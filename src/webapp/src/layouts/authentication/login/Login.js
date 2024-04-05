@@ -9,7 +9,11 @@ import MDButton from "components/MDButton";
 import BasicLayout from "layouts/authentication/components/BasicLayout";
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
+import { useMaterialUIController, setUserType } from "context";
+
 function Basic() {
+  const [controller, dispatch] = useMaterialUIController();
+  const { userType } = controller;
   const [showPass, setShowPass] = useState(false);
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
@@ -25,15 +29,19 @@ function Basic() {
     setPass(event.target.value);
   };
 
-  const handleLogin = () => {
-    // Verifica se o email e a senha foram preenchidos
-    if (email && pass) {
-      // Redireciona para a rota "/dashboard"
-      setRedirectToDashboard(true);
-    } else {
-      // Mostra uma mensagem de erro ou lógica adicional, se necessário
-      console.log("Por favor, preencha o email e a senha.");
-    }
+  const handleLogin = async () => {
+    // // Verifica se o email e a senha foram preenchidos
+    // if (email && pass) {
+    //   // Redireciona para a rota "/dashboard"
+    //   setRedirectToDashboard(true);
+    //   setUserType(dispatch, "Admin");
+    // } else {
+    //   // Mostra uma mensagem de erro ou lógica adicional, se necessário
+    //   console.log("Por favor, preencha o email e a senha.");
+    // }
+
+    await setUserType(dispatch, "Comum");
+    setRedirectToDashboard(true);
   };
 
   return (

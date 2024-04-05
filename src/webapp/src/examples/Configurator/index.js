@@ -1,21 +1,4 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useState, useEffect } from "react";
-
-// react-github-btn
 import GitHubButton from "react-github-btn";
 
 // @mui material components
@@ -91,7 +74,7 @@ function Configurator() {
     setWhiteSidenav(dispatch, false);
     setTransparentSidenav(dispatch, false);
   };
-  const handleFixedNavbar = () => setFixedNavbar(dispatch, !fixedNavbar);
+  const handleFixedNavbar = () => setFixedNavbar(dispatch, true);
   const handleDarkMode = () => setDarkMode(dispatch, !darkMode);
 
   // sidenav type buttons styles
