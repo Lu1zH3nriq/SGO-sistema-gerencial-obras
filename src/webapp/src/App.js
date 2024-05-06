@@ -4,7 +4,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "./assets/theme/index.js";
 import themeDark from "./assets/theme-dark/index.js";
 
-import routes from "routes";
+import routes from "Routes";
 
 import { useUIContextController } from "context";
 

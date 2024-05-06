@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Grid, TextField, Button, Card, CardHeader, CardContent, Box, Switch } from '@mui/material';
 import { Link } from 'react-router-dom';
-import bgImageLogin from '../assets/images/bgImageLogin.jpg';
+import bgImageLogin from '../../assets/images/bgImageLogin.jpg';
 
-import { useUIContextController } from '../context/index.js';
+import { useUIContextController } from '../../context/index.js';
 
-import Footer from '../components/footer/footerLogin.js';
-import Authenticator from '../components/auth/authenticator.js';
+import Footer from '../../components/footer/footerLogin.js';
+import Authenticator from '../../components/auth/authenticator.js';
 import { Spinner } from 'reactstrap';
 
 const Login = () => {

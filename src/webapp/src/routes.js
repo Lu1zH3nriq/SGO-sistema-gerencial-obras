@@ -1,6 +1,6 @@
-import Login from "./pages/Login.js";
-import ResetPass from "./pages/ResetPass.js";
-import Dashboard from "./pages/Dashboard.js";
+import Login from "./pages/Login/Login.js";
+import ResetPass from "./pages/Login/ResetPass.js";
+import Dashboard from "./pages/Dashboard/Dashboard.js";
 import Icon from "@mui/material/Icon";
 
 const routes = [
@@ -23,15 +23,7 @@ const routes = [
     name: "Dashboard",
     key: "dashboard",
     icon: <Icon fontSize="small">table_view</Icon>,
-    route: "admin/dashboard",
-    component: <Dashboard />,
-  },
-  {
-    type: "collapse",
-    name: "Dashboard",
-    key: "dashboard",
-    icon: <Icon fontSize="small">table_view</Icon>,
-    route: "comum/dashboard",
+    route: "/dashboard",
     component: <Dashboard />,
   },
   // {

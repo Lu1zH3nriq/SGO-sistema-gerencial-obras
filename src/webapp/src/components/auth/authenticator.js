@@ -11,7 +11,7 @@ const Authenticator = ({ user }) => {
         setUserType(dispatch, user.userType);
     }, [dispatch, user.userType]);
 
-    return <Navigate to={`/${user.userType}/dashboard`} />;
+    return <Navigate to={`/dashboard`} />;
 };
 
 export default Authenticator;

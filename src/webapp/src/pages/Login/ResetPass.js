@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Container, Grid, TextField, Button, Card, CardHeader, CardContent, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
-import bgImageLogin from '../assets/images/bgImageLogin.jpg';
+import bgImageLogin from '../../assets/images/bgImageLogin.jpg';
 
-import { useUIContextController } from '../context/index.js';
+import { useUIContextController } from '../../context/index.js';
 import FooterLogin from 'components/footer/footerLogin';
 import { Spinner } from 'reactstrap';
 
