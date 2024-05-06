@@ -1,10 +1,11 @@
 import React from "react";
-import { Box } from "@mui/system";
+import { Box } from "@mui/material";
 
-const FooterLogin = () => {
+const FooterLogin = ({color}) => {
 
     const currentYear = new Date().getFullYear();
     const copyrightSymbol = String.fromCharCode(169);
+    const colorFooter = color || 'white';
 
     return (
         <Box>
@@ -18,7 +19,7 @@ const FooterLogin = () => {
                     marginTop: -7.5,
                 }}
             >
-                <p style={{ color: 'white' }}>{copyrightSymbol} {currentYear} | SGO - Sistema de Gestão de Obras</p>
+                <p style={{ color: colorFooter }}>{copyrightSymbol} {currentYear} | SGO - Sistema de Gestão de Obras</p>
             </Box>
         </Box>
     );

@@ -6,6 +6,7 @@ import bgImageLogin from '../assets/images/bgImageLogin.jpg';
 import { useUIContextController } from '../context/index.js';
 
 import Footer from '../components/footer/footerLogin.js';
+import Authenticator from '../components/auth/authenticator.js';
 
 const Login = () => {
     const [controller] = useUIContextController();
@@ -14,133 +15,139 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    useEffect(() => {setShowPassword(false)},[]);
+    const [user, setUser] = useState({ userType: "" });
+    const [logged, setLogged] = useState(false);
+
+    useEffect(() => { setShowPassword(false) }, []);
 
     const alterShowPassword = () => {
         setShowPassword(!showPassword);
     }
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        // Send email and password data for login request
         console.log("Email:", email);
         console.log("Password:", password);
-        // Make login request here
+        await setUser({ userType: "comum" });
+        setLogged(true);
     }
 
     return (
-        <Box
-            sx={{
-                height: "100vh",
-                maxWidth: "100%",
-                backgroundImage: ({ functions: { linearGradient, rgba }, palette: { gradients } }) =>
-                    bgImageLogin &&
-                    `${linearGradient(
-                        rgba(gradients.dark.main, 0.6),
-                        rgba(gradients.dark.state, 0.6)
-                    )}, url(${bgImageLogin})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-            }}
-        >
-            <Container
+        <>
+            <Box
                 sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
                     height: "100vh",
+                    maxWidth: "100%",
+                    backgroundImage: ({ functions: { linearGradient, rgba }, palette: { gradients } }) =>
+                        bgImageLogin &&
+                        `${linearGradient(
+                            rgba(gradients.dark.main, 0.6),
+                            rgba(gradients.dark.state, 0.6)
+                        )}, url(${bgImageLogin})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
                 }}
             >
-                <Grid item xs={12} md={6}>
-                    <Card
-                        sx={{
-                            maxWidth: "70%",
-                            margin: "0 auto",
-                            minHeight: "60vh",
-                            justifyContent: "center",
-                        }}
-                    >
-                        <CardHeader
-                            title="SGO - Sistema de Gestão de Obras"
+                <Container
+                    sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100vh",
+                    }}
+                >
+                    <Grid item xs={12} md={6}>
+                        <Card
                             sx={{
-                                textAlign: "center",
+                                maxWidth: "70%",
+                                margin: "0 auto",
+                                minHeight: "60vh",
+                                justifyContent: "center",
                             }}
-                        />
-                        <CardContent>
-                            <div
-                                style={{
+                        >
+                            <CardHeader
+                                title="SGO - Sistema de Gestão de Obras"
+                                sx={{
                                     textAlign: "center",
-                                    color: darkMode ? "white" : '#344767',
-                                    fontFamily: "Arial, sans-serif",
-                                    fontWeight: "bold",
-                                    marginTop: -15,
-                                }}>
-                                <p>Bem vindo de volta!</p>
-                            </div>
-                            <form onSubmit={handleLogin}>
-                                <TextField
-                                    fullWidth
-                                    margin="normal"
-                                    label="Email"
-                                    type="email"
-                                    name="email"
-                                    id="email"
-                                    placeholder="Digite seu email"
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                />
-                                <TextField
-                                    fullWidth
-                                    margin="normal"
-                                    label="Senha"
-                                    type={showPassword ? "text" : "password"}
-                                    name="senha"
-                                    id="senha"
-                                    placeholder="Digite sua senha"
-                                    required
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
-                                <Switch
-                                    checked={showPassword}
-                                    onChange={() => alterShowPassword()}
-                                />
-                                <label style={{
-                                    cursor: "pointer",
-                                    color: darkMode ? "white" : '#344767',
-                                    fontFamily: "Arial, sans-serif",
-                                }}>&nbsp;Exibir senha</label>
-                                <Button
-                                    type="submit"
-                                    variant="contained"
-                                    color={darkMode ? "primary" : "secondary"}
-                                    fullWidth
-                                    style={{ color: 'white', marginTop: 20 }}
-                                >
-                                    Entrar
-                                </Button>
-                                <Link
-                                    to="/authentication/resetPassword"
+                                }}
+                            />
+                            <CardContent>
+                                <div
                                     style={{
+                                        textAlign: "center",
+                                        color: darkMode ? "white" : '#344767',
+                                        fontFamily: "Arial, sans-serif",
+                                        fontWeight: "bold",
+                                        marginTop: -15,
+                                    }}>
+                                    <p>Bem vindo de volta!</p>
+                                </div>
+                                <form onSubmit={handleLogin}>
+                                    <TextField
+                                        fullWidth
+                                        margin="normal"
+                                        label="Email"
+                                        type="email"
+                                        name="email"
+                                        id="email"
+                                        placeholder="Digite seu email"
+                                        required
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                    />
+                                    <TextField
+                                        fullWidth
+                                        margin="normal"
+                                        label="Senha"
+                                        type={showPassword ? "text" : "password"}
+                                        name="senha"
+                                        id="senha"
+                                        placeholder="Digite sua senha"
+                                        required
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                    />
+                                    <Switch
+                                        checked={showPassword}
+                                        onChange={() => alterShowPassword()}
+                                    />
+                                    <label style={{
                                         cursor: "pointer",
                                         color: darkMode ? "white" : '#344767',
                                         fontFamily: "Arial, sans-serif",
-                                        marginTop: 10,
-                                        display: "flex",
-                                        justifyContent: "center"
-                                    }}
-                                >
-                                    Redefinir senha
-                                </Link>
-                            </form>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            </Container>
-            <Footer />
-        </Box>
+                                    }}>&nbsp;Exibir senha</label>
+                                    <Button
+                                        type="submit"
+                                        variant="contained"
+                                        color={darkMode ? "primary" : "secondary"}
+                                        fullWidth
+                                        style={{ color: 'white', marginTop: 20 }}
+                                    >
+                                        Entrar
+                                    </Button>
+                                    <Link
+                                        to="/authentication/resetPassword"
+                                        style={{
+                                            cursor: "pointer",
+                                            color: darkMode ? "white" : '#344767',
+                                            fontFamily: "Arial, sans-serif",
+                                            marginTop: 10,
+                                            display: "flex",
+                                            justifyContent: "center"
+                                        }}
+                                    >
+                                        Redefinir senha
+                                    </Link>
+                                </form>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                </Container>
+                <Footer />
+            </Box>
+            {logged && <Authenticator user={user} />}
+        </>
     );
 };
 
