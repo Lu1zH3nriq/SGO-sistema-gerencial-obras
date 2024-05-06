@@ -7,6 +7,7 @@ import { useUIContextController } from '../context/index.js';
 
 import Footer from '../components/footer/footerLogin.js';
 import Authenticator from '../components/auth/authenticator.js';
+import { Spinner } from 'reactstrap';
 
 const Login = () => {
     const [controller] = useUIContextController();
@@ -14,6 +15,7 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loadingLogin, setLoadingLogin] = useState(false);
 
     const [user, setUser] = useState({ userType: "" });
     const [logged, setLogged] = useState(false);
@@ -25,11 +27,15 @@ const Login = () => {
     }
 
     const handleLogin = async (e) => {
+        setLoadingLogin(true);
         e.preventDefault();
         console.log("Email:", email);
         console.log("Password:", password);
         await setUser({ userType: "comum" });
-        setLogged(true);
+        setTimeout(() => {
+            setLogged(true);
+            setLoadingLogin(false);
+        }, 3000);
     }
 
     return (
@@ -67,7 +73,7 @@ const Login = () => {
                             }}
                         >
                             <CardHeader
-                                title="SGO - Sistema de Gestão de Obras"
+                                title={!loadingLogin ? "SGO - Sistema de Gestão de Obras" : "Entrando..."}
                                 sx={{
                                     textAlign: "center",
                                 }}
@@ -124,7 +130,7 @@ const Login = () => {
                                         fullWidth
                                         style={{ color: 'white', marginTop: 20 }}
                                     >
-                                        Entrar
+                                        {!loadingLogin ? "Entrar" : <Spinner color="light" style={{ width: '1.5rem', height: '1.5rem' }} />}
                                     </Button>
                                     <Link
                                         to="/authentication/resetPassword"

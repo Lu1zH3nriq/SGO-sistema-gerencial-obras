@@ -5,6 +5,7 @@ import bgImageLogin from '../assets/images/bgImageLogin.jpg';
 
 import { useUIContextController } from '../context/index.js';
 import FooterLogin from 'components/footer/footerLogin';
+import { Spinner } from 'reactstrap';
 
 const ResetPass = () => {
     const [controller] = useUIContextController();
@@ -12,12 +13,35 @@ const ResetPass = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const [hidenPassword, setHidenPassword] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const [findedUser, setFindedUser] = useState(false);
+    const [complete, setComplete] = useState({
+        status: false,
+        message: '',
+    });
+
     const handleResetPassword = (e) => {
+        setLoading(true);
         e.preventDefault();
-        // Enviar email e senha para redefinir a senha
-        console.log("Email:", email);
-        console.log("Nova Senha:", password);
-        // Fazer a solicitação de redefinição de senha aqui
+        //fazer a busca do email no banco de dados
+        //se encontrar o email, setar findedUser como true
+        if (!findedUser) {
+            setFindedUser(true);
+            setTimeout(() => {
+                setLoading(false);
+                setHidenPassword(false);
+            }, 1000);
+        } else {
+            setLoading(true);
+            setTimeout(() => {
+                setLoading(false);
+                setComplete({
+                    status: true,
+                    message: 'Senha redefinida com sucesso!'
+                });
+            }, 1000);
+        }
     }
 
     return (
@@ -60,6 +84,7 @@ const ResetPass = () => {
                                 />
                                 <CardContent>
                                     <form onSubmit={handleResetPassword}>
+                                        <label style={{ color: darkMode ? "white" : "#344767" }}>Digite o endereço de email do usuário:</label>
                                         <TextField
                                             fullWidth
                                             margin="normal"
@@ -72,18 +97,23 @@ const ResetPass = () => {
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                         />
-                                        <TextField
-                                            fullWidth
-                                            margin="normal"
-                                            label="Nova Senha"
-                                            type="password"
-                                            name="password"
-                                            id="password"
-                                            placeholder="Digite sua nova senha"
-                                            required
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                        />
+                                        {hidenPassword ? null : (
+                                            <TextField
+                                                fullWidth
+                                                margin="normal"
+                                                label="Nova Senha"
+                                                type="password"
+                                                name="password"
+                                                id="password"
+                                                placeholder="Digite sua nova senha"
+                                                required
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                            />)}
+
+                                        {complete.status ? 
+                                            <label style={{ color: darkMode ? "white" : "#344767" }}>{complete.message}</label>
+                                         : null}
                                         <Button
                                             type="submit"
                                             variant="contained"
@@ -91,7 +121,9 @@ const ResetPass = () => {
                                             fullWidth
                                             style={{ color: 'white', marginTop: 20 }}
                                         >
-                                            Redefinir Senha
+                                            {hidenPassword && !loading ? "Buscar" : (
+                                                hidenPassword || loading ? <Spinner color="light" /> : "Redefinir"
+                                            )}
                                         </Button>
                                         <Link
                                             to="/authentication/login"
@@ -112,7 +144,7 @@ const ResetPass = () => {
                         </Grid>
                     </Grid>
                 </Container>
-                <FooterLogin color={'#344767'}/>
+                <FooterLogin color={darkMode ? "white" : '#344767'} />
             </Box>
         </Box>
     );
