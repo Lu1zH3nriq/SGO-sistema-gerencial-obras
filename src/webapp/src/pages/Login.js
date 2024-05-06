@@ -1,18 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Grid, TextField, Button, Card, CardHeader, CardContent, Box, Switch } from '@mui/material';
+import { Link } from 'react-router-dom';
 import bgImageLogin from '../assets/images/bgImageLogin.jpg';
 
 import { useUIContextController } from '../context/index.js';
+
+import Footer from '../components/footer/footerLogin.js';
 
 const Login = () => {
     const [controller] = useUIContextController();
     const { darkMode } = controller;
     const [showPassword, setShowPassword] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    useEffect(() => {setShowPassword(false)},[]);
 
     const alterShowPassword = () => {
         setShowPassword(!showPassword);
     }
 
+    const handleLogin = (e) => {
+        e.preventDefault();
+        // Send email and password data for login request
+        console.log("Email:", email);
+        console.log("Password:", password);
+        // Make login request here
+    }
 
     return (
         <Box
@@ -64,7 +78,7 @@ const Login = () => {
                                 }}>
                                 <p>Bem vindo de volta!</p>
                             </div>
-                            <form onSubmit={() => { }}>
+                            <form onSubmit={handleLogin}>
                                 <TextField
                                     fullWidth
                                     margin="normal"
@@ -74,16 +88,20 @@ const Login = () => {
                                     id="email"
                                     placeholder="Digite seu email"
                                     required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                 />
                                 <TextField
                                     fullWidth
                                     margin="normal"
                                     label="Senha"
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     name="senha"
                                     id="senha"
                                     placeholder="Digite sua senha"
                                     required
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                 />
                                 <Switch
                                     checked={showPassword}
@@ -95,6 +113,7 @@ const Login = () => {
                                     fontFamily: "Arial, sans-serif",
                                 }}>&nbsp;Exibir senha</label>
                                 <Button
+                                    type="submit"
                                     variant="contained"
                                     color={darkMode ? "primary" : "secondary"}
                                     fullWidth
@@ -102,39 +121,26 @@ const Login = () => {
                                 >
                                     Entrar
                                 </Button>
-                                <label style={{
-                                    cursor: "pointer",
-                                    color: darkMode ? "white" : '#344767',
-                                    fontFamily: "Arial, sans-serif",
-                                    marginTop: 10,
-                                    display: "flex",
-                                    justifyContent: "center"
-                                }}
-                                onClick={() => { }}
-                                >&nbsp;Redefinir senha</label>
+                                <Link
+                                    to="/authentication/resetPassword"
+                                    style={{
+                                        cursor: "pointer",
+                                        color: darkMode ? "white" : '#344767',
+                                        fontFamily: "Arial, sans-serif",
+                                        marginTop: 10,
+                                        display: "flex",
+                                        justifyContent: "center"
+                                    }}
+                                >
+                                    Redefinir senha
+                                </Link>
                             </form>
                         </CardContent>
                     </Card>
                 </Grid>
             </Container>
-            <Box>
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: "10vh",
-                        color: 'white',
-                        fontFamily: "Arial, sans-serif",
-                        fontWeight: "bold",
-                        marginTop: -7.5,
-                    }}
-                >
-                    <p>SGO - Sistema de Gestão de Obras</p>
-                </Box>
-            </Box>
+            <Footer />
         </Box>
-        
     );
 };
 
