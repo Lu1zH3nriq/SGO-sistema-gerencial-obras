@@ -4,37 +4,58 @@ import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import InboxIcon from '@mui/icons-material/Inbox';
-import MailIcon from '@mui/icons-material/Mail';
 import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
 
+import { useUIContextController, setDarkMode } from '../../context/index.js';
 
 export default function PermanentDrawerLeft() {
+    const [controller, dispatch] = useUIContextController();
+    const { darkMode } = controller;
+
+    const [open, setOpen] = React.useState(false);
+
+    const handleDrawerToggle = () => {
+        setOpen(!open);
+    };
+
+    const handleAlterTheme = ()=>{
+        setDarkMode(dispatch, !darkMode);
+    }
+    
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
             <AppBar
                 position="fixed"
-                sx={{ width: '82%' }}
+                sx={{ width: '79.5%' }}
                 style={{
                     borderRadius: '10px',
                     margin: '3vh 1vw',
-                    backgroundColor: 'gray',
+                    backgroundColor: darkMode ? '#171719' : '#fff',
                 }}
             >
-                <Toolbar>
+                <Toolbar >
+                    <IconButton
+                        color="inherit"
+                        edge="start"
+                        onClick={handleDrawerToggle}
+                        sx={{ mr: 2, display: { sm: 'none' } }}
+                    >
+                        <MenuIcon />
+                    </IconButton>
                     <Typography variant="h6" noWrap component="div">
                         icone home / nome da rota
                     </Typography>
                     <Box sx={{ flexGrow: 1 }} />
-                    <Box sx={{ display: 'flex' }}>
-                        <Typography variant="h6" noWrap component="div" sx={{ marginRight: 2 }}>
+                    <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
+                        <Typography variant="h6" noWrap component="div" sx={{ marginRight: 2, cursor: "pointer" }}
+                        onClick={handleAlterTheme}
+                        >
                             dark-theme
                         </Typography>
                         <Typography variant="h6" noWrap component="div" sx={{ marginRight: 2 }}>
@@ -47,40 +68,26 @@ export default function PermanentDrawerLeft() {
                 </Toolbar>
             </AppBar>
             <Drawer
-                sx={{
-                    width: '16%',
-                    flexShrink: 0,
-                    '& .MuiDrawer-paper': {
-                        width: '15%',
-                        boxSizing: 'border-box',
-                    },
-                }}
-                variant="permanent"
+                variant="temporary"
                 anchor="left"
+                open={open}
+                onClose={handleDrawerToggle}
+                ModalProps={{
+                    keepMounted: true, 
+                }}
             >
                 <List>
-                    {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                        <ListItem key={text} disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
+                    <ListItem button>
+                        <ListItemText primary="dark-theme" onClick={handleAlterTheme} style={{color: !darkMode ? '#344767' :'white'}}/>
+                    </ListItem>
+                    <ListItem button>
+                        <ListItemText primary="profile" style={{color: !darkMode ? '#344767' :'white'}}/>
+                    </ListItem>
+                    <ListItem button>
+                        <ListItemText primary="logout" style={{color: !darkMode ? '#344767' :'white'}}/>
+                    </ListItem>
                 </List>
-                <Divider />
             </Drawer>
-            <Box
-                component="main"
-                sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
-            >
-                <Toolbar />
-                <Typography paragraph style={{ color: "white" }}>
-                    renderizar o componente da rota
-                </Typography>
-            </Box>
         </Box>
     );
 }

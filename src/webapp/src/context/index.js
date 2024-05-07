@@ -18,7 +18,7 @@ function reducer(state, action) {
 }
 function UIContextControllerProvider({ children }) {
   const initialState = {
-    darkMode: true,
+    darkMode: false,
     userType: "Comum",
   };
 
