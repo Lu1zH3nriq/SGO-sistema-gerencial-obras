@@ -6,19 +6,16 @@ import bgImageLogin from '../../assets/images/bgImageLogin.jpg';
 import { useUIContextController } from '../../context/index.js';
 
 import Footer from '../../components/footer/footerLogin.js';
-import Authenticator from '../../components/auth/authenticator.js';
+import Authenticator from '../../components/auth/Authenticator.js';
 import { Spinner } from 'reactstrap';
 
-const Login = () => {
+const Login = ({ onLogin }) => {
     const [controller] = useUIContextController();
     const { darkMode } = controller;
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loadingLogin, setLoadingLogin] = useState(false);
-
-    const [user, setUser] = useState({ userType: "" });
-    const [logged, setLogged] = useState(false);
 
     useEffect(() => { setShowPassword(false) }, []);
 
@@ -29,11 +26,17 @@ const Login = () => {
     const handleLogin = async (e) => {
         setLoadingLogin(true);
         e.preventDefault();
+
         console.log("Email:", email);
         console.log("Password:", password);
-        await setUser({ userType: "comum" });
+
+        // busca user no banco
+        const user = { 
+            userType: 1,
+            token: 'tokenchask123',
+        };
         setTimeout(() => {
-            setLogged(true);
+            onLogin(user);
             setLoadingLogin(false);
         }, 3000);
     }
@@ -152,7 +155,6 @@ const Login = () => {
                 </Container>
                 <Footer />
             </Box>
-            {logged && <Authenticator user={user} />}
         </>
     );
 };

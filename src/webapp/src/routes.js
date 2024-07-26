@@ -1,6 +1,8 @@
 import Login from "./pages/Login/Login.js";
 import ResetPass from "./pages/Login/ResetPass.js";
 import Dashboard from "./pages/Dashboard/Dashboard.js";
+import Unauthorized from "./pages/Unauthorized/Unauthorized.js";
+import NotFound from "./pages/NotFound/NotFound.js";
 import Icon from "@mui/material/Icon";
 
 const routes = [
@@ -20,20 +22,28 @@ const routes = [
   },
   {
     type: "collapse",
+    name: "Unauthorized",
+    key: "unauthorized",
+    icon: <Icon fontSize="small">receipt_long</Icon>,
+    route: "/unauthorized",
+    component: <Unauthorized />,
+  },
+  {
+    type: "collapse",
+    name: "Not Found",
+    key: "notFound",
+    icon: <Icon fontSize="small">receipt_long</Icon>,
+    route: "/notFound",
+    component: <NotFound />,
+  },
+  {
+    type: "collapse",
     name: "Dashboard",
     key: "dashboard",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/dashboard",
     component: <Dashboard />,
   },
-  // {
-  //   type: "collapse",
-  //   name: "Billing",
-  //   key: "billing",
-  //   icon: <Icon fontSize="small">receipt_long</Icon>,
-  //   route: "/billing",
-  //   component: <Billing />,
-  // },
   // {
   //   type: "collapse",
   //   name: "RTL",

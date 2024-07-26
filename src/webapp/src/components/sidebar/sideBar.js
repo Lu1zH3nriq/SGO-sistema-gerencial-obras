@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider } from '@mui/material';
 import InboxIcon from '@mui/icons-material/Inbox';
 import MailIcon from '@mui/icons-material/Mail';
+import { Navigate } from 'react-router-dom';
 
 const SideBar = () => {
     const [selectedButton, setSelectedButton] = useState(null);
@@ -38,6 +39,7 @@ const SideBar = () => {
                                 </ListItemIcon>
                                 <ListItemText primary={text} style={{ color: "white" }} 
                                     primaryTypographyProps={{fontSize: '15px', fontWeight: 'semi-bold'}}
+                                    onClick={() => { <Navigate to="/unauthorized" /> }}
                                 />
                             </ListItemButton>
                         </ListItem>
