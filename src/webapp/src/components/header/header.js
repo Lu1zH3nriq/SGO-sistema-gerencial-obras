@@ -12,8 +12,12 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 
 import { useUIContextController, setDarkMode } from '../../context/index.js';
+import { FaSun, FaMoon, FaToggleOff, FaToggleOn, FaUser } from "react-icons/fa";
+import { CiLogout } from "react-icons/ci";
 
-export default function PermanentDrawerLeft() {
+
+
+export default function PermanentDrawerLeft({ rotaAtual }) {
     const [controller, dispatch] = useUIContextController();
     const { darkMode } = controller;
 
@@ -23,10 +27,10 @@ export default function PermanentDrawerLeft() {
         setOpen(!open);
     };
 
-    const handleAlterTheme = ()=>{
+    const handleAlterTheme = () => {
         setDarkMode(dispatch, !darkMode);
     }
-    
+
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -49,20 +53,25 @@ export default function PermanentDrawerLeft() {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap component="div">
-                        icone home / nome da rota
+                        {rotaAtual}
                     </Typography>
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
                         <Typography variant="h6" noWrap component="div" sx={{ marginRight: 2, cursor: "pointer" }}
-                        onClick={handleAlterTheme}
+                            onClick={handleAlterTheme}
                         >
-                            dark-theme
+                            {darkMode ?
+                                <> <FaToggleOn size={20} /> <FaSun size={20} /> </> :
+                                <> <FaToggleOff size={20} /> <FaMoon size={20} /> </>}
                         </Typography>
-                        <Typography variant="h6" noWrap component="div" sx={{ marginRight: 2 }}>
-                            profile
+                        <Typography variant="h6" noWrap component="div" sx={{ marginRight: 2 }} style={{ cursor: "pointer" }}>
+                            <FaUser size={20} title='Perfil' />
                         </Typography>
-                        <Typography variant="h6" noWrap component="div">
-                            logout
+                        <Typography variant="h6" noWrap component="div" onClick={() => {
+                            localStorage.removeItem('userLogin');
+                            window.location.reload();
+                        }} style={{ cursor: "pointer" }}>
+                            <CiLogout size={20} title='Sair' />
                         </Typography>
                     </Box>
                 </Toolbar>
@@ -73,18 +82,18 @@ export default function PermanentDrawerLeft() {
                 open={open}
                 onClose={handleDrawerToggle}
                 ModalProps={{
-                    keepMounted: true, 
+                    keepMounted: true,
                 }}
             >
                 <List>
                     <ListItem button>
-                        <ListItemText primary="dark-theme" onClick={handleAlterTheme} style={{color: !darkMode ? '#344767' :'white'}}/>
+                        <ListItemText primary="dark-theme" onClick={handleAlterTheme} style={{ color: !darkMode ? '#344767' : 'white' }} />
                     </ListItem>
                     <ListItem button>
-                        <ListItemText primary="profile" style={{color: !darkMode ? '#344767' :'white'}}/>
+                        <ListItemText primary="profile" style={{ color: !darkMode ? '#344767' : 'white' }} />
                     </ListItem>
                     <ListItem button>
-                        <ListItemText primary="logout" style={{color: !darkMode ? '#344767' :'white'}}/>
+                        <ListItemText primary="logout" style={{ color: !darkMode ? '#344767' : 'white' }} />
                     </ListItem>
                 </List>
             </Drawer>

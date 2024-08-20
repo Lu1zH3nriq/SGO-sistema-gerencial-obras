@@ -11,6 +11,12 @@ function reducer(state, action) {
     case "USERTYPE": {
       return { ...state, userType: action.value };
     }
+    case "USERLOGIN": {
+      return { ...state, userLogin: action.value };
+    }
+    case "USERTOKEN": {
+      return { ...state, userToken: action.value };
+    }
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
     }
@@ -20,6 +26,8 @@ function UIContextControllerProvider({ children }) {
   const initialState = {
     darkMode: false,
     userType: "Comum",
+    userLogin: false,
+    userToken: "",
   };
 
   const [controller, dispatch] = useReducer(reducer, initialState);
@@ -47,6 +55,8 @@ UIContextControllerProvider.propTypes = {
 const setLayout = (dispatch, value) => dispatch({ type: "LAYOUT", value });
 const setDarkMode = (dispatch, value) => dispatch({ type: "DARKMODE", value });
 const setUserType = (dispatch, value) => dispatch({ type: "USERTYPE", value });
+const setUserLogin = (dispatch, value) => dispatch({ type: "USERLOGIN", value });
+const setUserToken = (dispatch, value) => dispatch({ type: "USERTOKEN", value });
 
 export {
   UIContextControllerProvider,
@@ -54,4 +64,6 @@ export {
   setLayout,
   setDarkMode,
   setUserType,
+  setUserLogin,
+  setUserToken,
 };
