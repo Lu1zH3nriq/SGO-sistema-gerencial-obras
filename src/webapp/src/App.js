@@ -4,12 +4,12 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "./assets/theme/index.js";
 import themeDark from "./assets/theme-dark/index.js";
 
-import { useUIContextController } from "context";
+import { useUIContextController, setUserLogin, setUserType} from "context";
 import Authenticator from "./components/auth/Authenticator.js";
 
 
 export default function App() {
-  const [controller] = useUIContextController();
+  const [controller , dispatch ] = useUIContextController();
   const { darkMode } = controller;
 
   return (

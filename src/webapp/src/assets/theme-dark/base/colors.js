@@ -21,13 +21,13 @@ Coded by www.creative-tim.com
 
 const colors = {
   background: {
-    default: "#1a2035",
+    default: "#313131",
     sidenav: "#1f283e",
     card: "#202940",
   },
 
   text: {
-    main: "#ffffffcc",
+    main: "#EFF2F7",
     focus: "#ffffffcc",
   },
 
@@ -36,7 +36,7 @@ const colors = {
   },
 
   white: {
-    main: "#ffffff",
+    main: "#EFF2F7",
     focus: "#ffffff",
   },
 
@@ -136,7 +136,7 @@ const colors = {
 
     dark: {
       main: "#323a54",
-      state: "#1a2035",
+      state: "#313131",
     },
   },
 

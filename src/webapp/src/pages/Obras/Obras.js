@@ -8,15 +8,10 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { Box, Typography } from '@mui/material';
 import { Container } from 'reactstrap';
 
-const Dashboard = () => {
+const Obras = () => {
     const [state] = useUIContextController();
-    const { userType, userId, userName } = state;
-    const [rotaSelecionada, setRotaSelecionada] = useState('Dashboard');
-
-    const _userType = {
-        Admin: 1,
-        Comum: 2,
-    }
+    const { userId, userName } = state;
+    const [rotaSelecionada, setRotaSelecionada] = useState('Dashboard'); 
 
     return (
         <>
@@ -29,7 +24,7 @@ const Dashboard = () => {
             <Container fluid style={{ paddingTop: 10}}>
                 <Box sx={{}}>
                     <Box sx={{ marginTop: '10vh', marginLeft: '18vw', padding: '16px', borderRadius: '10px' }}>
-                        <Typography variant="h6" align="start">{userName}</Typography>
+                        <Typography variant="h6" align="start">asdaskdjalskdjlaskdjlask</Typography>
                         <Typography variant="subtitle1" align="end">{userId}</Typography>
                     </Box>
                 </Box>
@@ -38,4 +33,4 @@ const Dashboard = () => {
     );
 };
 
-export default Dashboard;
+export default Obras;

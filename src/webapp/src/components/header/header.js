@@ -36,11 +36,11 @@ export default function PermanentDrawerLeft({ rotaAtual }) {
             <CssBaseline />
             <AppBar
                 position="fixed"
-                sx={{ width: '79.5%' }}
+                sx={{ width: '82.5%' }}
                 style={{
                     borderRadius: '10px',
-                    margin: '3vh 1vw',
-                    backgroundColor: darkMode ? '#171719' : '#fff',
+                    margin: 0,
+                    backgroundColor: darkMode ? '#414141' : '#D9D9D6',
                 }}
             >
                 <Toolbar >
@@ -68,7 +68,11 @@ export default function PermanentDrawerLeft({ rotaAtual }) {
                             <FaUser size={20} title='Perfil' />
                         </Typography>
                         <Typography variant="h6" noWrap component="div" onClick={() => {
-                            localStorage.removeItem('userLogin');
+                            sessionStorage.setItem('userLogin', 'false');
+                            sessionStorage.setItem('userType', null);
+                            sessionStorage.setItem('userToken', null);
+                            sessionStorage.setItem('userName', null);
+                            sessionStorage.setItem('userId', null);
                             window.location.reload();
                         }} style={{ cursor: "pointer" }}>
                             <CiLogout size={20} title='Sair' />
