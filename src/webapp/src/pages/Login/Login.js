@@ -6,7 +6,6 @@ import bgImageLogin from '../../assets/images/bgImageLogin.jpg';
 import { useUIContextController } from '../../context/index.js';
 
 import Footer from '../../components/footer/footerLogin.js';
-import Authenticator from '../../components/auth/Authenticator.js';
 import { Spinner } from 'reactstrap';
 
 const Login = ({ onLogin }) => {
@@ -33,7 +32,9 @@ const Login = ({ onLogin }) => {
         // busca user no banco
         const user = { 
             userType: 1,
-            token: 'tokenchask123',
+            userToken: 'tokenchask123',
+            userName: 'Fulano de Tal',
+            userId: email,
         };
         setTimeout(() => {
             onLogin(user);

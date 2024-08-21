@@ -5,19 +5,12 @@ import theme from "./assets/theme/index.js";
 import themeDark from "./assets/theme-dark/index.js";
 
 import { useUIContextController } from "context";
-import Authenticator from "./components/auth/authenticator.js";
+import Authenticator from "./components/auth/Authenticator.js";
 
 
 export default function App() {
   const [controller] = useUIContextController();
   const { darkMode } = controller;
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    document.documentElement.scrollTop = 0;
-    document.scrollingElement.scrollTop = 0;
-  }, [pathname]);
-
 
   return (
     <ThemeProvider theme={darkMode ? themeDark : theme}>

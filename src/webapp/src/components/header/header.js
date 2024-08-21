@@ -58,7 +58,7 @@ export default function PermanentDrawerLeft({ rotaAtual }) {
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
                         <Typography variant="h6" noWrap component="div" sx={{ marginRight: 2, cursor: "pointer" }}
-                            onClick={handleAlterTheme}
+                            onClick={handleAlterTheme} title='Alterar tema'
                         >
                             {darkMode ?
                                 <> <FaToggleOn size={20} /> <FaSun size={20} /> </> :

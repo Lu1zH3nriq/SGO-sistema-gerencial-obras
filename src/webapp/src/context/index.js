@@ -17,6 +17,12 @@ function reducer(state, action) {
     case "USERTOKEN": {
       return { ...state, userToken: action.value };
     }
+    case "USERNAME": {
+      return { ...state, userName: action.value };
+    }
+    case "USERID": {
+      return { ...state, userId: action.value };
+    }
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
     }
@@ -25,9 +31,11 @@ function reducer(state, action) {
 function UIContextControllerProvider({ children }) {
   const initialState = {
     darkMode: false,
-    userType: "Comum",
+    userType: 2,
     userLogin: false,
     userToken: "",
+    userName: "",
+    userId: "",
   };
 
   const [controller, dispatch] = useReducer(reducer, initialState);
@@ -42,7 +50,7 @@ function useUIContextController() {
 
   if (!context) {
     throw new Error(
-      "useMaterialUIController should be used inside the MaterialUIControllerProvider."
+      "erro ao criar contexto"
     );
   }
 
@@ -57,6 +65,8 @@ const setDarkMode = (dispatch, value) => dispatch({ type: "DARKMODE", value });
 const setUserType = (dispatch, value) => dispatch({ type: "USERTYPE", value });
 const setUserLogin = (dispatch, value) => dispatch({ type: "USERLOGIN", value });
 const setUserToken = (dispatch, value) => dispatch({ type: "USERTOKEN", value });
+const setUserName = (dispatch, value) => dispatch({ type: "USERNAME", value });
+const setUserId = (dispatch, value) => dispatch({ type: "USERID", value });
 
 export {
   UIContextControllerProvider,
@@ -66,4 +76,6 @@ export {
   setUserType,
   setUserLogin,
   setUserToken,
+  setUserName,
+  setUserId
 };
