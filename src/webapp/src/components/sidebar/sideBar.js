@@ -1,33 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FaChartPie, FaRegBuilding, FaWrench, FaUser, FaUsers, FaAddressCard, FaPaintRoller } from "react-icons/fa";
 import { CiLogout } from "react-icons/ci";
 import { PiShovelFill } from "react-icons/pi";
 import { useUIContextController } from '../../context/index.js';
 
+import LogoutModal from "components/logout/LogoutModal.js";
+
 const SideBar = ({ trocaRotas }) => {
     const [controller] = useUIContextController();
     const { darkMode, userType } = controller;
-    const [selectedButton, setSelectedButton] = useState(0);
+    const [selectedButton, setSelectedButton] = useState(null);
+    const [isFirstMount, setIsFirstMount] = useState(true);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
     const navigate = useNavigate();
-
-    const handleButtonClick = (index) => {
-        setSelectedButton(index);
-        const selectedRoute = menuOptions[index].route;
-        trocaRotas(selectedRoute);
-        navigate(`/${selectedRoute.toLowerCase()}`);
-    };
+    const location = useLocation();
 
     const menuOptionsAdmin = [
         { route: 'Dashboard', icon: <FaChartPie /> },
         { route: 'Obras', icon: <FaRegBuilding /> },
-        { route: 'Funcionários', icon: <FaPaintRoller /> },
+        { route: 'Funcionarios', icon: <FaPaintRoller /> },
         { route: 'Clientes', icon: <FaAddressCard /> },
         { route: 'Materiais', icon: <PiShovelFill /> },
         { route: 'Equipamentos', icon: <FaWrench /> },
         { route: 'Perfil', icon: <FaUser /> },
-        { route: 'Usuários', icon: <FaUsers /> },
+        { route: 'Usuarios', icon: <FaUsers /> },
         { route: 'Sair', icon: <CiLogout /> }
     ];
 
@@ -41,6 +39,32 @@ const SideBar = ({ trocaRotas }) => {
 
     const menuOptions = userType === 1 ? menuOptionsAdmin : menuOptionsComum;
 
+    useEffect(() => {
+        if (isFirstMount) {
+            setSelectedButton(0);
+            trocaRotas(menuOptions[0].route);
+            setIsFirstMount(false);
+        } else {
+            const currentRoute = location.pathname.split('/')[1];
+            const index = menuOptions.findIndex(option => option.route.toLowerCase() === currentRoute.toLowerCase());
+            if (index !== -1) {
+                setSelectedButton(index);
+                trocaRotas(menuOptions[index].route);
+            }
+        }
+    }, [location.pathname, menuOptions, trocaRotas, isFirstMount]);
+
+    const handleButtonClick = (index) => {
+        const selectedRoute = menuOptions[index].route;
+        if (selectedRoute === 'Sair') {
+            setShowLogoutModal(true);
+        } else {
+            setSelectedButton(index);
+            trocaRotas(selectedRoute);
+            navigate(`/${selectedRoute.toLowerCase()}`);
+        }
+    };
+
     return (
         <Box>
             <Drawer
@@ -51,7 +75,7 @@ const SideBar = ({ trocaRotas }) => {
                         height: '100vh',
                         marginTop: '0px',
                         marginLeft: '0px',
-                        maxWidth: '40vw',
+                        width: '15%',
                     }
                 }}
                 variant="permanent"
@@ -62,24 +86,31 @@ const SideBar = ({ trocaRotas }) => {
                         <ListItem key={option.route} style={{ padding: '0.2vh' }}>
                             <ListItemButton
                                 onClick={() => handleButtonClick(index)}
-                                style={{
+                                sx={{
                                     backgroundColor: selectedButton === index
                                         ? (darkMode ? '#414141' : '#FFFFFF') : (darkMode ? '#525252' : '#BABBBB'),
-                                    padding: '2vh'
+                                    padding: { xs: '1vh', sm: '2vh' },
+                                    '&:hover': {
+                                        backgroundColor: selectedButton === index
+                                            ? (darkMode ? '#414141' : '#FFFFFF') : (darkMode ? '#525252' : '#BABBBB'),
+                                    },
+                                    '& .MuiListItemText-primary': {
+                                        fontSize: { xs: '12px', sm: '15px' },
+                                        fontWeight: 'semi-bold'
+                                    }
                                 }}
                             >
                                 <ListItemIcon style={{ color: darkMode ? '#EFF2F7' : "#343A40" }}>
                                     {option.icon}
                                 </ListItemIcon>
-                                <ListItemText primary={option.route} style={{ color: darkMode ? '#EFF2F7' : "#343A40" }}
-                                    primaryTypographyProps={{ fontSize: '15px', fontWeight: 'semi-bold' }}
-                                />
+                                <ListItemText primary={option.route} style={{ color: darkMode ? '#EFF2F7' : "#343A40" }} />
                             </ListItemButton>
                         </ListItem>
                     ))}
                 </List>
                 <Divider />
             </Drawer>
+            {showLogoutModal && <LogoutModal visible={showLogoutModal} setVisible={()=>{setShowLogoutModal(false)}}/>}
         </Box>
     );
 };
