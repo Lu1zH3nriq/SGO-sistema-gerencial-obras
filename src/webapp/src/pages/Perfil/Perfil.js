@@ -44,6 +44,12 @@ const Perfil = () => {
     border: 'none', // Remover a borda do botão
   };
 
+  const inputStyle = {
+    backgroundColor: darkMode ? "#676767" : "#FFFFFF",
+    color: darkMode ? "#FFFFFF" : "#000000",
+    border: darkMode ? "1px solid #676767" : "1px solid #ced4da",
+  };
+
   return (
     <Layout rotaAtual="Obras">
       <Box
@@ -51,7 +57,7 @@ const Perfil = () => {
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          marginTop: "5%",
+          marginTop: "7%",
           alignItems: "center",
         }}
       >
@@ -95,11 +101,11 @@ const Perfil = () => {
                 <CardContent>
                   <Form.Group>
                     <Form.Label style={textStyle}>Email Atual</Form.Label>
-                    <FormControl type="text" value={userEmail} readOnly style={textStyle} />
+                    <FormControl type="text" value={userEmail} readOnly style={inputStyle} />
                   </Form.Group>
                   <Form.Group style={{ marginTop: "10px" }}>
                     <Form.Label style={textStyle}>Telefone</Form.Label>
-                    <FormControl type="text" defaultValue={userPhone} style={textStyle} />
+                    <FormControl type="text" defaultValue={userPhone} style={inputStyle} />
                   </Form.Group>
                 </CardContent>
               </Card>

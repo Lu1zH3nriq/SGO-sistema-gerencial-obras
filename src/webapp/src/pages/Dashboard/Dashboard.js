@@ -36,7 +36,7 @@ const Dashboard = () => {
           // marginLeft: "1%",
         }}
       >
-        <Container fluid height={'100%'}>
+        <Container height={'100%'} style={{ maxWidth: '85%' }}>
           {/* Linha com quatro colunas */}
           <Row className="mt-4">
             {[1, 2, 3, 4].map((info, index) => (
@@ -56,7 +56,7 @@ const Dashboard = () => {
                           padding: "0.5rem",
                           flex: 1,
                           borderRadius: "0.5rem",
-                          maxWidth: "35%",
+                          maxWidth: "25%",
                           display: "flex",
                           flexDirection: "column",
                           alignItems: "center",
