@@ -45,7 +45,7 @@ export default function PermanentDrawerLeft({ rotaAtual }) {
           borderRadius: 0,
           margin: 0,
           backgroundColor: darkMode ? "#414141" : "#D9D9D6",
-          height: "8%",
+          height: "9%",
         }}
       >
         <Toolbar>

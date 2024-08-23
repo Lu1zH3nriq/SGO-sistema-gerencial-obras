@@ -11,11 +11,13 @@ import Layout from "../../components/layout/Layout.js";
 import { useUIContextController } from "../../context/index.js";
 import { Container, Row, Col, Button, FormControl } from "react-bootstrap";
 import { FaPlus, FaSearch, FaChevronDown, FaChevronUp, FaEdit, FaTrash } from "react-icons/fa";
+import CadastrarObraModal from "components/Obras/CadastrarObraModa.js";
 
 const Obras = () => {
   const [state] = useUIContextController();
-  const { userId, darkMode } = state;
+  const { darkMode } = state;
   const [expanded, setExpanded] = useState(null);
+  const [viewCadastrarObraModal, setViewCadastrarObraModal] = useState(false);
 
   const handleExpandClick = (index) => {
     setExpanded(expanded === index ? null : index);
@@ -47,8 +49,13 @@ const Obras = () => {
   };
 
   const placeholderStyle = {
-      color: darkMode ? "#FFFFFF" : "#343A40",
+    color: darkMode ? "#FFFFFF" : "#343A40",
   };
+
+  const showCadastrarObraModal = () => {
+    console.log("Cadastrar Obra");
+    setViewCadastrarObraModal(true);
+  }
 
   return (
     <Layout rotaAtual="Obras">
@@ -65,7 +72,7 @@ const Obras = () => {
           {/* Linha com botão "Adicionar" e campo de pesquisa */}
           <Row className="mb-4" style={{ marginTop: "2%" }}>
             <Col md={2} className="d-flex align-items-center">
-              <Button variant="secondary" className="d-flex align-items-center" style={buttonStyle}>
+              <Button variant="secondary" className="d-flex align-items-center" style={buttonStyle} onClick={showCadastrarObraModal}>
                 <FaPlus className="me-2" /> Adicionar
               </Button>
             </Col>
@@ -183,7 +190,13 @@ const Obras = () => {
             ))}
           </Container>
         </Container>
+        {/* Modal para cadastrar obra */}
+        <CadastrarObraModal
+          visible={viewCadastrarObraModal}
+          setVisible={setViewCadastrarObraModal}
+        />
       </Box>
+
     </Layout>
   );
 };

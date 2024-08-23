@@ -7,9 +7,10 @@ import {
   Row,
   Col,
   Button,
+  Form,
+  Input,
   Table,
-  FormControl,
-} from "react-bootstrap";
+} from "reactstrap";
 import { FaPlus, FaSearch, FaEdit, FaTrash } from "react-icons/fa";
 
 const Clientes = () => {
@@ -27,16 +28,6 @@ const Clientes = () => {
     borderRadius: "20px",
   };
 
-  const tableHeaderStyle = {
-    backgroundColor: darkMode ? "#585858" : "#CACACA",
-    color: darkMode ? "#FFFFFF" : "#343A40",
-  };
-
-  const tableRowStyle = {
-    backgroundColor: darkMode ? "#676767" : "#F0F0EE",
-    color: darkMode ? "#FFFFFF" : "#343A40",
-  };
-
   return (
     <Layout rotaAtual="Clientes">
       <Box
@@ -50,13 +41,9 @@ const Clientes = () => {
       >
         <Container>
           {/* Linha com botão "Adicionar" e campo de pesquisa */}
-          <Row className="mb-4" style={{ marginTop: "2%" }}>
+          <Row className="mb-4" style={{ marginTop: '2%' }}>
             <Col md={6} className="d-flex align-items-center">
-              <Button
-                variant="secondary"
-                className="d-flex align-items-center"
-                style={buttonStyle}
-              >
+              <Button color="secondary" className="d-flex align-items-center" style={buttonStyle}>
                 <FaPlus className="me-2" /> Adicionar
               </Button>
             </Col>
@@ -64,93 +51,70 @@ const Clientes = () => {
               md={6}
               className="d-flex align-items-center justify-content-end"
             >
-              <Typography
-                variant="subtitle1"
-                className="me-2"
-                color={"secondary"}
-                style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-              >
-                Pesquisar por nome:
+              <Typography variant="subtitle1" className="me-2" color={'secondary'} style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}>
+                Pesquisar nome:
               </Typography>
-              <FormControl
+              <Input
                 type="text"
                 className="me-2"
                 style={inputStyle}
-                sx={{
-                  "&::placeholder": { color: darkMode ? "#FFFFFF" : "#343A40" },
-                }}
               />
-              <Button variant="outline-secondary" style={buttonStyle}>
+              <Button outline color="secondary" style={buttonStyle}>
                 <FaSearch />
               </Button>
             </Col>
           </Row>
 
-          {/* Tabela */}
-          <Table
-            striped
-            bordered
-            hover
-            style={{
-              borderRadius: "10px",
-              overflow: "hidden",
-              marginTop: "5%",
-            }}
-          >
-            <thead style={tableHeaderStyle}>
-              <tr>
-                <th style={{ padding: "4px" }}>Nome</th>
-                <th style={{ padding: "4px" }}>Contato</th>
-                <th style={{ padding: "4px" }}>Data de Cadastro</th>
-                <th style={{ padding: "4px", textAlign: "center" }}>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style={{ ...tableRowStyle, height: "40px" }}>
-                <td style={{ padding: "4px" }}>Cliente 1</td>
-                <td style={{ padding: "4px" }}>contato@cliente1.com</td>
-                <td style={{ padding: "4px" }}>01/01/2023</td>
-                <td
-                  style={{
-                    padding: "10px",
-                    textAlign: "center",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      width: "100%",
-                      height: "100%",
-                    }}
-                  >
-                    <FaEdit
+          <Container fluid style={{ maxWidth: "85%", marginTop: "5%" }}>
+            {/* Tabela */}
+            <Table
+              striped
+              responsive
+              size="sm"
+              borderless
+              dark={darkMode}
+              style={{ borderRadius: "10px", marginTop: "2%" }}
+            >
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Contato</th>
+                  <th>Data de Cadastro</th>
+                  <th style={{ textAlign: "center" }}>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style={{ backgroundColor: darkMode ? "#676767" : "#f0f0f0" }}>
+                  <td>Cliente 1</td>
+                  <td>Contato 1</td>
+                  <td>01/01/2023</td>
+                  <td>
+                    <div
                       style={{
-                        cursor: "pointer",
-                        marginRight: "10px",
-                        color: darkMode ? "#343A40" : "#343A40",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        width: "100%",
+                        height: "100%",
                       }}
-                      size={20}
-                      title="Editar"
-                    />
-                    <FaTrash
-                      style={{
-                        cursor: "pointer",
-                        color: darkMode ? "#343A40" : "#343A40",
-                      }}
-                      size={20}
-                      title="Excluir"
-                    />
-                  </div>
-                </td>
-              </tr>
-              {/* Adicione mais linhas conforme necessário */}
-            </tbody>
-          </Table>
+                    >
+                      <FaEdit
+                        style={{ cursor: "pointer", marginRight: "10px", color: darkMode ? "#FFFFFF" : "#343A40" }}
+                        size={20}
+                        title="Editar"
+                      />
+                      <FaTrash
+                        style={{ cursor: "pointer", color: darkMode ? "#FFFFFF" : "#343A40" }}
+                        size={20}
+                        title="Excluir"
+                      />
+                    </div>
+                  </td>
+                </tr>
+                {/* Adicione mais linhas conforme necessário */}
+              </tbody>
+            </Table>
+          </Container>
         </Container>
       </Box>
     </Layout>

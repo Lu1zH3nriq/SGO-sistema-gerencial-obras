@@ -7,14 +7,25 @@ import {
   Row,
   Col,
   Button,
+  Input,
   Table,
-  FormControl,
-} from "react-bootstrap";
+} from "reactstrap";
 import { FaPlus, FaSearch, FaEdit, FaTrash } from "react-icons/fa";
 
 const Usuarios = () => {
   const [state] = useUIContextController();
-  const { userId } = state;
+  const { userId, darkMode } = state;
+
+  const buttonStyle = {
+    backgroundColor: darkMode ? "#676767" : "#CECFCB",
+    color: darkMode ? "#FFFFFF" : "#343A40",
+  };
+
+  const inputStyle = {
+    backgroundColor: darkMode ? "#676767" : "#FFFFFF",
+    color: darkMode ? "#FFFFFF" : "#343A40",
+    borderRadius: "20px",
+  };
 
   return (
     <Layout rotaAtual="Usuários">
@@ -31,7 +42,7 @@ const Usuarios = () => {
           {/* Linha com botão "Adicionar" e campo de pesquisa */}
           <Row className="mb-4" style={{ marginTop: '2%' }}>
             <Col md={6} className="d-flex align-items-center">
-              <Button variant="secondary" className="d-flex align-items-center">
+              <Button color="secondary" className="d-flex align-items-center" style={buttonStyle}>
                 <FaPlus className="me-2" /> Adicionar
               </Button>
             </Col>
@@ -39,79 +50,70 @@ const Usuarios = () => {
               md={6}
               className="d-flex align-items-center justify-content-end"
             >
-              <Typography variant="subtitle1" className="me-2" color={'secondary'}>
-                Pesquisar
+              <Typography variant="subtitle1" className="me-2" color={'secondary'} style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}>
+                Pesquisar nome:
               </Typography>
-              <FormControl
+              <Input
                 type="text"
-                placeholder="Pesquisar por nome do usuário"
                 className="me-2"
-                style={{ borderRadius: "20px" }}
+                style={inputStyle}
               />
-              <Button variant="outline-secondary">
+              <Button outline color="secondary" style={buttonStyle}>
                 <FaSearch />
               </Button>
             </Col>
           </Row>
 
-          {/* Tabela */}
-          <Table
-            striped
-            bordered
-            hover
-            style={{
-              borderRadius: "10px",
-              overflow: "hidden",
-              marginTop: "5%",
-            }}
-          >
-            <thead style={{ backgroundColor: "#d3d3d3" }}>
-              <tr>
-                <th style={{ padding: "4px" }}>Nome</th>
-                <th style={{ padding: "4px" }}>Email</th>
-                <th style={{ padding: "4px" }}>Data de Registro</th>
-                <th style={{ padding: "4px", textAlign: "center" }}>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style={{ backgroundColor: "#f0f0f0", height: "40px" }}>
-                <td style={{ padding: "4px" }}>Usuário 1</td>
-                <td style={{ padding: "4px" }}>usuario1@example.com</td>
-                <td style={{ padding: "4px" }}>01/01/2023</td>
-                <td
-                  style={{
-                    padding: "4px",
-                    textAlign: "center",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      width: "100%",
-                      height: "100%",
-                    }}
-                  >
-                    <FaEdit
-                      style={{ cursor: "pointer", marginRight: "10px" }}
-                      size={20}
-                      title="Editar"
-                    />
-                    <FaTrash
-                      style={{ cursor: "pointer" }}
-                      size={20}
-                      title="Excluir"
-                    />
-                  </div>
-                </td>
-              </tr>
-              {/* Adicione mais linhas conforme necessário */}
-            </tbody>
-          </Table>
+          <Container fluid style={{ maxWidth: "85%", marginTop: "5%" }}>
+            {/* Tabela */}
+            <Table
+              striped
+              responsive
+              size="sm"
+              borderless
+              dark={darkMode}
+              style={{ borderRadius: "10px", marginTop: "2%" }}
+            >
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Email</th>
+                  <th>Data de Registro</th>
+                  <th style={{ textAlign: "center" }}>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style={{ backgroundColor: darkMode ? "#676767" : "#f0f0f0" }}>
+                  <td>Usuário 1</td>
+                  <td>usuario1@example.com</td>
+                  <td>01/01/2023</td>
+                  <td>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        width: "100%",
+                        height: "100%",
+                      }}
+                    >
+                      <FaEdit
+                        style={{ cursor: "pointer", marginRight: "10px", color: darkMode ? "#FFFFFF" : "#343A40" }}
+                        size={20}
+                        title="Editar"
+                      />
+                      <FaTrash
+                        style={{ cursor: "pointer", color: darkMode ? "#FFFFFF" : "#343A40" }}
+                        size={20}
+                        title="Excluir"
+                      />
+                    </div>
+                  </td>
+                </tr>
+                {/* Adicione mais linhas conforme necessário */}
+              </tbody>
+            </Table>
+          </Container>
         </Container>
       </Box>
     </Layout>

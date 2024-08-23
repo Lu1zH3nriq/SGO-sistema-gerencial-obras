@@ -33,14 +33,14 @@ const Dashboard = () => {
           justifyContent: "start",
           marginTop: "5%",
           alignItems: "start",
-          marginLeft: "1.5%",
+          // marginLeft: "1%",
         }}
       >
         <Container fluid height={'100%'}>
           {/* Linha com quatro colunas */}
           <Row className="mt-4">
             {[1, 2, 3, 4].map((info, index) => (
-              <Col key={index}>
+              <Col key={index} xs={12} sm={6} md={3}>
                 <Card style={cardStyle}>
                   <Card.Body>
                     <div
@@ -56,15 +56,17 @@ const Dashboard = () => {
                           padding: "0.5rem",
                           flex: 1,
                           borderRadius: "0.5rem",
-                          maxWidth: "25%",
+                          maxWidth: "35%",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
                         }}
                       >
-                        <Typography variant="subtitle2" style={{ color: "#FFFFFF" }}>Info {info}</Typography>
                         <Typography
                           variant="h6"
                           component="div"
                           fontWeight="bold"
-                          style={{ color: "#FFFFFF" }}
+                          style={{ color: "#FFFFFF", fontSize: "1.5rem" }}
                         >
                           {info * 10}
                         </Typography>
@@ -80,7 +82,7 @@ const Dashboard = () => {
           </Row>
           {/* Linha com três colunas */}
           <Row className="mt-4">
-            <Col>
+            <Col xs={12} sm={6} md={4}>
               <Card style={cardStyle}>
                 <Card.Body>
                   <Card.Title style={textStyle}>Card 3</Card.Title>
@@ -88,7 +90,7 @@ const Dashboard = () => {
                 </Card.Body>
               </Card>
             </Col>
-            <Col>
+            <Col xs={12} sm={6} md={4}>
               <Card style={cardStyle}>
                 <Card.Body>
                   <Card.Title style={textStyle}>Card 4</Card.Title>
@@ -96,7 +98,7 @@ const Dashboard = () => {
                 </Card.Body>
               </Card>
             </Col>
-            <Col>
+            <Col xs={12} sm={6} md={4}>
               <Card style={cardStyle}>
                 <Card.Body>
                   <Card.Title style={textStyle}>Card 5</Card.Title>
@@ -108,7 +110,7 @@ const Dashboard = () => {
 
           {/* Linha com duas colunas */}
           <Row className="mt-4">
-            <Col md={8}>
+            <Col xs={12} md={8}>
               <Card style={cardStyle}>
                 <Card.Body>
                   <Card.Title style={textStyle}>Card 1</Card.Title>
@@ -116,7 +118,7 @@ const Dashboard = () => {
                 </Card.Body>
               </Card>
             </Col>
-            <Col md={4}>
+            <Col xs={12} md={4}>
               <Card style={cardStyle}>
                 <Card.Body>
                   <Card.Title style={textStyle}>Card 2</Card.Title>
