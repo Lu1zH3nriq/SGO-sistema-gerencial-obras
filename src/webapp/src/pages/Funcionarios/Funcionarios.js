@@ -3,7 +3,14 @@ import { Typography, Box } from "@mui/material";
 import Layout from "../../components/layout/Layout.js";
 import { useUIContextController } from "../../context/index.js";
 import { Container, Row, Col, Button, Input, Table } from "reactstrap";
-import { FaPlus, FaSearch, FaEdit, FaTrash, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import {
+  FaPlus,
+  FaSearch,
+  FaEdit,
+  FaTrash,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 import ListaFuncionarios from "./ListaFuncionarios.js"; // Importar a lista de funcionários
 import CadastrarFuncionariosModal from "components/Funcionarios/CadastrarFuncionariosModal.js";
 import DeleteFuncionarioModal from "components/Funcionarios/DeleteFuncionarioModal.js";
@@ -24,6 +31,9 @@ const Funcionarios = () => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 30;
 
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [searchCpf, setSearchCpf] = React.useState("");
+
   const buttonStyle = {
     backgroundColor: darkMode ? "#676767" : "#CECFCB",
     color: darkMode ? "#FFFFFF" : "#343A40",
@@ -32,7 +42,6 @@ const Funcionarios = () => {
   const inputStyle = {
     backgroundColor: darkMode ? "#676767" : "#FFFFFF",
     color: darkMode ? "#FFFFFF" : "#343A40",
-    borderRadius: "20px",
   };
 
   const tableHeaderStyle = {
@@ -62,10 +71,34 @@ const Funcionarios = () => {
     setCurrentPage(newPage);
   };
 
+  // Função para atualizar o termo de pesquisa
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1); // Resetar para a primeira página ao pesquisar
+  };
+  const handleSearchCpfChange = (event) => {
+    setSearchCpf(event.target.value);
+    setCurrentPage(1); // Resetar para a primeira página ao pesquisar
+  };
+
+  // Filtrar a lista de funcionários com base no termo de pesquisa
+  const filteredFuncionarios = ListaFuncionarios.filter((funcionario) => {
+    if (searchTerm === "") {
+      return funcionario.cpf.toLowerCase().includes(searchCpf.toLowerCase());
+    } else if (searchCpf === "") {
+      return funcionario.nome.toLowerCase().includes(searchTerm.toLowerCase());
+    } else {
+      return (
+        funcionario.nome.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        funcionario.cpf.toLowerCase().includes(searchCpf.toLowerCase())
+      );
+    }
+  });
+
   // Dividir a lista de funcionários em páginas
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentFuncionarios = ListaFuncionarios.slice(startIndex, endIndex);
+  const currentFuncionarios = filteredFuncionarios.slice(startIndex, endIndex);
 
   return (
     <Layout rotaAtual="Funcionários">
@@ -81,39 +114,61 @@ const Funcionarios = () => {
         <Container>
           {/* Linha com botão "Adicionar" e campo de pesquisa */}
           <Row className="mb-4" style={{ marginTop: "2%" }}>
-            <Col md={6} className="d-flex align-items-center">
+            <Col className="d-flex align-items-center justify-content-between flex-wrap">
               <Button
                 color="secondary"
-                className="d-flex align-items-center"
+                className="d-flex align-items-center mb-2"
                 style={buttonStyle}
                 onClick={cadastrarFunc}
               >
                 <FaPlus className="me-2" /> Adicionar
               </Button>
-            </Col>
-            <Col
-              md={6}
-              className="d-flex align-items-center justify-content-end"
-            >
-              <Typography
-                variant="subtitle1"
-                className="me-2"
-                color={"secondary"}
-                style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-              >
-                Pesquisar nome:
-              </Typography>
-              <Input type="text" className="me-2" style={inputStyle} />
-              <Button outline color="secondary" style={buttonStyle}>
-                <FaSearch />
-              </Button>
+              <div className="d-flex align-items-center mb-2 ms-auto me-4">
+                <Typography
+                  variant="subtitle1"
+                  className="me-2"
+                  color={"secondary"}
+                  style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                >
+                  Funcionário:
+                </Typography>
+                <Input
+                  type="text"
+                  className="me-2"
+                  style={inputStyle}
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                />
+                <Button outline color="secondary" style={buttonStyle}>
+                  <FaSearch />
+                </Button>
+              </div>
+              <div className="d-flex align-items-center mb-2">
+                <Typography
+                  variant="subtitle1"
+                  className="me-2"
+                  color={"secondary"}
+                  style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                >
+                  Cpf:
+                </Typography>
+                <Input
+                  type="text"
+                  className="me-2"
+                  style={inputStyle}
+                  value={searchCpf}
+                  onChange={handleSearchCpfChange}
+                />
+                <Button outline color="secondary" style={buttonStyle}>
+                  <FaSearch />
+                </Button>
+              </div>
             </Col>
           </Row>
 
           <Container fluid style={{ maxWidth: "100%", marginTop: "5%" }}>
             {/* Tabela */}
             <Table
-              
               responsive
               size="sm"
               bordered
@@ -128,47 +183,67 @@ const Funcionarios = () => {
                   <th style={tableHeaderStyle}>Email</th>
                   <th style={tableHeaderStyle}>Telefone</th>
                   <th style={tableHeaderStyle}>Tipo</th>
-                  <th style={{ ...tableHeaderStyle, textAlign: "center" }}>Ações</th>
+                  <th style={{ ...tableHeaderStyle, textAlign: "center" }}>
+                    Ações
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {currentFuncionarios.map((funcionario, index) => (
-                  <tr key={index}>
-                    <td style={tableCellStyle}>{funcionario.nome}</td>
-                    <td style={tableCellStyle}>{funcionario.cpf || "N/A"}</td>
-                    <td style={tableCellStyle}>{funcionario.cargo}</td>
-                    <td style={tableCellStyle}>{funcionario.email || "N/A"}</td>
-                    <td style={tableCellStyle}>{funcionario.telefone || "N/A"}</td>
-                    <td style={tableCellStyle}>{funcionario.tipo}</td>
-                    <td>
-                      <div
-                        style={{
-                          textAlign: "center",
-                        }}
-                      >
-                        <FaEdit
+                {currentFuncionarios.length > 0 ? (
+                  currentFuncionarios.map((funcionario, index) => (
+                    <tr key={index}>
+                      <td style={tableCellStyle}>{funcionario.nome}</td>
+                      <td style={tableCellStyle}>{funcionario.cpf || "N/A"}</td>
+                      <td style={tableCellStyle}>{funcionario.cargo}</td>
+                      <td style={tableCellStyle}>
+                        {funcionario.email || "N/A"}
+                      </td>
+                      <td style={tableCellStyle}>
+                        {funcionario.telefone || "N/A"}
+                      </td>
+                      <td style={tableCellStyle}>{funcionario.tipo}</td>
+                      <td>
+                        <div
                           style={{
-                            cursor: "pointer",
-                            marginRight: "10px",
-                            color: darkMode ? "#FFFFFF" : "#343A40",
+                            textAlign: "center",
                           }}
-                          size={20}
-                          title="Editar"
-                          onClick={() => editarFunc(funcionario)}
-                        />
-                        <FaTrash
-                          style={{
-                            cursor: "pointer",
-                            color: darkMode ? "#FFFFFF" : "#343A40",
-                          }}
-                          size={20}
-                          title="Excluir"
-                          onClick={() => excluirFunc(funcionario)}
-                        />
-                      </div>
+                        >
+                          <FaEdit
+                            style={{
+                              cursor: "pointer",
+                              marginRight: "10px",
+                              color: darkMode ? "#FFFFFF" : "#343A40",
+                            }}
+                            size={20}
+                            title="Editar"
+                            onClick={() => editarFunc(funcionario)}
+                          />
+                          <FaTrash
+                            style={{
+                              cursor: "pointer",
+                              color: darkMode ? "#FFFFFF" : "#343A40",
+                            }}
+                            size={20}
+                            title="Excluir"
+                            onClick={() => excluirFunc(funcionario)}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="7"
+                      style={{
+                        textAlign: "center",
+                        color: darkMode ? "#FFFFFF" : "#343A40",
+                      }}
+                    >
+                      Funcionário não encontrado.
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </Table>
             {/* Botões de navegação */}
@@ -197,13 +272,18 @@ const Funcionarios = () => {
                   padding: "0% 1% 0% 1%",
                 }}
               >
-                Página {currentPage} de {Math.ceil(ListaFuncionarios.length / itemsPerPage)} (Total: {ListaFuncionarios.length} funcionários)
+                Página {currentPage} de{" "}
+                {Math.ceil(filteredFuncionarios.length / itemsPerPage)} (Total:{" "}
+                {filteredFuncionarios.length} funcionários)
               </Typography>
               <Button
                 variant="secondary"
                 style={{ ...buttonStyle, marginLeft: "5px" }}
                 onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === Math.ceil(ListaFuncionarios.length / itemsPerPage)}
+                disabled={
+                  currentPage ===
+                  Math.ceil(filteredFuncionarios.length / itemsPerPage)
+                }
                 size="sm"
               >
                 <FaChevronRight size={10} />
@@ -215,13 +295,17 @@ const Funcionarios = () => {
 
       <CadastrarFuncionariosModal
         visible={modalVisible.visible}
-        setVisible={() => setModalVisible({ visible: false, funcionario: null })}
+        setVisible={() =>
+          setModalVisible({ visible: false, funcionario: null })
+        }
         funcionario={modalVisible.funcionario}
       />
 
       <DeleteFuncionarioModal
         visible={deleteFuncionarioModal.visible}
-        setVisible={() => setDeleteFuncionarioModal({ visible: false, funcionario: null })}
+        setVisible={() =>
+          setDeleteFuncionarioModal({ visible: false, funcionario: null })
+        }
         funcionario={deleteFuncionarioModal.funcionario}
       />
     </Layout>

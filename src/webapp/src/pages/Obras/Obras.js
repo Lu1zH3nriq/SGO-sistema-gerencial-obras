@@ -44,7 +44,7 @@ const Obras = () => {
     visible: false,
     obra: null,
   });
-  const [ viewDeleteObraModal, setViewDeleteObraModal ] = useState({
+  const [viewDeleteObraModal, setViewDeleteObraModal] = useState({
     visible: false,
     obra: null,
   });
@@ -53,6 +53,7 @@ const Obras = () => {
   const [dataInicial, setDataInicial] = useState("");
   const [dataFinal, setDataFinal] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchContract, setSearchContract] = useState("");
 
   // Estado para paginação
   const [currentPage, setCurrentPage] = useState(1);
@@ -75,9 +76,21 @@ const Obras = () => {
     setFiltro("Nenhum");
   };
 
-  const filteredObras = obras.filter((obra) =>
-    obra.cliente.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredObras = obras.filter((obra) => {
+    if (searchTerm === "") {
+      return obra.numeroContrato
+        .toLowerCase()
+        .includes(searchContract.toLowerCase());
+    } else if (searchContract === "") {
+      return obra.cliente.toLowerCase().includes(searchTerm.toLowerCase());
+    }
+    else {
+      return (
+        obra.cliente.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        obra.numeroContrato.toLowerCase().includes(searchContract.toLowerCase())
+      );
+    }
+  });
 
   // Calcular índices de paginação
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -164,7 +177,7 @@ const Obras = () => {
                 <FaPlus className="me-2" /> Adicionar
               </Button>
             </Col>
-            <Col md={3} className="d-flex align-items-center">
+            <Col md={2} className="d-flex align-items-center">
               <Typography
                 variant="subtitle1"
                 className="me-2"
@@ -188,24 +201,40 @@ const Obras = () => {
                 <option value="Atrasadas">Atrasadas</option>
               </FormControl>
             </Col>
-            <Col
-              md={7}
-              className="d-flex align-items-center justify-content-end"
-            >
+            <Col md={4} className="d-flex align-items-center">
               <Typography
                 variant="subtitle1"
                 className="me-2"
                 color={"secondary"}
                 style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
               >
-                Pesquisar por cliente
+                Cliente
               </Typography>
               <FormControl
                 type="text"
                 className="me-2"
-                style={{ ...inputStyle, borderRadius: "20px" }}
+                style={{ ...inputStyle}}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <Button variant="outline-secondary" style={buttonStyle}>
+                <FaSearch />
+              </Button>
+            </Col>
+            <Col md={4} className="d-flex align-items-center">
+              <Typography
+                variant="subtitle1"
+                className="me-2"
+                color={"secondary"}
+                style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+              >
+                Contrato
+              </Typography>
+              <FormControl
+                type="text"
+                style={{ ...inputStyle}}
+                value={searchContract}
+                onChange={(e) => setSearchContract(e.target.value)}
               />
               <Button variant="outline-secondary" style={buttonStyle}>
                 <FaSearch />
@@ -392,7 +421,9 @@ const Obras = () => {
       {/* Modal para excluir obra */}
       <DeleteObraModal
         visible={viewDeleteObraModal.visible}
-        setVisible={() => setViewDeleteObraModal({ visible: false, obra: null })}
+        setVisible={() =>
+          setViewDeleteObraModal({ visible: false, obra: null })
+        }
         obra={viewDeleteObraModal.obra}
       />
     </Layout>

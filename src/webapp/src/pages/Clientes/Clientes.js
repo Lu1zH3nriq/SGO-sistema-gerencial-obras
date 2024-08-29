@@ -3,7 +3,14 @@ import { Typography, Box } from "@mui/material";
 import Layout from "../../components/layout/Layout.js";
 import { useUIContextController } from "../../context/index.js";
 import { Container, Row, Col, Button, Input, Table } from "reactstrap";
-import { FaPlus, FaSearch, FaEdit, FaTrash, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import {
+  FaPlus,
+  FaSearch,
+  FaEdit,
+  FaTrash,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 import ListaClientes from "./ListaClientes.js"; // Importar a lista de clientes
 import CadastrarClienteModal from "components/Clientes/CadastrarClienteModal.js";
 import DeleteClienteModal from "components/Clientes/DeleteClienteModal.js";
@@ -24,6 +31,9 @@ const Clientes = () => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 30;
 
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [searchCpf, setSearchCpf] = React.useState("");
+
   const buttonStyle = {
     backgroundColor: darkMode ? "#676767" : "#CECFCB",
     color: darkMode ? "#FFFFFF" : "#343A40",
@@ -32,7 +42,6 @@ const Clientes = () => {
   const inputStyle = {
     backgroundColor: darkMode ? "#676767" : "#FFFFFF",
     color: darkMode ? "#FFFFFF" : "#343A40",
-    borderRadius: "20px",
   };
 
   const tableHeaderStyle = {
@@ -62,10 +71,34 @@ const Clientes = () => {
     setCurrentPage(newPage);
   };
 
+  // Função para atualizar o termo de pesquisa
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1); // Resetar para a primeira página ao pesquisar
+  };
+  const handleSearchCpf = (event) => {
+    setSearchCpf(event.target.value);
+    setCurrentPage(1); // Resetar para a primeira página ao pesquisar
+  };
+
+  // Filtrar a lista de clientes com base no termo de pesquisa
+  const filteredClientes = ListaClientes.filter((cliente) => {
+    if (searchCpf === "") {
+      return cliente.nome.toLowerCase().includes(searchTerm.toLowerCase());
+    } else if (searchTerm === "") {
+      return cliente.cpf.toLowerCase().includes(searchCpf.toLowerCase());
+    } else {
+      return (
+        cliente.nome.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        cliente.cpf.toLowerCase().includes(searchCpf.toLowerCase())
+      );
+    }
+  });
+
   // Dividir a lista de clientes em páginas
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentClientes = ListaClientes.slice(startIndex, endIndex);
+  const currentClientes = filteredClientes.slice(startIndex, endIndex);
 
   return (
     <Layout rotaAtual="Clientes">
@@ -81,32 +114,55 @@ const Clientes = () => {
         <Container>
           {/* Linha com botão "Adicionar" e campo de pesquisa */}
           <Row className="mb-4" style={{ marginTop: "2%" }}>
-            <Col md={6} className="d-flex align-items-center">
+            <Col className="d-flex align-items-center justify-content-between flex-wrap">
               <Button
                 color="secondary"
-                className="d-flex align-items-center"
+                className="d-flex align-items-center mb-2"
                 style={buttonStyle}
                 onClick={cadastrarCliente}
               >
                 <FaPlus className="me-2" /> Adicionar
               </Button>
-            </Col>
-            <Col
-              md={6}
-              className="d-flex align-items-center justify-content-end"
-            >
-              <Typography
-                variant="subtitle1"
-                className="me-2"
-                color={"secondary"}
-                style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-              >
-                Pesquisar nome:
-              </Typography>
-              <Input type="text" className="me-2" style={inputStyle} />
-              <Button outline color="secondary" style={buttonStyle}>
-                <FaSearch />
-              </Button>
+              <div className="d-flex align-items-center mb-2 ms-auto me-4">
+                <Typography
+                  variant="subtitle1"
+                  className="me-2"
+                  color={"secondary"}
+                  style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                >
+                  Cliente:
+                </Typography>
+                <Input
+                  type="text"
+                  className="me-2"
+                  style={inputStyle}
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                />
+                <Button outline color="secondary" style={buttonStyle}>
+                  <FaSearch />
+                </Button>
+              </div>
+              <div className="d-flex align-items-center mb-2">
+                <Typography
+                  variant="subtitle1"
+                  className="me-2"
+                  color={"secondary"}
+                  style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                >
+                  Cpf:
+                </Typography>
+                <Input
+                  type="text"
+                  className="me-2"
+                  style={inputStyle}
+                  value={searchCpf}
+                  onChange={handleSearchCpf}
+                />
+                <Button outline color="secondary" style={buttonStyle}>
+                  <FaSearch />
+                </Button>
+              </div>
             </Col>
           </Row>
 
@@ -126,46 +182,66 @@ const Clientes = () => {
                   <th style={tableHeaderStyle}>Endereço</th>
                   <th style={tableHeaderStyle}>Email</th>
                   <th style={tableHeaderStyle}>Telefone</th>
-                  <th style={{ ...tableHeaderStyle, textAlign: "center" }}>Ações</th>
+                  <th style={{ ...tableHeaderStyle, textAlign: "center" }}>
+                    Ações
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {currentClientes.map((cliente, index) => (
-                  <tr key={index}>
-                    <td style={tableCellStyle}>{cliente.nome}</td>
-                    <td style={tableCellStyle}>{cliente.cpf || "N/A"}</td>
-                    <td style={tableCellStyle}>{cliente.endereco || "N/A"}</td>
-                    <td style={tableCellStyle}>{cliente.email || "N/A"}</td>
-                    <td style={tableCellStyle}>{cliente.telefone || "N/A"}</td>
-                    <td>
-                      <div
-                        style={{
-                          textAlign: "center",
-                        }}
-                      >
-                        <FaEdit
+                {currentClientes.length > 0 ? (
+                  currentClientes.map((cliente, index) => (
+                    <tr key={index}>
+                      <td style={tableCellStyle}>{cliente.nome}</td>
+                      <td style={tableCellStyle}>{cliente.cpf || "N/A"}</td>
+                      <td style={tableCellStyle}>
+                        {cliente.endereco || "N/A"}
+                      </td>
+                      <td style={tableCellStyle}>{cliente.email || "N/A"}</td>
+                      <td style={tableCellStyle}>
+                        {cliente.telefone || "N/A"}
+                      </td>
+                      <td>
+                        <div
                           style={{
-                            cursor: "pointer",
-                            marginRight: "10px",
-                            color: darkMode ? "#FFFFFF" : "#343A40",
+                            textAlign: "center",
                           }}
-                          size={20}
-                          title="Editar"
-                          onClick={() => editarCliente(cliente)}
-                        />
-                        <FaTrash
-                          style={{
-                            cursor: "pointer",
-                            color: darkMode ? "#FFFFFF" : "#343A40",
-                          }}
-                          size={20}
-                          title="Excluir"
-                          onClick={() => excluirCliente(cliente)}
-                        />
-                      </div>
+                        >
+                          <FaEdit
+                            style={{
+                              cursor: "pointer",
+                              marginRight: "10px",
+                              color: darkMode ? "#FFFFFF" : "#343A40",
+                            }}
+                            size={20}
+                            title="Editar"
+                            onClick={() => editarCliente(cliente)}
+                          />
+                          <FaTrash
+                            style={{
+                              cursor: "pointer",
+                              color: darkMode ? "#FFFFFF" : "#343A40",
+                            }}
+                            size={20}
+                            title="Excluir"
+                            onClick={() => excluirCliente(cliente)}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="6"
+                      style={{
+                        textAlign: "center",
+                        color: darkMode ? "#FFFFFF" : "#343A40",
+                      }}
+                    >
+                      Cliente não encontrado.
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </Table>
             {/* Botões de navegação */}
@@ -194,13 +270,18 @@ const Clientes = () => {
                   padding: "0% 1% 0% 1%",
                 }}
               >
-                Página {currentPage} de {Math.ceil(ListaClientes.length / itemsPerPage)} (Total: {ListaClientes.length} clientes)
+                Página {currentPage} de{" "}
+                {Math.ceil(filteredClientes.length / itemsPerPage)} (Total:{" "}
+                {filteredClientes.length} clientes)
               </Typography>
               <Button
                 variant="secondary"
                 style={{ ...buttonStyle, marginLeft: "5px" }}
                 onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === Math.ceil(ListaClientes.length / itemsPerPage)}
+                disabled={
+                  currentPage ===
+                  Math.ceil(filteredClientes.length / itemsPerPage)
+                }
                 size="sm"
               >
                 <FaChevronRight size={10} />
@@ -218,7 +299,9 @@ const Clientes = () => {
 
       <DeleteClienteModal
         visible={deleteClienteModal.visible}
-        setVisible={() => setDeleteClienteModal({ visible: false, cliente: null })}
+        setVisible={() =>
+          setDeleteClienteModal({ visible: false, cliente: null })
+        }
         cliente={deleteClienteModal.cliente}
       />
     </Layout>
