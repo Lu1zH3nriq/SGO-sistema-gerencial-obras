@@ -137,7 +137,7 @@ const Login = ({ onLogin }) => {
                                         {!loadingLogin ? "Entrar" : <Spinner color="light" style={{ width: '1.5rem', height: '1.5rem' }} />}
                                     </Button>
                                     <Link
-                                        to="/authentication/resetPassword"
+                                        to="/resetSenha"
                                         style={{
                                             cursor: "pointer",
                                             color: darkMode ? "white" : '#344767',

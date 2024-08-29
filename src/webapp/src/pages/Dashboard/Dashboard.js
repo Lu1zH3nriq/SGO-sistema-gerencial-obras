@@ -57,6 +57,7 @@ const Dashboard = () => {
                           flex: 1,
                           borderRadius: "0.5rem",
                           maxWidth: "25%",
+                          minWidth: "35%",
                           display: "flex",
                           flexDirection: "column",
                           alignItems: "center",

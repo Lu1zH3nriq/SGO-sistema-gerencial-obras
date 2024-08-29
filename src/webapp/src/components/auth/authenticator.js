@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
 import LoginPage from "../../pages/Login/Login.js";
+import ResetPass from "pages/Login/ResetPass.js";
 import Dashboard from "../../pages/Dashboard/Dashboard.js";
 import Obras from "../../pages/Obras/Obras.js";
 import Funcionarios from "../../pages/Funcionarios/Funcionarios.js";
@@ -89,7 +90,10 @@ const Authenticator = () => {
     <div>
       {!userLogin ? (
         <Routes>
-          <Route path="*" element={<Navigate to={"/authentication/login"} />} />
+          <Route path="/" element={<Navigate to={"/authentication/login"} />} />
+          <Route path="/resetSenha" element={
+            <ResetPass />
+          } />
           <Route
             path="/authentication/login"
             element={
@@ -112,6 +116,7 @@ const Authenticator = () => {
           <Route path="/perfil" element={<Perfil />} />
           <Route path="/materiais" element={<Materiais />} />
           <Route path="/usuarios" element={<Usuarios />} />
+          <Route path="/resetSenha" element={<ResetPass />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
         </Routes>
       )}
