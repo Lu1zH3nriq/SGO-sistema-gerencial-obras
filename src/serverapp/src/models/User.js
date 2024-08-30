@@ -1,17 +1,52 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../config/config'); // Atualize o caminho para refletir a estrutura correta
+const { Sequelize, DataTypes } = require("sequelize");
+const sequelize = require("../config/config");
 
-const User = sequelize.define('User', {
-  username: {
-    type: DataTypes.STRING,
-    allowNull: false
+const Usuario = sequelize.define(
+  "Usuario",
+  {
+    nome: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        isEmail: true,
+      },
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    telefone: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    cargo: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    dataCadastro: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    nivelUsuario: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    tipo: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false
+  {
+    // Outras opções do modelo
   }
-}, {
-  // Outras opções do modelo
-});
+);
 
-module.exports = User;
+module.exports = Usuario;

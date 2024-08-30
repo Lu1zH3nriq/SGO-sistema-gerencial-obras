@@ -12,8 +12,6 @@ import Perfil from "../../pages/Perfil/Perfil.js";
 import Materiais from "pages/Materiais/Materiais.js";
 import Usuarios from "pages/Usuarios/Usuarios.js";
 
-
-
 import Unauthorized from "../../pages/Unauthorized/Unauthorized.js";
 
 import {
@@ -57,33 +55,35 @@ const Authenticator = () => {
     }
   }, [dispatch]);
 
-  const handleLogin = (user) => {
+  const handleLogin = (data) => {
     if (
-      !user ||
-      !user.userType ||
-      !user.userToken ||
-      !user.userName ||
-      !user.userId
+      !data ||
+      !data.user.nivelUsuario ||
+      !data.token ||
+      !data.user.nome ||
+      !data.user.id
     ) {
-      console.error("Dados do usuário incompletos:", user);
+      console.error("Dados do usuário incompletos:", data);
       return;
     }
 
-    setUserType(dispatch, user.userType);
+    setUserType(dispatch, data.user.nivelUsuario);
     setUserLogin(dispatch, true);
-    setUserToken(dispatch, user.userToken);
-    setUserName(dispatch, user.userName);
-    setUserId(dispatch, user.userId);
-
-    console.log("User Logado: ", user);
+    setUserToken(dispatch, data.token);
+    setUserName(dispatch, data.user.nome);
+    setUserId(dispatch, data.user.id);
 
     sessionStorage.setItem("userLogin", "true");
-    sessionStorage.setItem("userType", user.userType.toString());
-    sessionStorage.setItem("userToken", user.userToken);
-    sessionStorage.setItem("userName", user.userName);
-    sessionStorage.setItem("userId", user.userId);
+    sessionStorage.setItem("userType", parseInt(data.user.nivelUsuario));
+    sessionStorage.setItem("userToken", data.token);
+    sessionStorage.setItem("userName", data.user.nome);
+    sessionStorage.setItem("userId", data.user.id);
 
-    navigate("/dashboard");
+    if (data.user.nivelUsuario === "1") {
+      navigate("/dashboard");
+    } else {
+      navigate("/resumo");
+    }
   };
 
   return (
@@ -91,15 +91,13 @@ const Authenticator = () => {
       {!userLogin ? (
         <Routes>
           <Route path="/" element={<Navigate to={"/authentication/login"} />} />
-          <Route path="/resetSenha" element={
-            <ResetPass />
-          } />
+          <Route path="/resetSenha" element={<ResetPass />} />
           <Route
             path="/authentication/login"
             element={
               <LoginPage
-                onLogin={(user) => {
-                  handleLogin(user);
+                onLogin={(data) => {
+                  handleLogin(data);
                 }}
               />
             }

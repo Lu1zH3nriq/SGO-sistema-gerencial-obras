@@ -1,19 +1,20 @@
 const { Sequelize } = require('sequelize');
 const fs = require('fs');
 const path = require('path');
+require('dotenv').config();
 
-// Atualize o caminho do arquivo de certificado CA para refletir o local correto
 const caCertPath = path.join(__dirname, '..', 'database', 'DigiCertGlobalRootCA.crt.pem');
 
-const sequelize = new Sequelize('db_teste_connect', 'db_admin', 'adminSGO!', {
-  host: 'db-mysql-sgo.mysql.database.azure.com',
+
+const sequelize = new Sequelize(process.env.NAME_DB_LOCAL, process.env.USER_DB_LOCAL, process.env.PASS_DB_LOCAL, {
+  host: process.env.URL_HOST_DB_LOCAL,
   dialect: 'mysql',
-  port: 3306,
-  dialectOptions: {
-    ssl: {
-      ca: fs.readFileSync(caCertPath)
-    }
-  }
+  port: process.env.PORT_DB_LOCAL,
+  // dialectOptions: {
+  //   ssl: {
+  //     ca: fs.readFileSync(caCertPath)
+  //   }
+  // }
 });
 
 sequelize.authenticate()

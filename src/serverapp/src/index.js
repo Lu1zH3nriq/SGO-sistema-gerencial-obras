@@ -1,12 +1,21 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
-const port = 3000;
-const routes = require('./routes');
-const sequelize = require('./config/config'); // Atualize o caminho para refletir a estrutura correta
+const cors = require('cors');
+const port = 3001;
+const usersRoutes = require('./routes/usersRoutes');
+const loginRoutes = require('./routes/loginRoutes');
+const sequelize = require('./config/config');
 const User = require('./models/User');
 
+app.use(cors());
 app.use(express.json());
-app.use('/', routes);
+app.use(bodyParser.urlencoded({ extended: true }));
+
+
+app.use('/api/users', usersRoutes);
+app.use('/api', loginRoutes);
+
 
 sequelize.sync()
   .then(() => {
