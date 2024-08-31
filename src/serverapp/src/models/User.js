@@ -4,6 +4,11 @@ const sequelize = require("../config/config");
 const Usuario = sequelize.define(
   "Usuario",
   {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     nome: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -11,6 +16,7 @@ const Usuario = sequelize.define(
     email: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         isEmail: true,
       },

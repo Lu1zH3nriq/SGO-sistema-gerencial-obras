@@ -5,7 +5,7 @@ const usersRoutes = express.Router();
 
 usersRoutes.post('/novoUsuario', UserController.createUsuario);
 usersRoutes.get('/usuarios', UserController.getUsuarios);
-usersRoutes.get('/usuario', UserController.getUsuarioById);
+usersRoutes.get('/usuario', UserController.getUsuarioByEmail);
 usersRoutes.put('/alterarUsuario', UserController.updateUsuario);
 usersRoutes.delete('/deleteUsuario', UserController.deleteUsuario);
 

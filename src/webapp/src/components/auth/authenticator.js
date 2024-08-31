@@ -27,7 +27,9 @@ const Authenticator = () => {
   const navigate = useNavigate();
   const [controller, dispatch] = useUIContextController();
   const { userLogin } = controller;
+
   const setUserDetails = () => {
+    //sincroniza o context com os dados do sessionStorage
     setUserLogin(dispatch, true);
     setUserType(dispatch, parseInt(sessionStorage.getItem("userType")));
     setUserToken(dispatch, sessionStorage.getItem("userToken"));
@@ -36,24 +38,21 @@ const Authenticator = () => {
   };
 
   useEffect(() => {
-    console.log("entrou aqui");
     const userLogin = sessionStorage.getItem("userLogin") === "true";
+    const currentPath = window.location.pathname;
+
+    // Verifica se o usuário está logado
     if (userLogin) {
-      console.log("userLogado: ", userLogin);
       setUserDetails();
-      navigate("/dashboard");
+      // Redireciona para o dashboard se não estiver em uma rota válida
+      if (currentPath === "/" || currentPath === "/authentication/login") {
+        navigate("/dashboard");
+      }
     } else {
-      console.log("userLogado: ", userLogin);
+      // Se o usuário não estiver logado, redireciona para a página de login
       navigate("/authentication/login");
     }
-  }, []);
-
-  useEffect(() => {
-    const userLogin = sessionStorage.getItem("userLogin") === "true";
-    if (userLogin) {
-      setUserDetails();
-    }
-  }, [dispatch]);
+  }, []); 
 
   const handleLogin = (data) => {
     if (
@@ -67,23 +66,21 @@ const Authenticator = () => {
       return;
     }
 
-    setUserType(dispatch, data.user.nivelUsuario);
+    // Define os detalhes do usuário e salva no context
     setUserLogin(dispatch, true);
+    setUserType(dispatch, parseInt(data.user.nivelUsuario));
     setUserToken(dispatch, data.token);
     setUserName(dispatch, data.user.nome);
     setUserId(dispatch, data.user.id);
 
+    // Define os detalhes do usuário e salva no sessionStorage
     sessionStorage.setItem("userLogin", "true");
-    sessionStorage.setItem("userType", parseInt(data.user.nivelUsuario));
+    sessionStorage.setItem("userType", data.user.nivelUsuario);
     sessionStorage.setItem("userToken", data.token);
     sessionStorage.setItem("userName", data.user.nome);
     sessionStorage.setItem("userId", data.user.id);
 
-    if (data.user.nivelUsuario === "1") {
-      navigate("/dashboard");
-    } else {
-      navigate("/resumo");
-    }
+    navigate("/dashboard");
   };
 
   return (

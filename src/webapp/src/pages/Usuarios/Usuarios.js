@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Typography, Box } from "@mui/material";
 import Layout from "../../components/layout/Layout.js";
 import { useUIContextController } from "../../context/index.js";
-import { Container, Row, Col, Button, Input, Table } from "reactstrap";
+import { Container, Row, Col, Button, Input, Table, Spinner } from "reactstrap";
 import {
   FaPlus,
   FaSearch,
@@ -11,14 +11,22 @@ import {
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
-import ListaUsuarios from "./ListaUsuarios.js"; // Importar a lista de usuários
 import CadastrarUsuarioModal from "components/Usuarios/CadastrarUsuarioModal.js";
 import DeleteUsuarioModal from "components/Usuarios/DeleteUsuarioModal.js";
+import {
+  formatarTelefone,
+  removerFormatacaoTelefone,
+  formatarData,
+} from "components/utils/utilsMask.js";
+import axios from "axios";
 
 const Usuarios = () => {
+  const URL_API = process.env.REACT_APP_URL_API;
   const [state] = useUIContextController();
   const { darkMode } = state;
 
+  const [loading, setLoading] = React.useState(true);
+  const [ListaUsuarios, setListaUsuarios] = React.useState([]);
   const [modalVisible, setModalVisible] = React.useState({
     visible: false,
     usuario: null,
@@ -33,6 +41,24 @@ const Usuarios = () => {
 
   const [searchTerm, setSearchTerm] = React.useState("");
   const [searchEmail, setSearchEmail] = React.useState("");
+
+  const nivelUsuario = {
+    1: "Administrador",
+    2: "Comum",
+  };
+
+  useEffect(() => {
+    axios
+      .get(`${URL_API}/api/users/usuarios`)
+      .then((response) => {
+        setListaUsuarios(response.data || []); // Garantir que seja um array
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar usuários:", error);
+        setLoading(false);
+      });
+  }, [URL_API]);
 
   const buttonStyle = {
     backgroundColor: darkMode ? "#676767" : "#CECFCB",
@@ -50,8 +76,11 @@ const Usuarios = () => {
 
   const tableCellStyle = {
     textAlign: "center",
-    padding: "1%",
     backgroundColor: darkMode ? "#676767" : "#f0f0f0",
+    padding: "0.5rem",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   };
 
   const cadastrarUsuario = () => {
@@ -167,14 +196,29 @@ const Usuarios = () => {
             </Col>
           </Row>
 
-          <Container fluid style={{ maxWidth: "100%", marginTop: "5%" }}>
-            {/* Tabela */}
+          {/* Tabela */}
+          {loading ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "start",
+                height: "100vh",
+              }}
+            >
+              <Spinner color="secondary" />
+            </Box>
+          ) : (
             <Table
               responsive
               size="sm"
               bordered
               dark={darkMode}
-              style={{ borderRadius: "0px", marginTop: "2%" }}
+              style={{
+                borderRadius: "0px",
+                marginTop: "2%",
+                tableLayout: "auto",
+              }}
             >
               <thead>
                 <tr>
@@ -184,7 +228,7 @@ const Usuarios = () => {
                   <th style={tableHeaderStyle}>Cargo</th>
                   <th style={tableHeaderStyle}>Data de Cadastro</th>
                   <th style={tableHeaderStyle}>Status</th>
-                  <th style={tableHeaderStyle}>Nível de Usuário</th>
+                  <th style={tableHeaderStyle}>Usuário</th>
                   <th style={tableHeaderStyle}>Tipo</th>
                   <th style={{ ...tableHeaderStyle, textAlign: "center" }}>
                     Ações
@@ -196,19 +240,19 @@ const Usuarios = () => {
                   currentUsuarios.map((usuario, index) => (
                     <tr key={index}>
                       <td style={tableCellStyle}>{usuario.nome}</td>
-                      <td style={tableCellStyle}>{usuario.email || "N/A"}</td>
+                      <td style={tableCellStyle}>{usuario.email || "--"}</td>
                       <td style={tableCellStyle}>
-                        {usuario.telefone || "N/A"}
+                        {formatarTelefone(usuario.telefone) || "--"}
                       </td>
-                      <td style={tableCellStyle}>{usuario.cargo || "N/A"}</td>
+                      <td style={tableCellStyle}>{usuario.cargo || "--"}</td>
                       <td style={tableCellStyle}>
-                        {usuario.dataCadastro || "N/A"}
+                        {formatarData(usuario.dataCadastro) || "--"}
                       </td>
-                      <td style={tableCellStyle}>{usuario.status || "N/A"}</td>
+                      <td style={tableCellStyle}>{usuario.status || "--"}</td>
                       <td style={tableCellStyle}>
-                        {usuario.nivelUsuario || "N/A"}
+                        {nivelUsuario[usuario.nivelUsuario] || "--"}
                       </td>
-                      <td style={tableCellStyle}>{usuario.tipo || "N/A"}</td>
+                      <td style={tableCellStyle}>{usuario.tipo || "--"}</td>
                       <td>
                         <div
                           style={{
@@ -253,50 +297,50 @@ const Usuarios = () => {
                 )}
               </tbody>
             </Table>
-            {/* Botões de navegação */}
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                paddingTop: "2%",
-                paddingBottom: "2%",
-                alignItems: "center",
+          )}
+          {/* Botões de navegação */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              paddingTop: "2%",
+              paddingBottom: "2%",
+              alignItems: "center",
+            }}
+          >
+            <Button
+              variant="secondary"
+              style={{ ...buttonStyle, marginRight: "5px" }}
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              size="sm"
+            >
+              <FaChevronLeft size={10} />
+            </Button>
+            <Typography
+              variant="subtitle1"
+              style={{
+                color: darkMode ? "#FFFFFF" : "#343A40",
+                padding: "0% 1% 0% 1%",
               }}
             >
-              <Button
-                variant="secondary"
-                style={{ ...buttonStyle, marginRight: "5px" }}
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                size="sm"
-              >
-                <FaChevronLeft size={10} />
-              </Button>
-              <Typography
-                variant="subtitle1"
-                style={{
-                  color: darkMode ? "#FFFFFF" : "#343A40",
-                  padding: "0% 1% 0% 1%",
-                }}
-              >
-                Página {currentPage} de{" "}
-                {Math.ceil(filteredUsuarios.length / itemsPerPage)} (Total:{" "}
-                {filteredUsuarios.length} usuários)
-              </Typography>
-              <Button
-                variant="secondary"
-                style={{ ...buttonStyle, marginLeft: "5px" }}
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={
-                  currentPage ===
-                  Math.ceil(filteredUsuarios.length / itemsPerPage)
-                }
-                size="sm"
-              >
-                <FaChevronRight size={10} />
-              </Button>
-            </Box>
-          </Container>
+              Página {currentPage} de{" "}
+              {Math.ceil(filteredUsuarios.length / itemsPerPage)} (Total:{" "}
+              {filteredUsuarios.length} usuários)
+            </Typography>
+            <Button
+              variant="secondary"
+              style={{ ...buttonStyle, marginLeft: "5px" }}
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={
+                currentPage ===
+                Math.ceil(filteredUsuarios.length / itemsPerPage)
+              }
+              size="sm"
+            >
+              <FaChevronRight size={10} />
+            </Button>
+          </Box>
         </Container>
       </Box>
 
@@ -304,6 +348,9 @@ const Usuarios = () => {
         visible={modalVisible.visible}
         setVisible={() => setModalVisible({ visible: false, usuario: null })}
         usuario={modalVisible.usuario}
+        newListUsers={(list) => {
+          setListaUsuarios(list);
+        }}
       />
 
       <DeleteUsuarioModal
@@ -312,6 +359,9 @@ const Usuarios = () => {
           setDeleteUsuarioModal({ visible: false, usuario: null })
         }
         usuario={deleteUsuarioModal.usuario}
+        newListUsers={(list) => {
+          setListaUsuarios(list);
+        }}
       />
     </Layout>
   );

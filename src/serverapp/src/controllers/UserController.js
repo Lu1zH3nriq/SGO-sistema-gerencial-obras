@@ -37,11 +37,11 @@ const getUsuarios = async (req, res) => {
   }
 };
 
-// Obter um usuário por ID
-const getUsuarioById = async (req, res) => {
+// Obter um usuário por email
+const getUsuarioByEmail = async (req, res) => {
   try {
-    const id = req.query.id;
-    const usuario = await Usuario.findByPk(id);
+    const email = req.query.email;
+    const usuario = await Usuario.findOne({ where: { email } });
     if (usuario) {
       res.status(200).json(usuario);
     } else {
@@ -88,7 +88,7 @@ const deleteUsuario = async (req, res) => {
 module.exports = {
   createUsuario,
   getUsuarios,
-  getUsuarioById,
+  getUsuarioByEmail,
   updateUsuario,
   deleteUsuario,
 };

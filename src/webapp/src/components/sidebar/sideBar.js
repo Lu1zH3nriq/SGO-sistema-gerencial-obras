@@ -52,7 +52,7 @@ const SideBar = ({ trocaRotas }) => {
                 trocaRotas(menuOptions[index].route);
             }
         }
-    }, [location.pathname, menuOptions, trocaRotas, isFirstMount]);
+    }, [location.pathname, trocaRotas, isFirstMount]);
 
     const handleButtonClick = (index) => {
         const selectedRoute = menuOptions[index].route;

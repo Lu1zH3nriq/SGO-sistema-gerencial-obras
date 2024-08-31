@@ -15,7 +15,7 @@ import {
   DialogActions,
   Typography,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { json, Link } from "react-router-dom";
 import bgImageLogin from "../../assets/images/bgImageLogin.jpg";
 
 import { useUIContextController } from "../../context/index.js";
@@ -23,6 +23,27 @@ import { useUIContextController } from "../../context/index.js";
 import Footer from "../../components/footer/footerLogin.js";
 import { Spinner } from "reactstrap";
 import axios from "axios";
+import { makeStyles } from "@mui/styles";
+
+// Estilos personalizados
+const useStyles = makeStyles((theme) => ({
+  dialogPaper: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "70%", // Ajuste a largura conforme necessário
+    margin: "auto",
+  },
+  dialogContent: {
+    textAlign: "center",
+  },
+  dialogTitle: {
+    textAlign: "center",
+  },
+  dialogDescription: {
+    textAlign: "center",
+  },
+}));
 
 const Login = ({ onLogin }) => {
   const URL_API = process.env.REACT_APP_URL_API;
@@ -35,6 +56,8 @@ const Login = ({ onLogin }) => {
   const [loadingLogin, setLoadingLogin] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [openErrorModal, setOpenErrorModal] = useState(false);
+
+  const classes = useStyles();
 
   useEffect(() => {
     setShowPassword(false);
@@ -61,22 +84,27 @@ const Login = ({ onLogin }) => {
           },
         }
       );
-      setInterval(() => {
-        onLogin(response.data);
-        setLoadingLogin(false);
-      }, 3000);
+      onLogin(response.data);
+      setLoadingLogin(false);
     } catch (error) {
       if (error.response) {
-        // Verifica se o status da resposta é 404
-        if (error.response.status === 404) {
-          setErrorMessage(error.response.data.message);
-        } else {
-          setErrorMessage("Erro: " + error.message);
+        let resp;
+        try {
+          resp = JSON.parse(error.response.data);
+        } catch (parseError) {
+          resp = error.response.data;
         }
+        console.log(resp);
+        setOpenErrorModal(true);
+        setErrorMessage(
+          resp.message || "Erro ao fazer login, tente novamente."
+        );
+        setLoadingLogin(false);
       } else {
-        setErrorMessage("Erro na solicitação. Por favor, tente novamente.");
+        setErrorMessage("Erro ao fazer login, tente novamente.");
+        setLoadingLogin(false);
+        setOpenErrorModal(true);
       }
-      setOpenErrorModal(true);
     }
   };
 
@@ -223,10 +251,18 @@ const Login = ({ onLogin }) => {
         onClose={handleCloseErrorModal}
         aria-labelledby="error-dialog-title"
         aria-describedby="error-dialog-description"
+        classes={{ paper: classes.dialogPaper }}
       >
-        <DialogTitle id="error-dialog-title">Erro de Login</DialogTitle>
-        <DialogContent>
-          <Typography id="error-dialog-description">{errorMessage}</Typography>
+        <DialogTitle id="error-dialog-title" className={classes.dialogTitle}>
+          Erro de Login
+        </DialogTitle>
+        <DialogContent className={classes.dialogContent}>
+          <Typography
+            id="error-dialog-description"
+            className={classes.dialogDescription}
+          >
+            {errorMessage}
+          </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseErrorModal} color="primary">
