@@ -60,7 +60,7 @@ const Authenticator = () => {
       !data.user.nivelUsuario ||
       !data.token ||
       !data.user.nome ||
-      !data.user.id
+      !data.user.email
     ) {
       console.error("Dados do usuário incompletos:", data);
       return;
@@ -71,14 +71,14 @@ const Authenticator = () => {
     setUserType(dispatch, parseInt(data.user.nivelUsuario));
     setUserToken(dispatch, data.token);
     setUserName(dispatch, data.user.nome);
-    setUserId(dispatch, data.user.id);
+    setUserId(dispatch, data.user.email);
 
     // Define os detalhes do usuário e salva no sessionStorage
     sessionStorage.setItem("userLogin", "true");
     sessionStorage.setItem("userType", data.user.nivelUsuario);
     sessionStorage.setItem("userToken", data.token);
     sessionStorage.setItem("userName", data.user.nome);
-    sessionStorage.setItem("userId", data.user.id);
+    sessionStorage.setItem("userId", data.user.email);
 
     navigate("/dashboard");
   };

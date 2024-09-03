@@ -84,8 +84,14 @@ const Login = ({ onLogin }) => {
           },
         }
       );
-      onLogin(response.data);
-      setLoadingLogin(false);
+      if (response.data.user.status === "Inativo") {
+        setErrorMessage("Usuário inativo, entre em contato com o administrador.");
+        setLoadingLogin(false);
+        setOpenErrorModal(true);
+      } else {
+        onLogin(response.data);
+        setLoadingLogin(false);
+      }
     } catch (error) {
       if (error.response) {
         let resp;

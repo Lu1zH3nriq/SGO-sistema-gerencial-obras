@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   Box,
@@ -10,22 +10,42 @@ import {
 } from "@mui/material";
 import Layout from "../../components/layout/Layout.js";
 import { useUIContextController } from "../../context/index.js";
-import { Container, Row, Col, Button, FormControl, Form } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  FormControl,
+  Form,
+} from "react-bootstrap";
+import { Spinner } from "reactstrap";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import axios from "axios";
+import { formatarTelefone } from "components/utils/utilsMask.js";
 
 const Perfil = () => {
   const [state] = useUIContextController();
-  const { userId, userName, userEmail, userRole, userFunction, userPhone, userPermission, darkMode } = state;
-  const [status, setStatus] = useState(true);
-  const [permission, setPermission] = useState("Comum");
+  const { userId, darkMode } = state;
+  const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [confirmation, setconfirmation] = useState({
+    state: false,
+    message: "",
+  });
 
-  const handleStatusChange = () => {
-    setStatus(!status);
-  };
+  const URL_API = process.env.REACT_APP_URL_API;
 
-  const handlePermissionChange = (event) => {
-    setPermission(event.target.value);
-  };
+  useEffect(() => {
+    axios
+      .get(`${URL_API}/api/users/usuario?email=${userId}`)
+      .then((response) => {
+        console.log("user", response.data);
+        setUser(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   const cardStyle = {
     padding: "20px",
@@ -41,13 +61,37 @@ const Perfil = () => {
   const buttonStyle = {
     backgroundColor: darkMode ? "#676767" : "#CECFCB",
     color: darkMode ? "#FFFFFF" : "#343A40",
-    border: 'none', // Remover a borda do botão
+    border: "none", // Remover a borda do botão
   };
 
   const inputStyle = {
     backgroundColor: darkMode ? "#676767" : "#FFFFFF",
     color: darkMode ? "#FFFFFF" : "#000000",
     border: darkMode ? "1px solid #676767" : "1px solid #ced4da",
+  };
+
+  const updateUser = () => {
+    setLoading(true);
+    axios
+      .put(`${URL_API}/api/users/alterarUsuario?id=${user.id}`, user)
+      .then((response) => {
+        console.log("user", response.data);
+        setUser(response.data);
+        setconfirmation({
+          state: true,
+          message: "Usuário atualizado com sucesso!",
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        setconfirmation({
+          state: true,
+          message: "Erro ao atualizar usuário!",
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -61,13 +105,32 @@ const Perfil = () => {
           alignItems: "center",
         }}
       >
-        <Container style={{ height: '100%' }}>
+        <Container style={{ height: "100%" }}>
           <Row>
             <Col md={6}>
               <Card style={cardStyle}>
-                <CardContent style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100%" }}>
-                  <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
-                    <Typography variant="h6" style={{ marginBottom: "10px", ...textStyle }}>Foto</Typography>
+                <CardContent
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      width: "100%",
+                    }}
+                  >
+                    <Typography
+                      variant="h6"
+                      style={{ marginBottom: "10px", ...textStyle }}
+                    >
+                      Foto
+                    </Typography>
                     <Box>
                       <IconButton style={textStyle}>
                         <FaEdit />
@@ -77,20 +140,45 @@ const Perfil = () => {
                       </IconButton>
                     </Box>
                   </Box>
-                  <div style={{ width: "150px", height: "150px", borderRadius: "50%", backgroundColor: "#ccc" }}></div>
+                  <div
+                    style={{
+                      width: "150px",
+                      height: "150px",
+                      borderRadius: "50%",
+                      backgroundColor: "#ccc",
+                    }}
+                  ></div>
                 </CardContent>
               </Card>
             </Col>
             <Col md={6}>
               <Card style={cardStyle}>
                 <CardContent>
-                  <Typography variant="h6" style={{ textAlign: "center", marginBottom: "10px", ...textStyle }}>Informações Pessoais</Typography>
-                  <Typography variant="h6" style={textStyle}>Nome: {userName}</Typography>
-                  <Typography variant="h6" style={textStyle}>Email: {userEmail}</Typography>
-                  <Typography variant="h6" style={textStyle}>Cargo: {userRole}</Typography>
-                  <Typography variant="h6" style={textStyle}>Função: {userFunction}</Typography>
-                  <Typography variant="h6" style={textStyle}>Telefone: {userPhone}</Typography>
-                  <Typography variant="h6" style={textStyle}>Permissão: {userPermission}</Typography>
+                  <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      marginBottom: "10px",
+                      ...textStyle,
+                    }}
+                  >
+                    Informações Pessoais
+                  </Typography>
+                  <Typography variant="h6" style={textStyle}>
+                    Nome: {user.nome}
+                  </Typography>
+                  <Typography variant="h6" style={textStyle}>
+                    Email: {user.email}
+                  </Typography>
+                  <Typography variant="h6" style={textStyle}>
+                    Cargo: {user.cargo}
+                  </Typography>
+                  <Typography variant="h6" style={textStyle}>
+                    Tipo: {user.tipo}
+                  </Typography>
+                  <Typography variant="h6" style={textStyle}>
+                    Telefone: {formatarTelefone(user.telefone)}
+                  </Typography>
                 </CardContent>
               </Card>
             </Col>
@@ -100,12 +188,24 @@ const Perfil = () => {
               <Card style={cardStyle}>
                 <CardContent>
                   <Form.Group>
-                    <Form.Label style={textStyle}>Email Atual</Form.Label>
-                    <FormControl type="text" value={userEmail} readOnly style={inputStyle} />
+                    <Form.Label style={textStyle}>Email</Form.Label>
+                    <FormControl
+                      type="text"
+                      value={user.email}
+                      readOnly
+                      style={inputStyle}
+                    />
                   </Form.Group>
                   <Form.Group style={{ marginTop: "10px" }}>
                     <Form.Label style={textStyle}>Telefone</Form.Label>
-                    <FormControl type="text" defaultValue={userPhone} style={inputStyle} />
+                    <FormControl
+                      type="text"
+                      value={formatarTelefone(user.telefone)}
+                      style={inputStyle}
+                      onChange={(e) => {
+                        setUser({ ...user, telefone: e.target.value });
+                      }}
+                    />
                   </Form.Group>
                 </CardContent>
               </Card>
@@ -113,10 +213,23 @@ const Perfil = () => {
             <Col md={4}>
               <Card style={cardStyle}>
                 <CardContent>
-                  <Typography variant="h6" style={{ textAlign: "center", marginBottom: "10px", ...textStyle }}>Status</Typography>
+                  <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      marginBottom: "10px",
+                      ...textStyle,
+                    }}
+                  >
+                    Status
+                  </Typography>
                   <FormControlLabel
-                    control={<Switch checked={status} onChange={handleStatusChange} />}
-                    label={status ? "Ativado" : "Desativado"}
+                    control={
+                      <Switch
+                        checked={user.status === "Ativo" ? true : false}
+                      />
+                    }
+                    label={user.status === "Ativo" ? "Ativo" : "Inativo"}
                     style={textStyle}
                   />
                 </CardContent>
@@ -125,14 +238,22 @@ const Perfil = () => {
             <Col md={4}>
               <Card style={cardStyle}>
                 <CardContent>
-                  <Typography variant="h6" style={{ textAlign: "center", marginBottom: "10px", ...textStyle }}>Permissões</Typography>
+                  <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      marginBottom: "10px",
+                      ...textStyle,
+                    }}
+                  >
+                    Nível do Usuário
+                  </Typography>
                   <Form.Check
                     type="radio"
                     label="Administrador"
                     name="permission"
                     value="Administrador"
-                    checked={permission === "Administrador"}
-                    onChange={handlePermissionChange}
+                    checked={user.nivelUsuario === "1" ? true : false}
                     style={textStyle}
                   />
                   <Form.Check
@@ -140,16 +261,25 @@ const Perfil = () => {
                     label="Comum"
                     name="permission"
                     value="Comum"
-                    checked={permission === "Comum"}
-                    onChange={handlePermissionChange}
+                    checked={user.nivelUsuario === "2" ? true : false}
                     style={{ marginTop: "10px", ...textStyle }}
                   />
                 </CardContent>
               </Card>
             </Col>
           </Row>
-          <Box sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-            <Button variant="primary" style={buttonStyle}>Salvar</Button>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "20px",
+            }}
+          >
+            <Button variant="primary" style={buttonStyle} onClick={()=>{
+              updateUser();
+            }}>
+              {loading ? <Spinner color="light" size={"sm"} /> : "Salvar"}
+            </Button>
           </Box>
         </Container>
       </Box>
