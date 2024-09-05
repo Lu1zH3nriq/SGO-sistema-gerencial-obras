@@ -1,8 +1,11 @@
+const { BlobServiceClient } = require("@azure/storage-blob");
 const Usuario = require("../models/User");
 const bcrypt = require("bcryptjs");
 const sendEmail = require("../sendEmails/sendEmails");
 
-//criar usuario
+const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION_STRING);
+
+// Criar usuário
 const createUsuario = async (req, res) => {
   try {
     const { email, nivelUsuario } = req.body;
@@ -17,7 +20,7 @@ const createUsuario = async (req, res) => {
     });
 
     // Enviar e-mail com a senha gerada
-    const subject = "Bem-vindo so Sistema Gerencial de Obras! Aqui está sua senha de acesso";
+    const subject = "Bem-vindo ao Sistema Gerencial de Obras! Aqui está sua senha de acesso";
     const text = `Olá ${usuario.nome},\n\nSua conta foi criada com sucesso! Aqui está sua senha para acessar o sistema: ${password}\n\nRecomendamos que você altere sua senha após o primeiro login.\n\nObrigado!`;
     await sendEmail(email, subject, text);
 
@@ -85,10 +88,82 @@ const deleteUsuario = async (req, res) => {
   }
 };
 
+// Editar foto do usuário
+const editPhoto = async (req, res) => {
+  try {
+    const email = req.query.email;
+    const file = req.file;
+
+    // Buscar usuário pelo email
+    const usuario = await Usuario.findOne({ where: { email } });
+    if (!usuario) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    // Fazer upload da foto para o Azure Blob Storage
+    const containerName = "imagens";
+    const blobName = `${usuario.id}-${file.originalname}`;
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+    await blockBlobClient.uploadData(file.buffer);
+
+    // Obter a URL da foto no Azure
+    const photoUrl = blockBlobClient.url;
+
+    // Atualizar o usuário no banco de dados com a URL da foto
+    usuario.urlFoto = photoUrl;
+    await usuario.save();
+
+    // Retornar a URL da foto para o frontend
+    res.status(200).json({ message: "Foto atualizada com sucesso", photoUrl });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Remover foto do usuário
+const removePhoto = async (req, res) => {
+  try {
+    const email = req.query.email;
+    const usuario = await Usuario.findOne({ where: { email } });
+    if (!usuario) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    const containerName = "imagens";
+    const blobName = `${req.query.photoName}`;
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+    console.log("blobName", blobName);
+    console.log("blockBlobClient", blockBlobClient);
+
+    // Verificar se o blob existe
+    const exists = await blockBlobClient.exists();
+    if (!exists) {
+      return res.status(404).json({ error: "A foto especificada não existe" });
+    }
+
+    // Deletar o blob
+    await blockBlobClient.delete();
+
+    // Atualizar o usuário no banco de dados
+    usuario.urlFoto = null;
+    await usuario.save();
+
+    res.status(200).json({ message: "Foto removida com sucesso" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createUsuario,
   getUsuarios,
   getUsuarioByEmail,
   updateUsuario,
   deleteUsuario,
+  editPhoto,
+  removePhoto
 };

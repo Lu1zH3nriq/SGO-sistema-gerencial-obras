@@ -135,8 +135,8 @@ const colors = {
     },
 
     dark: {
-      main: "#323a54",
-      state: "#313131",
+      main: "#313131",
+      state: "#FFFFFF",
     },
   },
 
