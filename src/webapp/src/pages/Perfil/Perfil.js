@@ -280,7 +280,7 @@ const Perfil = () => {
 
   return (
     <Layout rotaAtual="Obras">
-      {!loadingUser ? (
+      {!loading ? (
         <Box
           sx={{
             display: "flex",
@@ -612,7 +612,10 @@ const Perfil = () => {
             >
               <Button
                 variant="primary"
-                style={buttonStyle}
+                style={{
+                  ...buttonStyle,
+                  marginBottom: "10px",
+                }}
                 onClick={() => {
                   updateUser();
                 }}
@@ -627,11 +630,11 @@ const Perfil = () => {
           sx={{
             display: "flex",
             justifyContent: "center",
-            alignItems: "start",
+            alignItems: "center",
             height: "100vh",
           }}
         >
-          <Spinner color="secondary" />
+          <Spinner color="secondary"/>
         </Box>
       )}
 

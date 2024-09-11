@@ -138,11 +138,12 @@ const Usuarios = () => {
           justifyContent: "center",
           marginTop: "5%",
           alignItems: "center",
+          maxWidth: "95%",
         }}
       >
         <Container>
           {/* Linha com botão "Adicionar" e campo de pesquisa */}
-          <Row className="mb-4" style={{ marginTop: "2%" }}>
+          <Row className="mb-4" style={{ marginTop: "2%", maxWidth: '100%' }}>
             <Col className="d-flex align-items-center justify-content-between">
               <Button
                 color="secondary"
