@@ -121,9 +121,7 @@ const PesquisarFuncionarioModal = ({
                         name="nome"
                         className="form-control"
                         style={inputStyle}
-                        onChange={(e) => {
-                          setFieldValues("nome", e.target.value);
-                        }}
+                        onChange={(e) => {setFieldValues("nome", e.target.value);}}
                       />
                     </div>
                   </Col>
