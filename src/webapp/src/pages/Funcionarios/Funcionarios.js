@@ -2,7 +2,7 @@ import React from "react";
 import { Typography, Box } from "@mui/material";
 import Layout from "../../components/layout/Layout.js";
 import { useUIContextController } from "../../context/index.js";
-import { Container, Row, Col, Button, Input, Table } from "reactstrap";
+import { Container, Row, Col, Button, Input, Table, Spinner } from "reactstrap";
 import {
   FaPlus,
   FaSearch,
@@ -11,14 +11,19 @@ import {
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
-import ListaFuncionarios from "./ListaFuncionarios.js"; // Importar a lista de funcionários
 import CadastrarFuncionariosModal from "components/Funcionarios/CadastrarFuncionariosModal.js";
 import DeleteFuncionarioModal from "components/Funcionarios/DeleteFuncionarioModal.js";
+import axios from "axios";
+import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
+import { formatarCPF } from "components/utils/utilsMask.js";
+import { formatarTelefone } from "components/utils/utilsMask.js";
 
 const Funcionarios = () => {
+  const URL_API = process.env.REACT_APP_URL_API;
+  const [ListaFuncionarios, setListaFuncionarios] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
   const [state] = useUIContextController();
   const { darkMode } = state;
-
   const [modalVisible, setModalVisible] = React.useState({
     visible: false,
     funcionario: null,
@@ -33,6 +38,34 @@ const Funcionarios = () => {
 
   const [searchTerm, setSearchTerm] = React.useState("");
   const [searchCpf, setSearchCpf] = React.useState("");
+  const [confirmacaoModal, setConfirmacaoModal] = React.useState({
+    visible: false,
+    mensagem: "",
+    sucesso: false,
+  });
+
+  const getFuncionarios = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${URL_API}/api/funcionarios/funcionarios`
+      );
+      setListaFuncionarios(response.data);
+      setLoading(false);
+    } catch (error) {
+      setConfirmacaoModal({
+        visible: true,
+        mensagem: "Erro ao buscar funcionários.",
+        sucesso: false,
+      });
+      setLoading(false);
+      console.log(error);
+    }
+  };
+
+  React.useEffect(() => {
+    getFuncionarios();
+  }, []);
 
   const buttonStyle = {
     backgroundColor: darkMode ? "#676767" : "#CECFCB",
@@ -46,12 +79,18 @@ const Funcionarios = () => {
 
   const tableHeaderStyle = {
     textAlign: "center",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   };
 
   const tableCellStyle = {
     textAlign: "center",
-    padding: "1%",
     backgroundColor: darkMode ? "#676767" : "#f0f0f0",
+    padding: "0.5rem",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   };
 
   const cadastrarFunc = () => {
@@ -166,8 +205,19 @@ const Funcionarios = () => {
             </Col>
           </Row>
 
-          <Container fluid style={{ maxWidth: "100%", marginTop: "5%" }}>
-            {/* Tabela */}
+          {/* Tabela */}
+          {loading ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "start",
+                height: "100vh",
+              }}
+            >
+              <Spinner color="secondary" />
+            </Box>
+          ) : (
             <Table
               responsive
               size="sm"
@@ -183,6 +233,7 @@ const Funcionarios = () => {
                   <th style={tableHeaderStyle}>Email</th>
                   <th style={tableHeaderStyle}>Telefone</th>
                   <th style={tableHeaderStyle}>Tipo</th>
+                  <th style={tableHeaderStyle}>Status</th>
                   <th style={{ ...tableHeaderStyle, textAlign: "center" }}>
                     Ações
                   </th>
@@ -193,15 +244,18 @@ const Funcionarios = () => {
                   currentFuncionarios.map((funcionario, index) => (
                     <tr key={index}>
                       <td style={tableCellStyle}>{funcionario.nome}</td>
-                      <td style={tableCellStyle}>{funcionario.cpf || "N/A"}</td>
+                      <td style={tableCellStyle}>
+                        {formatarCPF(funcionario?.cpf) || "--"}
+                      </td>
                       <td style={tableCellStyle}>{funcionario.cargo}</td>
                       <td style={tableCellStyle}>
-                        {funcionario.email || "N/A"}
+                        {funcionario.email || "--"}
                       </td>
                       <td style={tableCellStyle}>
-                        {funcionario.telefone || "N/A"}
+                        {formatarTelefone(funcionario?.telefone) || "--"}
                       </td>
                       <td style={tableCellStyle}>{funcionario.tipo}</td>
+                      <td style={tableCellStyle}>{funcionario.status}</td>
                       <td>
                         <div
                           style={{
@@ -240,56 +294,56 @@ const Funcionarios = () => {
                         color: darkMode ? "#FFFFFF" : "#343A40",
                       }}
                     >
-                      Funcionário não encontrado.
+                      Nenhum Funcionário encontrado
                     </td>
                   </tr>
                 )}
               </tbody>
             </Table>
-            {/* Botões de navegação */}
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                paddingTop: "2%",
-                paddingBottom: "2%",
-                alignItems: "center",
+          )}
+          {/* Botões de navegação */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              paddingTop: "2%",
+              paddingBottom: "2%",
+              alignItems: "center",
+            }}
+          >
+            <Button
+              variant="secondary"
+              style={{ ...buttonStyle, marginRight: "5px" }}
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              size="sm"
+            >
+              <FaChevronLeft size={10} />
+            </Button>
+            <Typography
+              variant="subtitle1"
+              style={{
+                color: darkMode ? "#FFFFFF" : "#343A40",
+                padding: "0% 1% 0% 1%",
               }}
             >
-              <Button
-                variant="secondary"
-                style={{ ...buttonStyle, marginRight: "5px" }}
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                size="sm"
-              >
-                <FaChevronLeft size={10} />
-              </Button>
-              <Typography
-                variant="subtitle1"
-                style={{
-                  color: darkMode ? "#FFFFFF" : "#343A40",
-                  padding: "0% 1% 0% 1%",
-                }}
-              >
-                Página {currentPage} de{" "}
-                {Math.ceil(filteredFuncionarios.length / itemsPerPage)} (Total:{" "}
-                {filteredFuncionarios.length} funcionários)
-              </Typography>
-              <Button
-                variant="secondary"
-                style={{ ...buttonStyle, marginLeft: "5px" }}
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={
-                  currentPage ===
-                  Math.ceil(filteredFuncionarios.length / itemsPerPage)
-                }
-                size="sm"
-              >
-                <FaChevronRight size={10} />
-              </Button>
-            </Box>
-          </Container>
+              Página {currentPage} de{" "}
+              {Math.ceil(filteredFuncionarios.length / itemsPerPage)} (Total:{" "}
+              {filteredFuncionarios.length} funcionários)
+            </Typography>
+            <Button
+              variant="secondary"
+              style={{ ...buttonStyle, marginLeft: "5px" }}
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={
+                currentPage ===
+                Math.ceil(filteredFuncionarios.length / itemsPerPage)
+              }
+              size="sm"
+            >
+              <FaChevronRight size={10} />
+            </Button>
+          </Box>
         </Container>
       </Box>
 
@@ -299,6 +353,7 @@ const Funcionarios = () => {
           setModalVisible({ visible: false, funcionario: null })
         }
         funcionario={modalVisible.funcionario}
+        getFuncionarios={getFuncionarios}
       />
 
       <DeleteFuncionarioModal
@@ -307,6 +362,20 @@ const Funcionarios = () => {
           setDeleteFuncionarioModal({ visible: false, funcionario: null })
         }
         funcionario={deleteFuncionarioModal.funcionario}
+        getFuncionarios={getFuncionarios}
+      />
+
+      <ConfirmacaoModal
+        visible={confirmacaoModal.visible}
+        setVisible={() =>
+          setConfirmacaoModal({
+            visible: false,
+            mensagem: "",
+            sucesso: false,
+          })
+        }
+        mensagem={confirmacaoModal.mensagem}
+        sucesso={confirmacaoModal.sucesso}
       />
     </Layout>
   );

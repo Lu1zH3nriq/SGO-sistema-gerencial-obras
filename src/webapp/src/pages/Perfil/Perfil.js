@@ -28,6 +28,7 @@ import { Input, Spinner } from "reactstrap";
 import { FaEdit, FaTrash, FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { formatarTelefone } from "components/utils/utilsMask.js";
+import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
 
 const Perfil = () => {
   const [loadingUser, setLoadingUser] = useState(true);
@@ -49,6 +50,11 @@ const Perfil = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileError, setFileError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [confirmacaoModal, setConfirmacaoModal] = useState({
+    state: false,
+    messagem: "",
+    sucesso: false,
+  });
 
   const [userFoto, setUserFoto] = useState(
     "https://t4.ftcdn.net/jpg/00/64/67/27/360_F_64672736_U5kpdGs9keUll8CRQ3p3YaEv2M6qkVY5.jpg"
@@ -56,15 +62,15 @@ const Perfil = () => {
 
   const URL_API = process.env.REACT_APP_URL_API;
 
-  useEffect(() => {
+  const getPerfil = async () => {
+    setLoadingUser(true);
     axios
       .get(`${URL_API}/api/users/usuario?email=${userId}`)
       .then((response) => {
         setUser(response.data);
-        console.log(response.data);
         setNivelUsuario(parseInt(response.data.nivelUsuario));
         setTelefoneEdit(response.data.telefone);
-        setLoadingUser(false);
+
         if (response.data.foto !== null) {
           setUserFoto(response.data.urlFoto);
         } else {
@@ -72,10 +78,21 @@ const Perfil = () => {
             "https://t4.ftcdn.net/jpg/00/64/67/27/360_F_64672736_U5kpdGs9keUll8CRQ3p3YaEv2M6qkVY5.jpg"
           );
         }
+        setLoadingUser(false);
       })
       .catch((error) => {
+        setConfirmacaoModal({
+          state: true,
+          messagem: "Erro ao buscar dados do perfil!",
+          sucesso: false,
+        });
+        setLoadingUser(false);
         console.log(error);
       });
+  };
+
+  useEffect(() => {
+    getPerfil();
   }, []);
 
   const cardStyle = {
@@ -634,7 +651,7 @@ const Perfil = () => {
             height: "100vh",
           }}
         >
-          <Spinner color="secondary"/>
+          <Spinner color="secondary" />
         </Box>
       )}
 
@@ -745,6 +762,19 @@ const Perfil = () => {
           </MuiButton>
         </DialogActions>
       </Dialog>
+
+      <ConfirmacaoModal
+        open={confirmacaoModal.state}
+        onClose={() =>
+          setConfirmacaoModal({
+            state: false,
+            messagem: "",
+            sucesso: false,
+          })
+        }
+        mensagem={confirmacaoModal.messagem}
+        sucesso={confirmacaoModal.sucesso}
+      />
     </Layout>
   );
 };

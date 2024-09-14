@@ -1,149 +1,299 @@
-import React, { useState } from 'react';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Row, Col } from 'reactstrap';
-import { Formik, Form, Field } from 'formik';
-import { useUIContextController } from '../../context/index.js';
+import React, { useState } from "react";
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  Row,
+  Col,
+  Spinner,
+} from "reactstrap";
+import { Formik, Form, Field } from "formik";
+import { useUIContextController } from "../../context/index.js";
+import axios from "axios";
+import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
 
-const CadastrarMaterialModal = ({ visible, setVisible, material }) => {
-    const [state] = useUIContextController();
-    const { darkMode } = state;
-    const [file, setFile] = useState(null);
+const CadastrarMaterialModal = ({
+  visible,
+  setVisible,
+  material,
+  getMaterials,
+}) => {
+  const URL_API = process.env.REACT_APP_URL_API;
+  const [loading, setLoading] = useState(false);
+  const [confirmacaoVisible, setConfirmacaoVisible] = useState({
+    visible: false,
+    message: "",
+    sucesso: false,
+  });
 
-    const handleSubmit = (values) => {
-        // Lógica para salvar os dados do formulário
-        console.log(values);
-        console.log(file);
+  const [state] = useUIContextController();
+  const { darkMode } = state;
+
+  const handleSubmit = (values) => {
+    setLoading(true);
+
+    const data = {
+      ...values,
     };
 
-    const handleFileChange = (event) => {
-        setFile(event.target.files[0]);
-    };
+    if (data.dataValidade === "--") {
+      data.dataValidade = null;
+    }
 
-    const toggleModal = () => {
-        setVisible(false);
-    };
+    if (material) {
+      axios
+        .put(
+          `${URL_API}/api/materiais/alterarMaterial?id=${material.id}`,
+          data
+        )
+        .then(() => {
+          setConfirmacaoVisible({
+            visible: true,
+            message: "Material editado com sucesso!",
+            sucesso: true,
+          });
 
-    const modalStyle = {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: darkMode ? '#6E6E6E' : '#FFFFFF',
-        color: darkMode ? '#FFFFFF' : '#000000',
-        border: 'none',
-    };
+          getMaterials();
+        })
+        .catch((error) => {
+          console.log(error);
+          setConfirmacaoVisible({
+            visible: true,
+            message: "Erro ao editar material!",
+            sucesso: false,
+          });
+        })
+        .finally(() => {
+          setLoading(false);
+          setVisible(false);
+        });
+    } else {
+      axios
+        .post(`${URL_API}/api/materiais/novoMaterial`, data)
+        .then(() => {
+          setConfirmacaoVisible({
+            visible: true,
+            message: "Material cadastrado com sucesso!",
+            sucesso: true,
+          });
 
-    const buttonStyle = {
-        backgroundColor: darkMode ? '#676767' : '#CECFCB',
-        color: darkMode ? '#FFFFFF' : '#343A40',
-        border: 'none',
-    };
+          getMaterials();
+        })
+        .catch((error) => {
+          setConfirmacaoVisible({
+            visible: true,
+            message: "Erro ao cadastrar material!",
+            sucesso: false,
+          });
+          console.log(error);
+        })
+        .finally(() => {
+          setLoading(false);
+          setVisible(false);
+        });
+    }
+  };
 
-    const formStyle = {
-        backgroundColor: darkMode ? '#6E6E6E' : '#FFFFFF',
-        color: darkMode ? '#FFFFFF' : '#000000',
-        border: 'none',
-    };
+  const toggleModal = () => {
+    setVisible(false);
+  };
 
-    const inputStyle = {
-        backgroundColor: darkMode ? '#6E6E6E' : '#FFFFFF',
-        color: darkMode ? '#FFFFFF' : '#000000',
-        marginBottom: '10px', // Espaçamento vertical entre os inputs
-    };
+  const modalStyle = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
+    color: darkMode ? "#FFFFFF" : "#000000",
+    border: "none",
+  };
 
-    const saveButtonStyle = {
-        backgroundColor: '#47FF63',
-        color: '#FFFFFF',
-        border: 'none',
-    };
+  const buttonStyle = {
+    backgroundColor: darkMode ? "#676767" : "#CECFCB",
+    color: darkMode ? "#FFFFFF" : "#343A40",
+    border: "none",
+  };
 
-    
+  const formStyle = {
+    backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
+    color: darkMode ? "#FFFFFF" : "#000000",
+    border: "none",
+  };
 
-    const initialValues = {
-        nome: material?.nome || '',
-        codigo: material?.codigo || '',
-        principalFornecedor: material?.principalFornecedor || '',
-        unidade: material?.unidade || '',
-        dataUltCompra: material?.dataUltCompra || '',
-        validade: material?.validade || '',
-        notaFiscal: material?.notaFiscal || '',
-    };
+  const inputStyle = {
+    backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
+    color: darkMode ? "#FFFFFF" : "#000000",
+    marginBottom: "10px", // Espaçamento vertical entre os inputs
+  };
 
-    return (
-        <Modal
-            size='lg'
-            isOpen={visible}
-            toggle={toggleModal}
-            centered
-        >
-            <ModalHeader toggle={toggleModal} style={modalStyle}>
-                {!material ? 'Cadastrar Material' : 'Editar Material'}
-            </ModalHeader>
-            <ModalBody style={formStyle}>
-                <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-                    <Form style={formStyle}>
-                        <Row form>
-                            <Col md={6}>
-                                <div className="form-group">
-                                    <label htmlFor="nome">Nome</label>
-                                    <Field type="text" name="nome" className="form-control" style={inputStyle} />
-                                </div>
-                            </Col>
-                            <Col md={6}>
-                                <div className="form-group">
-                                    <label htmlFor="codigo">Código</label>
-                                    <Field type="text" name="codigo" className="form-control" style={inputStyle} />
-                                </div>
-                            </Col>
-                        </Row>
-                        <Row form>
-                            <Col md={6}>
-                                <div className="form-group">
-                                    <label htmlFor="fornecedor">Principal Fornecedor</label>
-                                    <Field type="text" name="fornecedor" className="form-control" style={inputStyle} />
-                                </div>
-                            </Col>
-                            <Col md={6}>
-                                <div className="form-group">
-                                    <label htmlFor="quantidade">Unidade de Medida</label>
-                                    <Field type="number" name="quantidade" className="form-control" style={inputStyle} />
-                                </div>
-                            </Col>
-                        </Row>
-                        <Row form>
-                            <Col md={6}>
-                                <div className="form-group">
-                                    <label htmlFor="dataCompra">Data Última Compra</label>
-                                    <Field type="date" name="dataCompra" className="form-control" style={inputStyle} />
-                                </div>
-                            </Col>
-                            <Col md={6}>
-                                <div className="form-group">
-                                    <label htmlFor="validade">Validade</label>
-                                    <Field type="date" name="validade" className="form-control" style={inputStyle} />
-                                </div>
-                            </Col>
-                        </Row>
-                        <Row form>
-                            <Col md={6}>
-                                <div className="form-group">
-                                    <label htmlFor="notaFiscal">Nota Fiscal</label>
-                                    <Field type="text" name="notaFiscal" className="form-control" style={inputStyle} />
-                                </div>
-                            </Col>
-                        </Row>
-                        {/* Adicione mais campos do formulário aqui */}
-                    </Form>
-                </Formik>
-            </ModalBody>
-            <ModalFooter style={modalStyle}>
-                <Button color="secondary" onClick={toggleModal} style={buttonStyle}>
+  const saveButtonStyle = {
+    backgroundColor: "#47FF63",
+    color: "#FFFFFF",
+    border: "none",
+  };
+
+  const initialValues = {
+    nome: material?.nome || "",
+    codigo: material?.codigo || "",
+    principalFornecedor: material?.principalFornecedor || "",
+    unidadeMedida: material?.unidadeMedida || "",
+    dataUltimaCompra: material?.dataUltimaCompra
+      ? new Date(material?.dataUltimaCompra).toISOString().split("T")[0]
+      : new Date().toISOString().split("T")[0],
+      dataValidade: material?.dataValidade
+      ? new Date(material?.dataValidade).toISOString().split("T")[0]
+      : "--",
+      numeroNotaFiscal: material?.numeroNotaFiscal || "",
+  };
+
+  return (
+    <>
+      <Modal size="lg" isOpen={visible} toggle={toggleModal} centered>
+        <ModalHeader toggle={toggleModal} style={modalStyle}>
+          {!material ? "Cadastrar Material" : "Editar Material"}
+        </ModalHeader>
+        <ModalBody style={formStyle}>
+          <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+            {({ setFieldValue, values }) => (
+              <Form style={formStyle}>
+                <Row form>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label htmlFor="nome">Nome</label>
+                      <Field
+                        type="text"
+                        name="nome"
+                        className="form-control"
+                        style={inputStyle}
+                        onChange={(e) => {
+                          setFieldValue("nome", e.target.value);
+                        }}
+                      />
+                    </div>
+                  </Col>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label htmlFor="codigo">Código</label>
+                      <Field
+                        type="text"
+                        name="codigo"
+                        className="form-control"
+                        style={inputStyle}
+                        onChange={(e) => {
+                          setFieldValue("codigo", e.target.value);
+                        }}
+                      />
+                    </div>
+                  </Col>
+                </Row>
+                <Row form>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label htmlFor="principalFornecedor">Principal Fornecedor</label>
+                      <Field
+                        type="text"
+                        name="principalFornecedor"
+                        className="form-control"
+                        style={inputStyle}
+                        onChange={(e) => {
+                          setFieldValue("principalFornecedor", e.target.value);
+                        }}
+                      />
+                    </div>
+                  </Col>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label htmlFor="unidadeMedida">Unidade de Medida</label>
+                      <Field
+                        type="text"
+                        name="unidadeMedida"
+                        className="form-control"
+                        style={inputStyle}
+                        onChange={(e) => {
+                          setFieldValue("unidadeMedida", e.target.value);
+                        }}
+                      />
+                    </div>
+                  </Col>
+                </Row>
+                <Row form>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label htmlFor="dataUltimaCompra">Data Última Compra</label>
+                      <Field
+                        type="date"
+                        name="dataUltimaCompra"
+                        className="form-control"
+                        style={inputStyle}
+                        onChange={(e) => {
+                          setFieldValue("dataUltimaCompra", e.target.value);
+                        }}
+                      />
+                    </div>
+                  </Col>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label htmlFor="dataValidade">Validade</label>
+                      <Field
+                        type="date"
+                        name="dataValidade"
+                        className="form-control"
+                        style={inputStyle}
+                        onChange={(e) => {
+                          setFieldValue("dataValidade", e.target.value);
+                        }}
+                      />
+                    </div>
+                  </Col>
+                </Row>
+                <Row form>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label htmlFor="numeroNotaFiscal">Nota Fiscal</label>
+                      <Field
+                        type="text"
+                        name="numeroNotaFiscal"
+                        className="form-control"
+                        style={inputStyle}
+                        onChange={(e) => {
+                          setFieldValue("numeroNotaFiscal", e.target.value);
+                        }}
+                      />
+                    </div>
+                  </Col>
+                </Row>
+                {/* Adicione mais campos do formulário aqui */}
+                <ModalFooter style={modalStyle}>
+                  <Button
+                    color="secondary"
+                    onClick={toggleModal}
+                    style={buttonStyle}
+                  >
                     Fechar
-                </Button>
-                <Button color="primary" type="submit" form="form" style={saveButtonStyle}>
-                    Salvar
-                </Button>
-            </ModalFooter>
-        </Modal>
-    );
+                  </Button>
+                  <Button
+                    color="primary"
+                    type="submit"
+                    style={saveButtonStyle}
+                  >
+                    {loading ? <Spinner size="sm" color="light" /> : "Salvar"}
+                  </Button>
+                </ModalFooter>
+              </Form>
+            )}
+          </Formik>
+        </ModalBody>
+      </Modal>
+
+      <ConfirmacaoModal
+        visible={confirmacaoVisible.visible}
+        setVisible={setConfirmacaoVisible}
+        mensagem={confirmacaoVisible.message}
+        sucesso={confirmacaoVisible.sucesso}
+      />
+    </>
+  );
 };
 
 export default CadastrarMaterialModal;

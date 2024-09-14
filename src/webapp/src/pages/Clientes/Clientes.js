@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Typography, Box } from "@mui/material";
 import Layout from "../../components/layout/Layout.js";
 import { useUIContextController } from "../../context/index.js";
-import { Container, Row, Col, Button, Input, Table } from "reactstrap";
+import { Container, Row, Col, Button, Input, Table, Spinner } from "reactstrap";
 import {
   FaPlus,
   FaSearch,
@@ -11,11 +11,19 @@ import {
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
-import ListaClientes from "./ListaClientes.js"; // Importar a lista de clientes
 import CadastrarClienteModal from "components/Clientes/CadastrarClienteModal.js";
 import DeleteClienteModal from "components/Clientes/DeleteClienteModal.js";
+import axios from "axios";
+import {
+  formatarTelefone,
+  formatarCPF,
+  formatarCNPJ,
+} from "../../components/utils/utilsMask.js";
+import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
 
 const Clientes = () => {
+  const URL_API = process.env.REACT_APP_URL_API;
+
   const [state] = useUIContextController();
   const { darkMode } = state;
 
@@ -27,12 +35,20 @@ const Clientes = () => {
     visible: false,
     cliente: null,
   });
+  const [ListaClientes, setListaClientes] = React.useState([]);
 
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 30;
 
   const [searchTerm, setSearchTerm] = React.useState("");
   const [searchCpf, setSearchCpf] = React.useState("");
+
+  const [loading, setLoading] = React.useState(false);
+  const [confirmacao, setConfirmacao] = React.useState({
+    visible: false,
+    mensagem: "",
+    sucesso: false,
+  });
 
   const buttonStyle = {
     backgroundColor: darkMode ? "#676767" : "#CECFCB",
@@ -50,9 +66,45 @@ const Clientes = () => {
 
   const tableCellStyle = {
     textAlign: "center",
-    padding: "1%",
     backgroundColor: darkMode ? "#676767" : "#f0f0f0",
+    padding: "0.5rem",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   };
+
+  const getClientes = async () => {
+    setLoading(true);
+    try {
+      axios
+        .get(`${URL_API}/api/clientes/clientes`)
+        .then((response) => {
+          setListaClientes(response.data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setConfirmacao({
+            visible: true,
+            mensagem: "Erro ao buscar clientes!",
+            sucesso: false,
+          });
+          setLoading(false);
+          console.error("Erro ao buscar os clientes: ", error);
+        });
+    } catch (error) {
+      setConfirmacao({
+        visible: true,
+        mensagem: "Erro ao buscar clientes!",
+        sucesso: false,
+      });
+      setLoading(false);
+      console.error("Erro ao buscar os clientes: ", error);
+    }
+  };
+
+  useEffect(() => {
+    getClientes();
+  }, []);
 
   const cadastrarCliente = () => {
     setModalVisible({ visible: true, cliente: null });
@@ -86,11 +138,11 @@ const Clientes = () => {
     if (searchCpf === "") {
       return cliente.nome.toLowerCase().includes(searchTerm.toLowerCase());
     } else if (searchTerm === "") {
-      return cliente.cpf.toLowerCase().includes(searchCpf.toLowerCase());
+      return cliente.cpfCnpj.toLowerCase().includes(searchCpf.toLowerCase());
     } else {
       return (
         cliente.nome.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        cliente.cpf.toLowerCase().includes(searchCpf.toLowerCase())
+        cliente.cpfCnpj.toLowerCase().includes(searchCpf.toLowerCase())
       );
     }
   });
@@ -166,8 +218,19 @@ const Clientes = () => {
             </Col>
           </Row>
 
-          <Container fluid style={{ maxWidth: "100%", marginTop: "5%" }}>
-            {/* Tabela */}
+          {/* Tabela */}
+          {loading ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "start",
+                height: "100vh",
+              }}
+            >
+              <Spinner color="secondary" />
+            </Box>
+          ) : (
             <Table
               responsive
               size="sm"
@@ -178,7 +241,8 @@ const Clientes = () => {
               <thead>
                 <tr>
                   <th style={tableHeaderStyle}>Nome</th>
-                  <th style={tableHeaderStyle}>CPF</th>
+                  <th style={tableHeaderStyle}>Tipo</th>
+                  <th style={tableHeaderStyle}>Cpf/Cnpj</th>
                   <th style={tableHeaderStyle}>Endereço</th>
                   <th style={tableHeaderStyle}>Email</th>
                   <th style={tableHeaderStyle}>Telefone</th>
@@ -192,13 +256,16 @@ const Clientes = () => {
                   currentClientes.map((cliente, index) => (
                     <tr key={index}>
                       <td style={tableCellStyle}>{cliente.nome}</td>
-                      <td style={tableCellStyle}>{cliente.cpf || "N/A"}</td>
+                      <td style={tableCellStyle}>{cliente.tipoPessoa}</td>
                       <td style={tableCellStyle}>
-                        {cliente.endereco || "N/A"}
+                        {cliente.tipoPessoa === "Fisica"
+                          ? formatarCPF(cliente?.cpf)
+                          : formatarCNPJ(cliente?.cnpj) || "--"}
                       </td>
-                      <td style={tableCellStyle}>{cliente.email || "N/A"}</td>
+                      <td style={tableCellStyle}>{cliente.endereco || "--"}</td>
+                      <td style={tableCellStyle}>{cliente.email || "--"}</td>
                       <td style={tableCellStyle}>
-                        {cliente.telefone || "N/A"}
+                        {formatarTelefone(cliente.telefone) || "--"}
                       </td>
                       <td>
                         <div
@@ -238,56 +305,56 @@ const Clientes = () => {
                         color: darkMode ? "#FFFFFF" : "#343A40",
                       }}
                     >
-                      Cliente não encontrado.
+                      Nenhum cliente  encontrado
                     </td>
                   </tr>
                 )}
               </tbody>
             </Table>
-            {/* Botões de navegação */}
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                paddingTop: "2%",
-                paddingBottom: "2%",
-                alignItems: "center",
+          )}
+          {/* Botões de navegação */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              paddingTop: "2%",
+              paddingBottom: "2%",
+              alignItems: "center",
+            }}
+          >
+            <Button
+              variant="secondary"
+              style={{ ...buttonStyle, marginRight: "5px" }}
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              size="sm"
+            >
+              <FaChevronLeft size={10} />
+            </Button>
+            <Typography
+              variant="subtitle1"
+              style={{
+                color: darkMode ? "#FFFFFF" : "#343A40",
+                padding: "0% 1% 0% 1%",
               }}
             >
-              <Button
-                variant="secondary"
-                style={{ ...buttonStyle, marginRight: "5px" }}
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                size="sm"
-              >
-                <FaChevronLeft size={10} />
-              </Button>
-              <Typography
-                variant="subtitle1"
-                style={{
-                  color: darkMode ? "#FFFFFF" : "#343A40",
-                  padding: "0% 1% 0% 1%",
-                }}
-              >
-                Página {currentPage} de{" "}
-                {Math.ceil(filteredClientes.length / itemsPerPage)} (Total:{" "}
-                {filteredClientes.length} clientes)
-              </Typography>
-              <Button
-                variant="secondary"
-                style={{ ...buttonStyle, marginLeft: "5px" }}
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={
-                  currentPage ===
-                  Math.ceil(filteredClientes.length / itemsPerPage)
-                }
-                size="sm"
-              >
-                <FaChevronRight size={10} />
-              </Button>
-            </Box>
-          </Container>
+              Página {currentPage} de{" "}
+              {Math.ceil(filteredClientes.length / itemsPerPage)} (Total:{" "}
+              {filteredClientes.length} clientes)
+            </Typography>
+            <Button
+              variant="secondary"
+              style={{ ...buttonStyle, marginLeft: "5px" }}
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={
+                currentPage ===
+                Math.ceil(filteredClientes.length / itemsPerPage)
+              }
+              size="sm"
+            >
+              <FaChevronRight size={10} />
+            </Button>
+          </Box>
         </Container>
       </Box>
 
@@ -295,6 +362,7 @@ const Clientes = () => {
         visible={modalVisible.visible}
         setVisible={() => setModalVisible({ visible: false, cliente: null })}
         cliente={modalVisible.cliente}
+        getClientes={getClientes}
       />
 
       <DeleteClienteModal
@@ -303,6 +371,14 @@ const Clientes = () => {
           setDeleteClienteModal({ visible: false, cliente: null })
         }
         cliente={deleteClienteModal.cliente}
+        getClientes={getClientes}
+      />
+
+      <ConfirmacaoModal
+        visible={confirmacao.visible}
+        setVisible={() => setConfirmacao({ visible: false, mensagem: "" })}
+        mensagem={confirmacao.mensagem}
+        sucesso={confirmacao.sucesso}
       />
     </Layout>
   );

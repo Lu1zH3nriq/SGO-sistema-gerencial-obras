@@ -1,8 +1,25 @@
 import React from "react";
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from "reactstrap";
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  Spinner,
+} from "reactstrap";
 import { useUIContextController } from "../../context/index.js";
+import axios from "axios";
+import ConfirmacaoModal from "../utils/ConfirmacaoModal.js";
 
-const DeleteClienteModal = ({ visible, setVisible, cliente, onDelete }) => {
+const DeleteClienteModal = ({ visible, setVisible, cliente, getClientes }) => {
+  const URL_API = process.env.REACT_APP_URL_API;
+  const [loading, setLoading] = React.useState(false);
+  const [confirmacao, setConfirmacao] = React.useState({
+    visible: false,
+    mensagem: "",
+    sucesso: false,
+  });
+
   const [state] = useUIContextController();
   const { darkMode } = state;
 
@@ -11,8 +28,29 @@ const DeleteClienteModal = ({ visible, setVisible, cliente, onDelete }) => {
   };
 
   const handleDelete = () => {
-    onDelete(cliente);
-    toggleModal();
+    setLoading(true);
+
+    axios
+      .delete(`${URL_API}/api/clientes/deleteCliente?id=${cliente.id}`)
+      .then((response) => {
+        setConfirmacao({
+          visible: true,
+          mensagem: "Cliente excluído com sucesso!",
+          sucesso: true,
+        });
+        getClientes();
+      })
+      .catch((error) => {
+        setConfirmacao({
+          visible: true,
+          mensagem: "Erro ao excluir o cliente!",
+          sucesso: false,
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+        setVisible(false);
+      });
   };
 
   const modalStyle = {
@@ -37,28 +75,50 @@ const DeleteClienteModal = ({ visible, setVisible, cliente, onDelete }) => {
   };
 
   return (
-    <Modal isOpen={visible} toggle={toggleModal} centered>
-      <ModalHeader toggle={toggleModal} style={modalStyle}>
-        Confirmar Exclusão
-      </ModalHeader>
-      <ModalBody style={modalStyle}>
-        {cliente ? (
-          <>
-            Tem certeza de que deseja excluir o cliente "{cliente.nome}" com o CPF "{cliente.cpf}"?
-          </>
-        ) : (
-          <p>Carregando...</p>
-        )}
-      </ModalBody>
-      <ModalFooter style={modalStyle}>
-        <Button color="secondary" onClick={toggleModal} style={buttonStyle}>
-          Cancelar
-        </Button>
-        <Button color="danger" onClick={handleDelete} style={deleteButtonStyle}>
-          Excluir
-        </Button>
-      </ModalFooter>
-    </Modal>
+    <>
+      <Modal isOpen={visible} toggle={toggleModal} centered>
+        <ModalHeader toggle={toggleModal} style={modalStyle}>
+          Confirmar Exclusão
+        </ModalHeader>
+        <ModalBody>
+          {cliente ? (
+            <>
+              <p>Tem certeza que deseja excluir o cliente:</p>
+              <p>
+                Nome: <strong>{cliente.nome}</strong>
+              </p>
+              <p>
+                {cliente.tipoPessoa === "Fisica" ? "CPF: " : "CNPJ: "}
+                <strong>
+                  {cliente.tipoPessoa === "Fisica" ? cliente.cpf : cliente.cnpj}
+                </strong>
+              </p>
+            </>
+          ) : (
+            <p>Carregando...</p>
+          )}
+        </ModalBody>
+        <ModalFooter style={modalStyle}>
+          <Button color="secondary" onClick={toggleModal} style={buttonStyle}>
+            Cancelar
+          </Button>
+          <Button
+            color="danger"
+            onClick={handleDelete}
+            style={deleteButtonStyle}
+          >
+            {loading ? <Spinner size="sm" color="light" /> : "Excluir"}
+          </Button>
+        </ModalFooter>
+      </Modal>
+
+      <ConfirmacaoModal
+        visible={confirmacao.visible}
+        setVisible={setConfirmacao}
+        mensagem={confirmacao.mensagem}
+        sucesso={confirmacao.sucesso}
+      />
+    </>
   );
 };
 

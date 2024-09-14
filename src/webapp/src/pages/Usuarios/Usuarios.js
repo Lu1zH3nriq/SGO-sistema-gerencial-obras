@@ -20,6 +20,8 @@ import {
 } from "components/utils/utilsMask.js";
 import axios from "axios";
 
+import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
+
 const Usuarios = () => {
   const URL_API = process.env.REACT_APP_URL_API;
   const [state] = useUIContextController();
@@ -35,6 +37,11 @@ const Usuarios = () => {
     visible: false,
     usuario: null,
   });
+  const [confirmacao, setConfirmacao] = React.useState({
+    visible: false,
+    mensagem: "",
+    sucesso: false,
+  });
 
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 30;
@@ -47,18 +54,28 @@ const Usuarios = () => {
     2: "Comum",
   };
 
-  useEffect(() => {
+  const getUsuarios = () => {
+    setLoading(true);
     axios
       .get(`${URL_API}/api/users/usuarios`)
       .then((response) => {
-        setListaUsuarios(response.data || []); // Garantir que seja um array
+        setListaUsuarios(response.data || []);
         setLoading(false);
       })
       .catch((error) => {
+        setConfirmacao({
+          visible: true,
+          mensagem: "Erro ao buscar usuários!",
+          sucesso: false,
+        });
         console.error("Erro ao buscar usuários:", error);
         setLoading(false);
       });
-  }, [URL_API]);
+  };
+
+  useEffect(() => {
+    getUsuarios();
+  }, []);
 
   const buttonStyle = {
     backgroundColor: darkMode ? "#676767" : "#CECFCB",
@@ -143,7 +160,7 @@ const Usuarios = () => {
       >
         <Container>
           {/* Linha com botão "Adicionar" e campo de pesquisa */}
-          <Row className="mb-4" style={{ marginTop: "2%", maxWidth: '100%' }}>
+          <Row className="mb-4" style={{ marginTop: "2%", maxWidth: "100%" }}>
             <Col className="d-flex align-items-center justify-content-between">
               <Button
                 color="secondary"
@@ -292,7 +309,7 @@ const Usuarios = () => {
                         color: darkMode ? "#FFFFFF" : "#343A40",
                       }}
                     >
-                      Usuário não encontrado.
+                      Nenhum usuário encontrado
                     </td>
                   </tr>
                 )}
@@ -363,6 +380,13 @@ const Usuarios = () => {
         newListUsers={(list) => {
           setListaUsuarios(list);
         }}
+      />
+
+      <ConfirmacaoModal
+        visible={confirmacao.visible}
+        setVisible={setConfirmacao}
+        mensagem={confirmacao.mensagem}
+        sucesso={confirmacao.sucesso}
       />
     </Layout>
   );

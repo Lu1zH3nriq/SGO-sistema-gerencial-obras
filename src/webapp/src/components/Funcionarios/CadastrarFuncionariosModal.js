@@ -7,15 +7,97 @@ import {
   Button,
   Row,
   Col,
+  Spinner,
 } from "reactstrap";
 import { Formik, Form, Field } from "formik";
 import { useUIContextController } from "../../context/index.js";
+import axios from "axios";
+import {
+  formatarCPF,
+  formatarData,
+  formatarTelefone,
+  removerFormatacaoCPF,
+  removerFormatacaoTelefone,
+} from "../../components/utils/utilsMask.js";
+import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
 
-const CadastrarFuncionariosModal = ({ visible, setVisible, funcionario }) => {
+const CadastrarFuncionariosModal = ({
+  visible,
+  setVisible,
+  funcionario,
+  getFuncionarios,
+}) => {
+  const URL_API = process.env.REACT_APP_URL_API;
+  const [loading, setLoading] = useState(false);
+
   const [state] = useUIContextController();
   const { darkMode } = state;
 
-  const handleSubmit = (values) => {};
+  const [confirmacaoVisible, setConfirmacaoVisible] = useState({
+    visible: false,
+    mensagem: "",
+    sucesso: false,
+  });
+
+  const handleSubmit = (values) => {
+    setLoading(true);
+    const data = {
+      ...values,
+      cpf: removerFormatacaoCPF(values.cpf),
+      telefone: removerFormatacaoTelefone(values.telefone),
+      dataDemissao: values.dataDemissao ? values.dataDemissao : null,
+    };
+    if (!funcionario) {
+      axios
+        .post(`${URL_API}/api/funcionarios/novoFuncionario`, data)
+        .then(() => {
+          setConfirmacaoVisible({
+            visible: true,
+            mensagem: "Funcionário cadastrado com sucesso!",
+            sucesso: true,
+          });
+          getFuncionarios();
+        })
+        .catch((error) => {
+          setConfirmacaoVisible({
+            visible: true,
+            mensagem: "Erro ao cadastrar funcionário!",
+            sucesso: false,
+          });
+          console.error(error);
+        })
+        .finally(() => {
+          setLoading(false);
+          setVisible(false);
+        });
+    } else {
+      axios
+        .put(
+          `${URL_API}/api/funcionarios/alterarFuncionario?id=${funcionario.id}`,
+          data
+        )
+        .then(() => {
+          setConfirmacaoVisible({
+            visible: true,
+            mensagem: "Funcionário alterado com sucesso!",
+            sucesso: true,
+          });
+          getFuncionarios();
+        })
+        .catch((error) => {
+          setConfirmacaoVisible({
+            visible: true,
+            mensagem: "Erro ao alterar funcionário!",
+            sucesso: false,
+          });
+          console.error(error);
+        })
+        .finally(() => {
+          setLoading(false);
+          setVisible(false);
+        });
+    }
+  };
 
   const toggleModal = () => {
     setVisible(false);
@@ -61,164 +143,269 @@ const CadastrarFuncionariosModal = ({ visible, setVisible, funcionario }) => {
 
   const initialValues = {
     nome: funcionario?.nome || "",
+    telefone: funcionario?.telefone || "",
+    email: funcionario?.email || "",
+    endereco: funcionario?.endereco || "",
     cpf: funcionario?.cpf || "",
+    tipo: funcionario?.tipo|| "",
+    status: funcionario?.status|| "",
     sexo: funcionario?.sexo || "",
     cargo: funcionario?.cargo || "",
-    email: funcionario?.email || "",
-    telefone: funcionario?.telefone || "",
-    tipo: funcionario?.tipo.toLowerCase() || "", // Certifique-se de que o valor está em minúsculas
-    dataContratacao: funcionario?.dataContratacao || "",
-    status: funcionario?.status.toLowerCase() || "", // Certifique-se de que o valor está em minúsculas
-    dataDemissao: funcionario?.dataDemissao || "",
+    dataContratacao: funcionario?.dataContratacao
+      ? new Date(funcionario?.dataContratacao).toISOString().split("T")[0]
+      : new Date().toISOString().split("T")[0] || "",
+    dataDemissao: funcionario?.dataDemissao
+      ? new Date(funcionario?.dataDemissao).toISOString().split("T")[0]
+      : "" || "",
   };
 
   return (
-    <Modal size="lg" isOpen={visible} toggle={toggleModal} centered>
-      <ModalHeader toggle={toggleModal} style={modalStyle}>
-        {!funcionario ? "Cadastrar Funcionário" : "Editar Funcionário"}
-      </ModalHeader>
-      <ModalBody style={formStyle}>
-        <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-          {({ values, setFieldValue }) => (
-            <Form style={formStyle}>
-              <Row form>
-                <Col md={6}>
-                  <div className="form-group">
-                    <label htmlFor="nome">Nome</label>
-                    <Field
-                      type="text"
-                      name="nome"
-                      className="form-control"
-                      style={inputStyle}
-                    />
-                  </div>
-                </Col>
-                <Col md={6}>
-                  <div className="form-group">
-                    <label htmlFor="cpf">CPF</label>
-                    <Field
-                      type="text"
-                      name="cpf"
-                      className="form-control"
-                      style={inputStyle}
-                    />
-                  </div>
-                </Col>
-              </Row>
-              <Row form>
-                <Col md={6}>
-                  <div className="form-group">
-                    <label htmlFor="sexo">Sexo</label>
-                    <Field
-                      as="select"
-                      name="sexo"
-                      className="form-control"
-                      style={inputStyle}
-                    >
-                      <option value="">Selecione</option>
-                      <option value="masculino">Masculino</option>
-                      <option value="feminino">Feminino</option>
-                    </Field>
-                  </div>
-                </Col>
-                <Col md={6}>
-                  <div className="form-group">
-                    <label htmlFor="cargo">Cargo</label>
-                    <Field
-                      type="text"
-                      name="cargo"
-                      className="form-control"
-                      style={inputStyle}
-                    />
-                  </div>
-                </Col>
-              </Row>
-              <Row form>
-                <Col md={6}>
-                  <div className="form-group">
-                    <label htmlFor="email">Email</label>
-                    <Field
-                      type="email"
-                      name="email"
-                      className="form-control"
-                      style={inputStyle}
-                    />
-                  </div>
-                </Col>
-                <Col md={6}>
-                  <div className="form-group">
-                    <label htmlFor="telefone">Telefone</label>
-                    <Field
-                      type="text"
-                      name="telefone"
-                      className="form-control"
-                      style={inputStyle}
-                    />
-                  </div>
-                </Col>
-              </Row>
-              <Row form>
-                <Col md={6}>
-                  <div className="form-group">
-                    <label htmlFor="tipo">Tipo</label>
-                    <div>
+    <>
+      <Modal size="lg" isOpen={visible} toggle={toggleModal} centered>
+        <ModalHeader toggle={toggleModal} style={modalStyle}>
+          {!funcionario ? "Cadastrar Funcionário" : "Editar Funcionário"}
+        </ModalHeader>
+        <ModalBody style={formStyle}>
+          <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+            {({ values, setFieldValue }) => (
+              <Form style={formStyle}>
+                <Row form>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label htmlFor="nome">Nome</label>
                       <Field
-                        type="radio"
-                        name="tipo"
-                        value="terceirizado"
-                        className="form-check-input"
-                        style={checkboxStyle}
-                        checked={values.tipo === "terceirizado"}
-                        onChange={(e) => {
-                          setFieldValue("tipo", e.target.value);
-                          setFieldValue("status", funcionario?.status || "");
-                        }}
+                        type="text"
+                        name="nome"
+                        className="form-control"
+                        style={inputStyle}
+                        value={values.nome}
+                        onChange={(e) => setFieldValue("nome", e.target.value)}
                       />
-                      <label
-                        className="form-check-label"
-                        htmlFor="terceirizado"
+                    </div>
+                  </Col>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label htmlFor="cpf">CPF</label>
+                      <Field
+                        type="text"
+                        name="cpf"
+                        className="form-control"
+                        style={inputStyle}
+                        value={formatarCPF(values.cpf)}
+                        onChange={(e) => setFieldValue("cpf", e.target.value)}
+                      />
+                    </div>
+                  </Col>
+                </Row>
+                <Row form>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label htmlFor="sexo">Sexo</label>
+                      <Field
+                        as="select"
+                        name="sexo"
+                        className="form-control"
+                        style={inputStyle}
+                        value={values.sexo}
+                        onChange={(e) => setFieldValue("sexo", e.target.value)}
                       >
-                        Terceirizado
-                      </label>
+                        <option value="--">--</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Feminino">Feminino</option>
+                      </Field>
                     </div>
-                    <div>
+                  </Col>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label htmlFor="cargo">Cargo</label>
                       <Field
-                        type="radio"
-                        name="tipo"
-                        value="efetivo"
-                        className="form-check-input"
-                        style={checkboxStyle}
-                        checked={values.tipo === "efetivo"}
-                        onChange={(e) => {
-                          setFieldValue("tipo", e.target.value);
-                          setFieldValue(
-                            "dataContratacao",
-                            funcionario?.dataContratacao || ""
-                          );
-                          setFieldValue("status", funcionario?.status || "");
-                        }}
+                        type="text"
+                        name="cargo"
+                        className="form-control"
+                        style={inputStyle}
+                        value={values.cargo}
+                        onChange={(e) => setFieldValue("cargo", e.target.value)}
                       />
-                      <label className="form-check-label" htmlFor="efetivo">
-                        Efetivo
-                      </label>
                     </div>
-                  </div>
-                </Col>
-                {values.tipo === "efetivo" && (
-                  <>
-                    <Col md={6}>
-                      <div className="form-group">
-                        <label htmlFor="dataContratacao">
-                          Data de Contratação
-                        </label>
+                  </Col>
+                </Row>
+                <Row form>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label htmlFor="email">Email</label>
+                      <Field
+                        type="email"
+                        name="email"
+                        className="form-control"
+                        style={inputStyle}
+                        value={values.email}
+                        onChange={(e) => setFieldValue("email", e.target.value)}
+                      />
+                    </div>
+                  </Col>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label htmlFor="telefone">Telefone</label>
+                      <Field
+                        type="text"
+                        name="telefone"
+                        className="form-control"
+                        style={inputStyle}
+                        value={formatarTelefone(values.telefone)}
+                        onChange={(e) =>
+                          setFieldValue("telefone", e.target.value)
+                        }
+                      />
+                    </div>
+                  </Col>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label htmlFor="endereco">Endereço</label>
+                      <Field
+                        type="text"
+                        name="endereco"
+                        className="form-control"
+                        style={inputStyle}
+                        value={values.endereco}
+                        onChange={(e) =>
+                          setFieldValue("endereco", e.target.value)
+                        }
+                      />
+                    </div>
+                  </Col>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label htmlFor="dataContratacao">
+                        Data de Contratação
+                      </label>
+                      <Field
+                        type="date"
+                        name="dataContratacao"
+                        className="form-control"
+                        style={inputStyle}
+                        onChange={(e) =>
+                          setFieldValue("dataContratacao", e.target.value)
+                        }
+                      />
+                    </div>
+                  </Col>
+                </Row>
+                <Row form>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label htmlFor="tipo">Tipo</label>
+                      <div>
                         <Field
-                          type="date"
-                          name="dataContratacao"
-                          className="form-control"
-                          style={inputStyle}
+                          type="radio"
+                          name="tipo"
+                          value="Terceirizado"
+                          className="form-check-input"
+                          style={checkboxStyle}
+                          checked={values.tipo === "Terceirizado"}
+                          onChange={(e) => {
+                            setFieldValue("tipo", e.target.value);
+                            setFieldValue("status", funcionario?.status || "");
+                          }}
                         />
+                        <label
+                          className="form-check-label"
+                          htmlFor="terceirizado"
+                        >
+                          Terceirizado
+                        </label>
                       </div>
-                    </Col>
+                      <div>
+                        <Field
+                          type="radio"
+                          name="tipo"
+                          value="Efetivo"
+                          className="form-check-input"
+                          style={checkboxStyle}
+                          checked={values.tipo === "Efetivo"}
+                          onChange={(e) => {
+                            setFieldValue("tipo", e.target.value);
+                            setFieldValue("status", funcionario?.status || "");
+                          }}
+                        />
+                        <label className="form-check-label" htmlFor="efetivo">
+                          Efetivo
+                        </label>
+                      </div>
+                    </div>
+                  </Col>
+                  {values.tipo === "Efetivo" && (
+                    <>
+                      <Col md={6}>
+                        <div className="form-group">
+                          <label htmlFor="status">Status</label>
+                          <div>
+                            <Field
+                              type="radio"
+                              name="status"
+                              value="Contratado"
+                              className="form-check-input"
+                              style={checkboxStyle}
+                              checked={values.status === "Contratado"}
+                              onChange={(e) => {
+                                setFieldValue("status", e.target.value);
+                                if (e.target.value === "Demitido") {
+                                  setFieldValue("dataDemissao", "");
+                                }
+                              }}
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor="contratado"
+                            >
+                              Contratado
+                            </label>
+                          </div>
+                          <div>
+                            <Field
+                              type="radio"
+                              name="status"
+                              value="Demitido"
+                              className="form-check-input"
+                              style={checkboxStyle}
+                              checked={values.status === "Demitido"}
+                              onChange={(e) => {
+                                setFieldValue("status", e.target.value);
+                                if (e.target.value === "Demitido") {
+                                  setFieldValue("dataDemissao", "");
+                                }
+                              }}
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor="demitido"
+                            >
+                              Demitido
+                            </label>
+                          </div>
+                        </div>
+                      </Col>
+                      {values.status === "Demitido" && (
+                        <Col md={6}>
+                          <div className="form-group">
+                            <label htmlFor="dataDemissao">
+                              Data de Demissão
+                            </label>
+                            <Field
+                              type="date"
+                              name="dataDemissao"
+                              className="form-control"
+                              style={inputStyle}
+                              value={values.dataDemissao}
+                              onChange={(e) =>
+                                setFieldValue("dataDemissao", e.target.value)
+                              }
+                            />
+                          </div>
+                        </Col>
+                      )}
+                    </>
+                  )}
+                  {values.tipo === "Terceirizado" && (
                     <Col md={6}>
                       <div className="form-group">
                         <label htmlFor="status">Status</label>
@@ -226,118 +413,66 @@ const CadastrarFuncionariosModal = ({ visible, setVisible, funcionario }) => {
                           <Field
                             type="radio"
                             name="status"
-                            value="contratado"
+                            value="Em Atividade"
                             className="form-check-input"
                             style={checkboxStyle}
-                            checked={values.status === "contratado"}
-                            onChange={(e) => {
-                              setFieldValue("status", e.target.value);
-                              if (e.target.value === "demitido") {
-                                setFieldValue("dataDemissao", "");
-                              }
-                            }}
+                            checked={values.status === "Em Atividade"}
+                            onChange={(e) =>
+                              setFieldValue("status", e.target.value)
+                            }
                           />
                           <label
                             className="form-check-label"
-                            htmlFor="contratado"
+                            htmlFor="em atividade"
                           >
-                            Contratado
+                            Em Atividade
                           </label>
                         </div>
                         <div>
                           <Field
                             type="radio"
                             name="status"
-                            value="demitido"
+                            value="Inativo"
                             className="form-check-input"
                             style={checkboxStyle}
-                            checked={values.status === "demitido"}
-                            onChange={(e) => {
-                              setFieldValue("status", e.target.value);
-                              if (e.target.value === "demitido") {
-                                setFieldValue("dataDemissao", "");
-                              }
-                            }}
+                            checked={values.status === "Inativo"}
+                            onChange={(e) =>
+                              setFieldValue("status", e.target.value)
+                            }
                           />
-                          <label
-                            className="form-check-label"
-                            htmlFor="demitido"
-                          >
-                            Demitido
+                          <label className="form-check-label" htmlFor="inativo">
+                            Inativo
                           </label>
                         </div>
                       </div>
                     </Col>
-                    {values.status === "demitido" && (
-                      <Col md={6}>
-                        <div className="form-group">
-                          <label htmlFor="dataDemissao">Data de Demissão</label>
-                          <Field
-                            type="date"
-                            name="dataDemissao"
-                            className="form-control"
-                            style={inputStyle}
-                          />
-                        </div>
-                      </Col>
-                    )}
-                  </>
-                )}
-                {values.tipo === "terceirizado" && (
-                  <Col md={6}>
-                    <div className="form-group">
-                      <label htmlFor="status">Status</label>
-                      <div>
-                        <Field
-                          type="radio"
-                          name="status"
-                          value="em atividade"
-                          className="form-check-input"
-                          style={checkboxStyle}
-                          checked={values.status === "em atividade"}
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="em atividade"
-                        >
-                          Em Atividade
-                        </label>
-                      </div>
-                      <div>
-                        <Field
-                          type="radio"
-                          name="status"
-                          value="inativo"
-                          className="form-check-input"
-                          style={checkboxStyle}
-                          checked={values.status === "inativo"}
-                        />
-                        <label className="form-check-label" htmlFor="inativo">
-                          Inativo
-                        </label>
-                      </div>
-                    </div>
-                  </Col>
-                )}
-              </Row>
-            </Form>
-          )}
-        </Formik>
-      </ModalBody>
-      <ModalFooter style={modalStyle}>
-        <Button color="secondary" onClick={toggleModal} style={buttonStyle}>
-          Fechar
-        </Button>
-        <Button
-          color="primary"
-          type="submit"
-          form="form"
-          style={saveButtonStyle}
-        >
-          Salvar
-        </Button>
-      </ModalFooter>
-    </Modal>
+                  )}
+                </Row>
+                <ModalFooter style={modalStyle}>
+                  <Button
+                    color="secondary"
+                    onClick={toggleModal}
+                    style={buttonStyle}
+                  >
+                    Fechar
+                  </Button>
+                  <Button color="primary" type="submit" style={saveButtonStyle}>
+                    {loading ? <Spinner size="sm" color="light" /> : "Salvar"}
+                  </Button>
+                </ModalFooter>
+              </Form>
+            )}
+          </Formik>
+        </ModalBody>
+      </Modal>
+
+      <ConfirmacaoModal
+        visible={confirmacaoVisible.visible}
+        setVisible={setConfirmacaoVisible}
+        mensagem={confirmacaoVisible.mensagem}
+        sucesso={confirmacaoVisible.sucesso}
+      />
+    </>
   );
 };
 

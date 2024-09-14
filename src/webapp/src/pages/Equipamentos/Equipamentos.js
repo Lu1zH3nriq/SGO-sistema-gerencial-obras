@@ -30,12 +30,16 @@ import {
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
+import { Spinner } from "reactstrap";
 import CadastrarEquipamentoModal from "components/Equipamentos/CadastrarEquipamentoModal.js";
 import DeleteEquipamentoModal from "components/Equipamentos/DeleteEquipamentoModal.js";
-import ListaEquipamentos from "./ListaEquipamentos.js";
+import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
+import axios from "axios";
 
 const Equipamentos = () => {
-  const equipamentos = ListaEquipamentos;
+  const URL_API = process.env.REACT_APP_URL_API;
+  const [equipamentos, setEquipamentos] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [state] = useUIContextController();
   const { darkMode } = state;
   const [expanded, setExpanded] = useState(null);
@@ -50,6 +54,34 @@ const Equipamentos = () => {
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [searchContract, setSearchContract] = useState("");
+  const [confirmacaoModal, setConfirmacaoModal] = useState({
+    visible: false,
+    mensagem: "",
+    suceso: false,
+  });
+
+  const getEquipamentos = async () => {
+    setLoading(true);
+    axios
+      .get(`${URL_API}/api/equipamentos/equipamentos`)
+      .then((response) => {
+        setEquipamentos(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setConfirmacaoModal({
+          visible: true,
+          mensagem: "Erro ao buscar equipamentos",
+          sucesso: false,
+        });
+        console.log(error);
+        setLoading(false);
+      });
+  };
+
+  React.useEffect(() => {
+    getEquipamentos();
+  }, []);
 
   // Estado para paginação
   const [currentPage, setCurrentPage] = useState(1);
@@ -210,112 +242,125 @@ const Equipamentos = () => {
           </Row>
 
           {/* Lista de Cards */}
-          <Container fluid style={{ maxWidth: "80%", marginTop: "5%" }}>
-            {currentItems.length > 0 ? (
-              currentItems.map((equipamento, index) => (
-                <Box key={index} sx={{ width: "100%", mb: 2 }}>
-                  <Card style={cardStyle}>
-                    <CardContent
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Box>
-                        <Typography
-                          variant="h6"
-                          style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                        >
-                          {equipamento.nome}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                        >
-                          Cliente: {equipamento.cliente}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                        >
-                          Data Início: {equipamento.dataInicio}
-                        </Typography>
-                      </Box>
-                      <IconButton
-                        onClick={() => handleExpandClick(index)}
-                        style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+          {loading ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "start",
+                height: "100vh",
+              }}
+            >
+              <Spinner color="secondary" />
+            </Box>
+          ) : (
+            <Container fluid style={{ maxWidth: "80%", marginTop: "5%" }}>
+              {currentItems.length > 0 ? (
+                currentItems.map((equipamento, index) => (
+                  <Box key={index} sx={{ width: "100%", mb: 2 }}>
+                    <Card style={cardStyle}>
+                      <CardContent
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
                       >
-                        {expanded === index ? (
-                          <FaChevronUp />
-                        ) : (
-                          <FaChevronDown />
-                        )}
-                      </IconButton>
-                    </CardContent>
-                    <Collapse
-                      in={expanded === index}
-                      timeout="auto"
-                      unmountOnExit
-                    >
-                      <CardContent>
-                        <Typography
-                          variant="body2"
+                        <Box>
+                          <Typography
+                            variant="h6"
+                            style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                          >
+                            {equipamento.nome}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                          >
+                            Cliente: {equipamento.cliente}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                          >
+                            Data Início: {equipamento.dataInicio}
+                          </Typography>
+                        </Box>
+                        <IconButton
+                          onClick={() => handleExpandClick(index)}
                           style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
                         >
-                          Descrição: {equipamento.descricao}
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            marginTop: "10px",
-                          }}
-                        >
-                          <FaEdit
-                            style={{
-                              cursor: "pointer",
-                              marginRight: "10px",
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                            }}
-                            onClick={() => {
-                              editarEquipamento(equipamento);
-                            }}
-                            size={20}
-                            title="Editar"
-                          />
-                          <FaTrash
-                            style={{
-                              cursor: "pointer",
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                            }}
-                            size={20}
-                            title="Excluir"
-                            onClick={() => {
-                              deleteEquipamento(equipamento);
-                            }}
-                          />
-                        </Box>
+                          {expanded === index ? (
+                            <FaChevronUp />
+                          ) : (
+                            <FaChevronDown />
+                          )}
+                        </IconButton>
                       </CardContent>
-                    </Collapse>
-                  </Card>
-                </Box>
-              ))
-            ) : (
-              <Typography
-                variant="h6"
-                style={{
-                  color: darkMode ? "#FFFFFF" : "#343A40",
-                  textAlign: "center",
-                }}
-              >
-                Sem equipamentos cadastrados para este cliente
-              </Typography>
-            )}
-          </Container>
+                      <Collapse
+                        in={expanded === index}
+                        timeout="auto"
+                        unmountOnExit
+                      >
+                        <CardContent>
+                          <Typography
+                            variant="body2"
+                            style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                          >
+                            Descrição: {equipamento.descricao}
+                          </Typography>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              marginTop: "10px",
+                            }}
+                          >
+                            <FaEdit
+                              style={{
+                                cursor: "pointer",
+                                marginRight: "10px",
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                              }}
+                              onClick={() => {
+                                editarEquipamento(equipamento);
+                              }}
+                              size={20}
+                              title="Editar"
+                            />
+                            <FaTrash
+                              style={{
+                                cursor: "pointer",
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                              }}
+                              size={20}
+                              title="Excluir"
+                              onClick={() => {
+                                deleteEquipamento(equipamento);
+                              }}
+                            />
+                          </Box>
+                        </CardContent>
+                      </Collapse>
+                    </Card>
+                  </Box>
+                ))
+              ) : (
+                <Typography
+                  variant="h6"
+                  style={{
+                    color: darkMode ? "#FFFFFF" : "#343A40",
+                    textAlign: "center",
+                  }}
+                >
+                  Nenhum equipamento encontrado
+                </Typography>
+              )}
+            </Container>
+          )}
 
           {/* Botões de navegação */}
           <Box
@@ -368,6 +413,7 @@ const Equipamentos = () => {
           visible={viewCadastrarEquipamentoModal.visible}
           setVisible={setViewCadastrarEquipamentoModal}
           equipamento={viewCadastrarEquipamentoModal.equipamento}
+          getEquipamentos={getEquipamentos}
         />
 
         {/* Modal para excluir equipamento */}
@@ -377,8 +423,19 @@ const Equipamentos = () => {
             setViewDeleteEquipamentoModal({ visible: false, equipamento: null })
           }
           equipamento={viewDeleteEquipamentoModal.equipamento}
+          getEquipamentos={getEquipamentos}
         />
       </Box>
+
+      {/* Modal de confirmação */}
+      <ConfirmacaoModal
+        visible={confirmacaoModal.visible}
+        setVisible={() =>
+          setConfirmacaoModal({ visible: false, mensagem: "", sucesso: false })
+        }
+        mensagem={confirmacaoModal.mensagem}
+        sucesso={confirmacaoModal.sucesso}
+      />
     </Layout>
   );
 };

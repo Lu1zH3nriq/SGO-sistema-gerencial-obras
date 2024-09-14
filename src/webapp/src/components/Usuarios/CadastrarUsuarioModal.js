@@ -316,7 +316,7 @@ const CadastrarUsuarioModal = ({
                     Fechar
                   </Button>
                   <Button color="primary" type="submit" style={saveButtonStyle}>
-                    {loading ? <Spinner color="light" /> : "Salvar"}
+                    {loading ? <Spinner color="light" size="sm"/> : "Salvar"}
                   </Button>
                 </ModalFooter>
               </Form>

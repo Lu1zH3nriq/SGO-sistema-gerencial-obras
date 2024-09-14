@@ -20,9 +20,9 @@ sequenceDiagram
     Frontend-->>User: Redireciona para a aplicação
     User->>Frontend: Navegação entre as páginas
     Frontend->>Frontend: Valida o tipo de usuário em cada navegação
-    Frontend->>Backend: Envia solicitações por tipo de usuário
+    Frontend->>Backend: Envia solicitações HTTP/HTTPS (GET, POST, PUT, DELETE)
     Backend->>Backend: Executa operações por tipo de usuário
-    Backend->>DataBase: Realiza buscas (GET, POST, PUT, DELETE)
+    Backend->>DataBase: Realiza buscas
     DataBase-->>Backend: Retorna resultado das operações
     Backend-->>Frontend: Retorna resultado das operações
     Frontend-->>User: Exibe mensagem de sucesso ou erro

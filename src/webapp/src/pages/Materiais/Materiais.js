@@ -2,7 +2,7 @@ import React from "react";
 import { Typography, Box } from "@mui/material";
 import Layout from "../../components/layout/Layout.js";
 import { useUIContextController } from "../../context/index.js";
-import { Container, Row, Col, Button, Input, Table } from "reactstrap";
+import { Container, Row, Col, Button, Input, Table, Spinner } from "reactstrap";
 import {
   FaPlus,
   FaSearch,
@@ -11,13 +11,46 @@ import {
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
-import ListaMateriais from "./ListaMateriais.js"; // Importar a lista de materiais
 import CadastrarMaterialModal from "components/Materiais/CadastrarMaterialModal.js";
 import DeleteMaterialModal from "components/Materiais/DeleteMaterialModal.js";
+import axios from "axios";
+import { formatarData } from "../../components/utils/utilsMask.js";
+import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
 
 const Materiais = () => {
+  const URL_API = process.env.REACT_APP_URL_API;
+  const [ListaMateriais, setListaMateriais] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
   const [state] = useUIContextController();
   const { darkMode } = state;
+  const [confirmacaoModal, setConfirmacaoModal] = React.useState({
+    visible: false,
+    mensagem: "",
+    sucesso: false,
+  });
+
+  const getMaterials = async () => {
+    setLoading(true);
+    axios
+      .get(`${URL_API}/api/materiais/materiais`)
+      .then((response) => {
+        setListaMateriais(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.error(error);
+        setConfirmacaoModal({
+          visible: true,
+          mensagem: "Erro ao buscar materiais.",
+          sucesso: false,
+        });
+      });
+  };
+
+  React.useEffect(() => {
+    getMaterials();
+  }, []);
 
   const [modalVisible, setModalVisible] = React.useState({
     visible: false,
@@ -46,12 +79,18 @@ const Materiais = () => {
 
   const tableHeaderStyle = {
     textAlign: "center",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   };
 
   const tableCellStyle = {
     textAlign: "center",
-    padding: "1%",
     backgroundColor: darkMode ? "#676767" : "#f0f0f0",
+    padding: "0.5rem",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   };
 
   const cadastrarMaterial = () => {
@@ -164,8 +203,19 @@ const Materiais = () => {
             </Col>
           </Row>
 
-          <Container fluid style={{ maxWidth: "100%", marginTop: "5%" }}>
-            {/* Tabela */}
+          {/* Tabela */}
+          {loading ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "start",
+                height: "100vh",
+              }}
+            >
+              <Spinner color="secondary" />
+            </Box>
+          ) : (
             <Table
               responsive
               size="sm"
@@ -196,15 +246,17 @@ const Materiais = () => {
                       <td style={tableCellStyle}>
                         {material.principalFornecedor || "--"}
                       </td>
-                      <td style={tableCellStyle}>{material.unidade || "--"}</td>
                       <td style={tableCellStyle}>
-                        {material.dataUltCompra || "--"}
+                        {material.unidadeMedida || "--"}
                       </td>
                       <td style={tableCellStyle}>
-                        {material.validade || "--"}
+                        {formatarData(material?.dataUltimaCompra) || "--"}
                       </td>
                       <td style={tableCellStyle}>
-                        {material.notaFiscal || "--"}
+                        {formatarData(material?.dataValidade) || "--"}
+                      </td>
+                      <td style={tableCellStyle}>
+                        {material.numeroNotaFiscal || "--"}
                       </td>
                       <td>
                         <div
@@ -244,56 +296,56 @@ const Materiais = () => {
                         color: darkMode ? "#FFFFFF" : "#343A40",
                       }}
                     >
-                      Material não encontrado.
+                      Nenhum material encontrado
                     </td>
                   </tr>
                 )}
               </tbody>
             </Table>
-            {/* Botões de navegação */}
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                paddingTop: "2%",
-                paddingBottom: "2%",
-                alignItems: "center",
+          )}
+          {/* Botões de navegação */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              paddingTop: "2%",
+              paddingBottom: "2%",
+              alignItems: "center",
+            }}
+          >
+            <Button
+              variant="secondary"
+              style={{ ...buttonStyle, marginRight: "5px" }}
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              size="sm"
+            >
+              <FaChevronLeft size={10} />
+            </Button>
+            <Typography
+              variant="subtitle1"
+              style={{
+                color: darkMode ? "#FFFFFF" : "#343A40",
+                padding: "0% 1% 0% 1%",
               }}
             >
-              <Button
-                variant="secondary"
-                style={{ ...buttonStyle, marginRight: "5px" }}
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                size="sm"
-              >
-                <FaChevronLeft size={10} />
-              </Button>
-              <Typography
-                variant="subtitle1"
-                style={{
-                  color: darkMode ? "#FFFFFF" : "#343A40",
-                  padding: "0% 1% 0% 1%",
-                }}
-              >
-                Página {currentPage} de{" "}
-                {Math.ceil(filteredMateriais.length / itemsPerPage)} (Total:{" "}
-                {filteredMateriais.length} materiais)
-              </Typography>
-              <Button
-                variant="secondary"
-                style={{ ...buttonStyle, marginLeft: "5px" }}
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={
-                  currentPage ===
-                  Math.ceil(filteredMateriais.length / itemsPerPage)
-                }
-                size="sm"
-              >
-                <FaChevronRight size={10} />
-              </Button>
-            </Box>
-          </Container>
+              Página {currentPage} de{" "}
+              {Math.ceil(filteredMateriais.length / itemsPerPage)} (Total:{" "}
+              {filteredMateriais.length} materiais)
+            </Typography>
+            <Button
+              variant="secondary"
+              style={{ ...buttonStyle, marginLeft: "5px" }}
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={
+                currentPage ===
+                Math.ceil(filteredMateriais.length / itemsPerPage)
+              }
+              size="sm"
+            >
+              <FaChevronRight size={10} />
+            </Button>
+          </Box>
         </Container>
       </Box>
 
@@ -301,6 +353,7 @@ const Materiais = () => {
         visible={modalVisible.visible}
         setVisible={() => setModalVisible({ visible: false, material: null })}
         material={modalVisible.material}
+        getMaterials={getMaterials}
       />
 
       <DeleteMaterialModal
@@ -309,6 +362,21 @@ const Materiais = () => {
           setDeleteMaterialModal({ visible: false, material: null })
         }
         material={deleteMaterialModal.material}
+        getMaterials={getMaterials}
+      />
+
+      <ConfirmacaoModal
+        visible={confirmacaoModal.visible}
+        setVisible={() =>
+          setConfirmacaoModal({
+            visible: false,
+            mensagem: "",
+            sucesso: false,
+          })
+        }
+        mensagem={confirmacaoModal.mensagem}
+        sucesso={confirmacaoModal.sucesso}
+        getMaterials={getMaterials}
       />
     </Layout>
   );
