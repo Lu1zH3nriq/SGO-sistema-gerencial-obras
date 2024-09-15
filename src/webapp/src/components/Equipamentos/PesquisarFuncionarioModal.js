@@ -30,11 +30,14 @@ const PesquisarFuncionarioModal = ({
     mensagem: "",
     sucesso: false,
   });
+  const [searchValues, setSearchValues] = useState({ nome: "", email: "", cpf: "" });
 
-  const handleSearch = (values) => {
+  const handleSearch = () => {
     setLoading(true);
     axios
-      .get(`${URL_API}/obras`)
+      .get(`${URL_API}/api/funcionarios/buscaFuncionarioQuery`, {
+        params: searchValues,
+      })
       .then((response) => {
         setResultados(response.data || []);
       })
@@ -50,6 +53,8 @@ const PesquisarFuncionarioModal = ({
 
   const handleSelect = (funcionario) => {
     onSelectFuncionario(funcionario);
+    setSearchValues({ nome: "", email: "", cpf: "" });
+    setResultados([]);
     setVisible(false);
   };
 
@@ -84,9 +89,9 @@ const PesquisarFuncionarioModal = ({
   };
 
   const tableCellStyle = {
-    textAlign: "center",
+    textAlign: "start",
     backgroundColor: darkMode ? "#676767" : "#f0f0f0",
-    padding: "0.5rem",
+    padding: "0.3rem 1rem 0.3rem 1rem",
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -95,7 +100,7 @@ const PesquisarFuncionarioModal = ({
   return (
     <>
       <Modal
-        size="lg"
+        size="xl"
         isOpen={visible}
         toggle={() => setVisible(false)}
         centered
@@ -107,10 +112,10 @@ const PesquisarFuncionarioModal = ({
           style={{ backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF" }}
         >
           <Formik
-            initialValues={{ nome: "", email: "", cpf: "" }}
+            initialValues={searchValues}
             onSubmit={handleSearch}
           >
-            {(setFieldValues, values) => (
+            {() => (
               <Form style={modalStyle}>
                 <Row form>
                   <Col md={4}>
@@ -121,7 +126,10 @@ const PesquisarFuncionarioModal = ({
                         name="nome"
                         className="form-control"
                         style={inputStyle}
-                        onChange={(e) => {setFieldValues("nome", e.target.value);}}
+                        onChange={(e) => {
+                          setSearchValues({ ...searchValues, nome: e.target.value });
+                        }}
+                        value={searchValues.nome}
                       />
                     </div>
                   </Col>
@@ -134,8 +142,9 @@ const PesquisarFuncionarioModal = ({
                         className="form-control"
                         style={inputStyle}
                         onChange={(e) => {
-                          setFieldValues("email", e.target.value);
+                          setSearchValues({ ...searchValues, email: e.target.value });
                         }}
+                        value={searchValues.email}
                       />
                     </div>
                   </Col>
@@ -148,8 +157,9 @@ const PesquisarFuncionarioModal = ({
                         className="form-control"
                         style={inputStyle}
                         onChange={(e) => {
-                          setFieldValues("cpf", e.target.value);
+                          setSearchValues({ ...searchValues, cpf: e.target.value });
                         }}
+                        value={searchValues.cpf}
                       />
                     </div>
                   </Col>
@@ -184,7 +194,7 @@ const PesquisarFuncionarioModal = ({
               <tr>
                 <th style={tableHeaderStyle}>Nome</th>
                 <th style={tableHeaderStyle}>Email</th>
-                <th style={tableHeaderStyle}>Contrato</th>
+                <th style={tableHeaderStyle}>Cpf</th>
                 <th style={{ ...tableHeaderStyle, textAlign: "center" }}>
                   Ações
                 </th>
@@ -192,11 +202,11 @@ const PesquisarFuncionarioModal = ({
             </thead>
             <tbody>
               {resultados.length > 0 ? (
-                resultados.map((obra, index) => (
+                resultados.map((funcionario, index) => (
                   <tr key={index}>
-                    <td style={tableCellStyle}>{obra.nome || "--"}</td>
-                    <td style={tableCellStyle}>{obra.cliente || "--"}</td>
-                    <td style={tableCellStyle}>{obra.contrato || "--"}</td>
+                    <td style={tableCellStyle}>{funcionario.nome || "--"}</td>
+                    <td style={tableCellStyle}>{funcionario.email || "--"}</td>
+                    <td style={tableCellStyle}>{funcionario.cpf || "--"}</td>
                     <td>
                       <div
                         style={{
@@ -206,7 +216,7 @@ const PesquisarFuncionarioModal = ({
                         <Button
                           color="primary"
                           size="sm"
-                          onClick={() => handleSelect(obra)}
+                          onClick={() => handleSelect(funcionario)}
                         >
                           Selecionar
                         </Button>

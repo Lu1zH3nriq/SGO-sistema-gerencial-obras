@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   Box,
@@ -9,17 +9,7 @@ import {
 } from "@mui/material";
 import Layout from "../../components/layout/Layout.js";
 import { useUIContextController } from "../../context/index.js";
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  FormControl,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "react-bootstrap";
+import { Container, Row, Col, Button, FormControl } from "react-bootstrap";
 import {
   FaPlus,
   FaSearch,
@@ -35,11 +25,13 @@ import CadastrarEquipamentoModal from "components/Equipamentos/CadastrarEquipame
 import DeleteEquipamentoModal from "components/Equipamentos/DeleteEquipamentoModal.js";
 import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
 import axios from "axios";
+import { formatarData } from "components/utils/utilsMask.js";
 
 const Equipamentos = () => {
   const URL_API = process.env.REACT_APP_URL_API;
   const [equipamentos, setEquipamentos] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingUso, setLoadingUso] = useState(false);
   const [state] = useUIContextController();
   const { darkMode } = state;
   const [expanded, setExpanded] = useState(null);
@@ -57,29 +49,32 @@ const Equipamentos = () => {
   const [confirmacaoModal, setConfirmacaoModal] = useState({
     visible: false,
     mensagem: "",
-    suceso: false,
+    sucesso: false,
   });
+
+  const [obraSelecionada, setObraSelecionada] = useState(null);
+  const [funcionarioSelecionado, setFuncionarioSelecionado] = useState(null);
 
   const getEquipamentos = async () => {
     setLoading(true);
-    axios
-      .get(`${URL_API}/api/equipamentos/equipamentos`)
-      .then((response) => {
-        setEquipamentos(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setConfirmacaoModal({
-          visible: true,
-          mensagem: "Erro ao buscar equipamentos",
-          sucesso: false,
-        });
-        console.log(error);
-        setLoading(false);
+    try {
+      const response = await axios.get(
+        `${URL_API}/api/equipamentos/equipamentos`
+      );
+      setEquipamentos(response.data);
+    } catch (error) {
+      setConfirmacaoModal({
+        visible: true,
+        mensagem: "Erro ao buscar equipamentos",
+        sucesso: false,
       });
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getEquipamentos();
   }, []);
 
@@ -145,11 +140,11 @@ const Equipamentos = () => {
   };
 
   const paginationStyle = {
-    fontSize: "0.875rem", // Tamanho menor para o texto
+    fontSize: "0.875rem",
   };
 
   const iconStyle = {
-    fontSize: "1rem", // Tamanho menor para os ícones
+    fontSize: "1rem",
   };
 
   const cadastrarEquipamento = () => {
@@ -171,6 +166,40 @@ const Equipamentos = () => {
       visible: true,
       equipamento: equipamento,
     });
+  };
+
+  const equipamentoEmUso = async (equipamento) => {
+    setLoadingUso(true);
+    if (equipamento.status !== "Em uso") {
+      setObraSelecionada(null);
+      setFuncionarioSelecionado(null);
+      return;
+    }
+    if (equipamento.obraId) {
+      axios
+        .get(`${URL_API}/api/obras/obra?id=${equipamento.obraId}`)
+        .then((response) => {
+          setObraSelecionada(response.data || null);
+          setLoadingUso(false);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else if (equipamento.funcionarioId) {
+      axios
+        .get(
+          `${URL_API}/api/funcionarios/funcionario?id=${equipamento.funcionarioId}`
+        )
+        .then((response) => {
+          setFuncionarioSelecionado(response.data || null);
+          setLoadingUso(false);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+
+    setLoadingUso(false);
   };
 
   return (
@@ -269,27 +298,65 @@ const Equipamentos = () => {
                         <Box>
                           <Typography
                             variant="h6"
-                            style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                            style={{
+                              color: darkMode ? "#FFFFFF" : "#343A40",
+                            }}
                           >
                             {equipamento.nome}
                           </Typography>
                           <Typography
                             variant="body2"
                             color="textSecondary"
-                            style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                            style={{
+                              color: darkMode ? "#FFFFFF" : "#343A40",
+                            }}
                           >
-                            Cliente: {equipamento.cliente}
+                            Identificador: {equipamento.identificador}
+                          </Typography>
+                        </Box>
+                        <Box>
+                          <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            style={{
+                              color: darkMode ? "#FFFFFF" : "#343A40",
+                            }}
+                          >
+                            Status do Equipamento
                           </Typography>
                           <Typography
                             variant="body2"
                             color="textSecondary"
-                            style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                            style={{
+                              color: darkMode ? "#FFFFFF" : "#343A40",
+                            }}
                           >
-                            Data Início: {equipamento.dataInicio}
+                            {equipamento.status === "Disponível" ? (
+                              <span
+                                style={{ color: "green", fontWeight: "bold" }}
+                              >
+                                {equipamento.status}
+                              </span>
+                            ) : equipamento.status === "Em uso" ? (
+                              <span
+                                style={{ color: "red", fontWeight: "bold" }}
+                              >
+                                {equipamento.status}
+                              </span>
+                            ) : equipamento.status === "Manutenção" ? (
+                              <span
+                                style={{ color: "#FFA500", fontWeight: "bold" }}
+                              >
+                                {equipamento.status}
+                              </span>
+                            ) : null}
                           </Typography>
                         </Box>
                         <IconButton
-                          onClick={() => handleExpandClick(index)}
+                          onClick={() => {
+                            handleExpandClick(index);
+                            equipamentoEmUso(equipamento);
+                          }}
                           style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
                         >
                           {expanded === index ? (
@@ -305,12 +372,90 @@ const Equipamentos = () => {
                         unmountOnExit
                       >
                         <CardContent>
-                          <Typography
-                            variant="body2"
-                            style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-center",
+                              alignItems: "center",
+                              paddingBottom: "10px",
+                            }}
                           >
-                            Descrição: {equipamento.descricao}
-                          </Typography>
+                            <Box
+                              sx={{
+                                width: "48%",
+                              }}
+                            >
+                              <Typography
+                                variant="body2"
+                                color="textSecondary"
+                                style={{
+                                  color: darkMode ? "#FFFFFF" : "#343A40",
+                                }}
+                              >
+                                Data Cadastro:{" "}
+                                {formatarData(equipamento.dataCadastro)}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                color="textSecondary"
+                                style={{
+                                  color: darkMode ? "#FFFFFF" : "#343A40",
+                                }}
+                              >
+                                Peso: {equipamento.peso}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                color="textSecondary"
+                                style={{
+                                  color: darkMode ? "#FFFFFF" : "#343A40",
+                                }}
+                              >
+                                Derivado: {equipamento.derivado}
+                              </Typography>
+                            </Box>
+
+                            {equipamento.status === "Em uso" &&
+                              (loadingUso ? (
+                                <Spinner color="light" size="sm" />
+                              ) : (
+                                <Box>
+                                  <Typography
+                                    variant="body2"
+                                    color="textSecondary"
+                                    style={{
+                                      color: darkMode ? "#FFFFFF" : "#343A40",
+                                    }}
+                                  >
+                                    Data Alocação:{" "}
+                                    {equipamento.dataAlocacao
+                                      ? formatarData(equipamento.dataAlocacao)
+                                      : "Não alocado"}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    color="textSecondary"
+                                    style={{
+                                      color: darkMode ? "#FFFFFF" : "#343A40",
+                                    }}
+                                  >
+                                    Obra :{" "}
+                                    {obraSelecionada?.nome || "Não alocado"}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    color="textSecondary"
+                                    style={{
+                                      color: darkMode ? "#FFFFFF" : "#343A40",
+                                    }}
+                                  >
+                                    Responsável:{" "}
+                                    {funcionarioSelecionado?.nome ||
+                                      "Não alocado"}
+                                  </Typography>
+                                </Box>
+                              ))}
+                          </Box>
                           <Box
                             sx={{
                               display: "flex",

@@ -85,9 +85,9 @@ const Materiais = () => {
   };
 
   const tableCellStyle = {
-    textAlign: "center",
+    textAlign: "start",
     backgroundColor: darkMode ? "#676767" : "#f0f0f0",
-    padding: "0.5rem",
+    padding: "0.3rem 1rem 0.3rem 1rem",
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
