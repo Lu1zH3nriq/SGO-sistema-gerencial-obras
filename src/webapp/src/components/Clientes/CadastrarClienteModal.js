@@ -26,7 +26,7 @@ const CadastrarClienteModal = ({
   visible = false,
   setVisible,
   cliente = null,
-  getClientes = () => {},
+  getClientes,
 }) => {
   const URL_API = process.env.REACT_APP_URL_API;
 
@@ -121,7 +121,7 @@ const CadastrarClienteModal = ({
   };
 
   const saveButtonStyle = {
-    backgroundColor: "#47FF63",
+    backgroundColor: "#1ED760",
     color: "#FFFFFF",
     border: "none",
   };

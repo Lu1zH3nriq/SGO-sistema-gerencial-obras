@@ -143,17 +143,8 @@ const CadastrarEquipamentoModal = ({
     marginBottom: "10px", // Espaçamento vertical entre os inputs
   };
 
-  const datePickerStyle = {
-    backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
-    color: darkMode ? "#FFFFFF" : "#000000",
-    border: "1px solid #ced4da",
-    borderRadius: ".25rem",
-    width: "100%",
-    padding: ".375rem .75rem",
-  };
-
   const saveButtonStyle = {
-    backgroundColor: "#47FF63",
+    backgroundColor: "#1ED760",
     color: "#FFFFFF",
     border: "none",
   };

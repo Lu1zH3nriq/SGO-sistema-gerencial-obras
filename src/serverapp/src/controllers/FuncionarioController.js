@@ -1,4 +1,5 @@
 const { Funcionario } = require('../models');
+const { Op } = require('sequelize');
 
 const FuncionarioController = {
   async createFuncionario(req, res) {
@@ -65,30 +66,30 @@ const FuncionarioController = {
 
   async buscaFuncionarioQuery(req, res) {
     try {
-      const { nome, email, cpf } = req.query;
-      const where = {};
+        const { nome, email, cpf } = req.query;
+        const where = {};
 
-      if (nome) {
-        where.nome = nome;
-      }
-      if (email) {
-        where.email = email;
-      }
-      if (cpf) {
-        where.cpf = cpf;
-      }
+        if (nome) {
+            where.nome = { [Op.like]: `%${nome}%` };
+        }
+        if (email) {
+            where.email = email;
+        }
+        if (cpf) {
+            where.cpf = cpf;
+        }
 
-      const funcionario = await Funcionario.findAll({ where });
+        const funcionario = await Funcionario.findAll({ where });
 
-      if (funcionario.length > 0) {
-        res.status(200).json(funcionario);
-      } else {
-        res.status(404).json({ error: "Nenhum funcionario encontrado" });
-      }
+        if (funcionario.length > 0) {
+            res.status(200).json(funcionario);
+        } else {
+            res.status(404).json({ error: "Nenhum funcionario encontrado" });
+        }
     } catch (error) {
-      res.status(400).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
-  },
+}
 };
 
 module.exports = FuncionarioController;

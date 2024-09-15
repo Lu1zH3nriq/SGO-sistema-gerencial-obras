@@ -128,7 +128,7 @@ const CadastrarMaterialModal = ({
   };
 
   const saveButtonStyle = {
-    backgroundColor: "#47FF63",
+    backgroundColor: "#1ED760",
     color: "#FFFFFF",
     border: "none",
   };

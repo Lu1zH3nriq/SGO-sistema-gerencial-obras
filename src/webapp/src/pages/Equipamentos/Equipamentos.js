@@ -202,6 +202,14 @@ const Equipamentos = () => {
     setLoadingUso(false);
   };
 
+  React.useEffect(() => {
+    equipamentos.map((equipamento) => {
+      if (equipamento.status === "Em uso") {
+        equipamentoEmUso(equipamento);
+      }
+    });
+  }, [equipamentos]);
+
   return (
     <Layout rotaAtual="Equipamentos">
       <Box

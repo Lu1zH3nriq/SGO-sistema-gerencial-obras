@@ -14,6 +14,8 @@ import { Formik, Form, Field } from "formik";
 import { useUIContextController } from "../../context/index.js";
 import axios from "axios";
 import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
+import { formatarCPF, removerFormatacaoCPF } from "../utils/utilsMask.js";
+import { FaCheckSquare } from "react-icons/fa";
 
 const PesquisarFuncionarioModal = ({
   visible,
@@ -30,13 +32,23 @@ const PesquisarFuncionarioModal = ({
     mensagem: "",
     sucesso: false,
   });
-  const [searchValues, setSearchValues] = useState({ nome: "", email: "", cpf: "" });
+  const [searchValues, setSearchValues] = useState({
+    nome: "",
+    email: "",
+    cpf: "",
+  });
+  const [erroCPF, setErroCPF] = React.useState("");
 
   const handleSearch = () => {
     setLoading(true);
+
     axios
       .get(`${URL_API}/api/funcionarios/buscaFuncionarioQuery`, {
-        params: searchValues,
+        params: {
+          nome: searchValues.nome,
+          email: searchValues.email,
+          cpf: removerFormatacaoCPF(searchValues.cpf),
+        },
       })
       .then((response) => {
         setResultados(response.data || []);
@@ -67,8 +79,8 @@ const PesquisarFuncionarioModal = ({
   };
 
   const buttonStyle = {
-    backgroundColor: darkMode ? "#676767" : "#CECFCB",
-    color: darkMode ? "#FFFFFF" : "#343A40",
+    backgroundColor: darkMode ? "#424242" : "#7A7A7A",
+    color: darkMode ? "#FFFFFF" : "#FFFFFF",
     border: "none",
   };
 
@@ -79,7 +91,7 @@ const PesquisarFuncionarioModal = ({
   };
 
   const saveButtonStyle = {
-    backgroundColor: "#47FF63",
+    backgroundColor: darkMode ? '#424242':  "#7A7A7A",
     color: "#FFFFFF",
     border: "none",
   };
@@ -111,10 +123,7 @@ const PesquisarFuncionarioModal = ({
         <ModalBody
           style={{ backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF" }}
         >
-          <Formik
-            initialValues={searchValues}
-            onSubmit={handleSearch}
-          >
+          <Formik initialValues={searchValues} onSubmit={handleSearch}>
             {() => (
               <Form style={modalStyle}>
                 <Row form>
@@ -127,7 +136,10 @@ const PesquisarFuncionarioModal = ({
                         className="form-control"
                         style={inputStyle}
                         onChange={(e) => {
-                          setSearchValues({ ...searchValues, nome: e.target.value });
+                          setSearchValues({
+                            ...searchValues,
+                            nome: e.target.value,
+                          });
                         }}
                         value={searchValues.nome}
                       />
@@ -142,7 +154,10 @@ const PesquisarFuncionarioModal = ({
                         className="form-control"
                         style={inputStyle}
                         onChange={(e) => {
-                          setSearchValues({ ...searchValues, email: e.target.value });
+                          setSearchValues({
+                            ...searchValues,
+                            email: e.target.value,
+                          });
                         }}
                         value={searchValues.email}
                       />
@@ -157,10 +172,36 @@ const PesquisarFuncionarioModal = ({
                         className="form-control"
                         style={inputStyle}
                         onChange={(e) => {
-                          setSearchValues({ ...searchValues, cpf: e.target.value });
+                          const rawValue = removerFormatacaoCPF(e.target.value);
+                          if (rawValue.length !== 11) {
+                            if (rawValue.length === 0) {
+                              setErroCPF("");
+                            } else {
+                              setErroCPF("CPF inválido.");
+                            }
+                          } else {
+                            setErroCPF("");
+                          }
+                          const formatedValue = formatarCPF(rawValue);
+                          setSearchValues({
+                            ...searchValues,
+                            cpf: formatedValue,
+                          });
                         }}
                         value={searchValues.cpf}
                       />
+                    </div>
+                    <div style={{ marginTop: "-15px" }}>
+                      <small style={{ color: "Grey", fontSize: "11px" }}>
+                        * Somente números
+                      </small>
+                    </div>
+                    <div style={{ marginTop: "-15px" }}>
+                      {erroCPF ? (
+                        <small style={{ color: "red", fontSize: "11px" }}>
+                          {erroCPF}
+                        </small>
+                      ) : null}
                     </div>
                   </Col>
                 </Row>
@@ -206,20 +247,16 @@ const PesquisarFuncionarioModal = ({
                   <tr key={index}>
                     <td style={tableCellStyle}>{funcionario.nome || "--"}</td>
                     <td style={tableCellStyle}>{funcionario.email || "--"}</td>
-                    <td style={tableCellStyle}>{funcionario.cpf || "--"}</td>
+                    <td style={tableCellStyle}>{ formatarCPF(funcionario.cpf) || "--"}</td>
                     <td>
                       <div
                         style={{
                           textAlign: "center",
+                          cursor: "pointer",
                         }}
+                        onClick={() => handleSelect(funcionario)}
                       >
-                        <Button
-                          color="primary"
-                          size="sm"
-                          onClick={() => handleSelect(funcionario)}
-                        >
-                          Selecionar
-                        </Button>
+                        <FaCheckSquare size={20} color={ darkMode ? "#FFFFFF" : "#7A7A7A" } title="Selecionar" />
                       </div>
                     </td>
                   </tr>
@@ -236,7 +273,6 @@ const PesquisarFuncionarioModal = ({
         </ModalBody>
         <ModalFooter style={modalStyle}>
           <Button
-            color="secondary"
             onClick={() => setVisible(false)}
             style={buttonStyle}
           >
