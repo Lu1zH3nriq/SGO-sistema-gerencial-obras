@@ -11,13 +11,18 @@ sequenceDiagram
     participant DataBase
 
     User->>Frontend: Insere credenciais de login
+    Frontend->>Frontend: Valida as credenciais
     Frontend->>Backend: Envia solicitação de login
-    Backend->>Frontend: Valida as credenciais
     Backend->>DataBase: Busca usuário
     DataBase-->>Backend: Retorna usuário encontrado ou não encontrado
     Backend-->>Frontend: Retorna usuário encontrado ou não encontrado
-    Frontend->>Frontend: Valida o tipo de usuário
+    Frontend->>Frontend: Valida o tipo de usuário (ADMIN ou COMUM)
     Frontend-->>User: Redireciona para a aplicação
+```
+
+
+
+
     User->>Frontend: Navegação entre as páginas
     Frontend->>Frontend: Valida o tipo de usuário em cada navegação
     Frontend->>Backend: Envia solicitações HTTP/HTTPS (GET, POST, PUT, DELETE)
@@ -26,4 +31,3 @@ sequenceDiagram
     DataBase-->>Backend: Retorna resultado das operações
     Backend-->>Frontend: Retorna resultado das operações
     Frontend-->>User: Exibe mensagem de sucesso ou erro
-```
