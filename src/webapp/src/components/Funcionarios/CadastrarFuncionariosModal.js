@@ -157,6 +157,7 @@ const CadastrarFuncionariosModal = ({
     dataDemissao: funcionario?.dataDemissao
       ? new Date(funcionario?.dataDemissao).toISOString().split("T")[0]
       : "" || "",
+    isUser: funcionario?.isUser ? true : false,
   };
 
   return (
@@ -362,6 +363,30 @@ const CadastrarFuncionariosModal = ({
                         />
                         <label className="form-check-label" htmlFor="efetivo">
                           Efetivo
+                        </label>
+                      </div>
+                    </div>
+                  </Col>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label htmlFor="isUser">Usuário:</label>
+                      <div>
+                        <Field
+                          type="checkbox"
+                          name="isUser"
+                          className="form-check-input"
+                          style={checkboxStyle}
+                          checked={values.isUser ? true : false}
+                          onChange={(e) => {
+                            setFieldValue("isUser", e.target.checked);
+                          }}
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="isUser"
+                          style={{ marginLeft: "0.5rem" }}
+                        >
+                          Sim
                         </label>
                       </div>
                     </div>

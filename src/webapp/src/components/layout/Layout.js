@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header from '../header/header.js';
 import SideBar from '../sidebar/sideBar.js';
 import { Box } from '@mui/material';
+import { Container } from 'reactstrap';
 
 const Layout = ({ children }) => {
     const [rotaAtual, setRotaAtual] = useState('Dashboard');
@@ -11,17 +12,17 @@ const Layout = ({ children }) => {
             <SideBar 
                 trocaRotas={(rota) => setRotaAtual(rota)}
             />
-            <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                 <Header rotaAtual={rotaAtual} />
                 <Box sx={{ 
                     flexGrow: 1, 
                     overflow: 'auto', 
-                    height: 'calc(100vh - 8%)', 
-                    maxWidth: 'calc(100vw - 15%)' 
+                    height: 'calc(100vh - 8vh)', 
+                    maxWidth: 'calc(100vw - 15vw)',
                 }}>
-                    {children}
+                    <Container fluid>
+                        {children}
+                    </Container>
                 </Box>
-            </Box>
         </Box>
     );
 };

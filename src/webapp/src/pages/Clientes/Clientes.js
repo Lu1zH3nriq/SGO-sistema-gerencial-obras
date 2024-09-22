@@ -153,17 +153,13 @@ const Clientes = () => {
   const currentClientes = filteredClientes.slice(startIndex, endIndex);
 
   return (
-    <Layout rotaAtual="Clientes">
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          marginTop: "5%",
-          alignItems: "center",
-        }}
-      >
-        <Container>
+    <main>
+      <Layout rotaAtual="Clientes">
+        <Container
+          style={{
+            marginTop: "8vh"
+          }}
+        >
           {/* Linha com botão "Adicionar" e campo de pesquisa */}
           <Row className="mb-4" style={{ marginTop: "2%" }}>
             <Col className="d-flex align-items-center justify-content-between flex-wrap">
@@ -305,7 +301,7 @@ const Clientes = () => {
                         color: darkMode ? "#FFFFFF" : "#343A40",
                       }}
                     >
-                      Nenhum cliente  encontrado
+                      Nenhum cliente encontrado
                     </td>
                   </tr>
                 )}
@@ -356,31 +352,31 @@ const Clientes = () => {
             </Button>
           </Box>
         </Container>
-      </Box>
 
-      <CadastrarClienteModal
-        visible={modalVisible.visible}
-        setVisible={() => setModalVisible({ visible: false, cliente: null })}
-        cliente={modalVisible.cliente}
-        getClientes={getClientes}
-      />
+        <CadastrarClienteModal
+          visible={modalVisible.visible}
+          setVisible={() => setModalVisible({ visible: false, cliente: null })}
+          cliente={modalVisible.cliente}
+          getClientes={getClientes}
+        />
 
-      <DeleteClienteModal
-        visible={deleteClienteModal.visible}
-        setVisible={() =>
-          setDeleteClienteModal({ visible: false, cliente: null })
-        }
-        cliente={deleteClienteModal.cliente}
-        getClientes={getClientes}
-      />
+        <DeleteClienteModal
+          visible={deleteClienteModal.visible}
+          setVisible={() =>
+            setDeleteClienteModal({ visible: false, cliente: null })
+          }
+          cliente={deleteClienteModal.cliente}
+          getClientes={getClientes}
+        />
 
-      <ConfirmacaoModal
-        visible={confirmacao.visible}
-        setVisible={() => setConfirmacao({ visible: false, mensagem: "" })}
-        mensagem={confirmacao.mensagem}
-        sucesso={confirmacao.sucesso}
-      />
-    </Layout>
+        <ConfirmacaoModal
+          visible={confirmacao.visible}
+          setVisible={() => setConfirmacao({ visible: false, mensagem: "" })}
+          mensagem={confirmacao.mensagem}
+          sucesso={confirmacao.sucesso}
+        />
+      </Layout>
+    </main>
   );
 };
 

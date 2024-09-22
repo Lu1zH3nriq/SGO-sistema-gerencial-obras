@@ -27,13 +27,13 @@ import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
 import axios from "axios";
 import { formatarData } from "components/utils/utilsMask.js";
 
-const Equipamentos = () => {
+const EquipamentosComum = () => {
   const URL_API = process.env.REACT_APP_URL_API;
   const [equipamentos, setEquipamentos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingUso, setLoadingUso] = useState(false);
   const [state] = useUIContextController();
-  const { darkMode } = state;
+  const { darkMode, userId } = state;
   const [expanded, setExpanded] = useState(null);
   const [viewCadastrarEquipamentoModal, setViewCadastrarEquipamentoModal] =
     useState({
@@ -55,7 +55,26 @@ const Equipamentos = () => {
   const [obraSelecionada, setObraSelecionada] = useState(null);
   const [funcionarioSelecionado, setFuncionarioSelecionado] = useState(null);
 
-  const getEquipamentos = async () => {
+  const getMeusEquipamentos = async () => {
+    setLoading(true);
+    console.log("userId", userId);
+    try {
+      const response = await axios.get(
+        `${URL_API}/api/equipamentos/equipamentosPorUser?userId=${userId}`
+      );
+      setEquipamentos(response.data);
+    } catch (error) {
+      setConfirmacaoModal({
+        visible: true,
+        mensagem: "Erro ao buscar equipamentos",
+        sucesso: false,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getTodosEquipamentos = async () => {
     setLoading(true);
     try {
       const response = await axios.get(
@@ -74,8 +93,16 @@ const Equipamentos = () => {
     }
   };
 
+  const buscaEquipamentos = (tipo) => {
+    if (tipo === "meus-equipamentos") {
+      getMeusEquipamentos();
+    } else {
+      getTodosEquipamentos();
+    }
+  };
+
   useEffect(() => {
-    getEquipamentos();
+    getTodosEquipamentos();
   }, []);
 
   // Estado para paginação
@@ -147,22 +174,8 @@ const Equipamentos = () => {
     fontSize: "1rem",
   };
 
-  const cadastrarEquipamento = () => {
-    setViewCadastrarEquipamentoModal({
-      visible: true,
-      equipamento: null,
-    });
-  };
-
   const editarEquipamento = (equipamento) => {
     setViewCadastrarEquipamentoModal({
-      visible: true,
-      equipamento: equipamento,
-    });
-  };
-
-  const deleteEquipamento = (equipamento) => {
-    setViewDeleteEquipamentoModal({
       visible: true,
       equipamento: equipamento,
     });
@@ -217,22 +230,31 @@ const Equipamentos = () => {
           marginTop: "8vh",
         }}
       >
-        {/* Linha com botão "Adicionar" e campo de pesquisa */}
-        <Row className="mb-4" style={{ marginTop: "2%" }}>
-          <Col md={2} className="d-flex align-items-center">
-            <Button
-              variant="secondary"
-              className="d-flex align-items-center"
-              style={buttonStyle}
-              onClick={cadastrarEquipamento}
+        <Row
+          className="mb-4"
+          style={{ marginTop: "2%", justifyContent: "space-between" }}
+        >
+          <Col md={3} className="d-flex align-items-center ml-auto">
+            <Typography
+              variant="subtitle1"
+              className="me-2"
+              color={"secondary"}
+              style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
             >
-              <FaPlus className="me-2" /> Adicionar
-            </Button>
+              Filtrar
+            </Typography>
+            <FormControl
+              as="select"
+              className="me-2"
+              style={{ ...inputStyle }}
+              onChange={(e) => buscaEquipamentos(e.target.value)}
+            >
+              <option value="todos">Todos</option>
+              <option value="meus-equipamentos">Meus Equipamentos</option>
+            </FormControl>
           </Col>
-          <Col
-            md={{ size: 4, offset: 2 }}
-            className="d-flex align-items-center ml-auto"
-          >
+
+          <Col md={4} className="d-flex align-items-center ml-auto">
             <Typography
               variant="subtitle1"
               className="me-2"
@@ -252,6 +274,7 @@ const Equipamentos = () => {
               <FaSearch />
             </Button>
           </Col>
+
           <Col md={4} className="d-flex align-items-center">
             <Typography
               variant="subtitle1"
@@ -314,7 +337,7 @@ const Equipamentos = () => {
                             color: darkMode ? "#FFFFFF" : "#343A40",
                           }}
                         >
-                          Identificador: {equipamento.identificador}
+                          {equipamento.identificador}
                         </Typography>
                       </Box>
                       <Box>
@@ -353,19 +376,45 @@ const Equipamentos = () => {
                           ) : null}
                         </Typography>
                       </Box>
-                      <IconButton
-                        onClick={() => {
-                          handleExpandClick(index);
-                          equipamentoEmUso(equipamento);
-                        }}
-                        style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                      >
+
+                      <div>
                         {expanded === index ? (
-                          <FaChevronUp />
+                          <>
+                            <FaEdit
+                              style={{
+                                cursor: "pointer",
+                                marginRight: "10px",
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                              }}
+                              onClick={() => {
+                                editarEquipamento(equipamento);
+                              }}
+                              size={20}
+                              title="Editar"
+                            />
+                            <FaChevronUp
+                              onClick={() => {
+                                handleExpandClick(index);
+                              }}
+                              style={{
+                                cursor: "pointer",
+                              }}
+                              title="Fechar"
+                            />
+                          </>
                         ) : (
-                          <FaChevronDown />
+                          <FaChevronDown
+                            onClick={() => {
+                              handleExpandClick(index);
+                              equipamentoEmUso(equipamento);
+                            }}
+                            style={{
+                              cursor: "pointer",
+                            }}
+                            title="Abrir"
+                          />
                         )}
-                      </IconButton>
+                      </div>
                     </CardContent>
                     <Collapse
                       in={expanded === index}
@@ -464,31 +513,7 @@ const Equipamentos = () => {
                             alignItems: "center",
                             marginTop: "10px",
                           }}
-                        >
-                          <FaEdit
-                            style={{
-                              cursor: "pointer",
-                              marginRight: "10px",
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                            }}
-                            onClick={() => {
-                              editarEquipamento(equipamento);
-                            }}
-                            size={20}
-                            title="Editar"
-                          />
-                          <FaTrash
-                            style={{
-                              cursor: "pointer",
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                            }}
-                            size={20}
-                            title="Excluir"
-                            onClick={() => {
-                              deleteEquipamento(equipamento);
-                            }}
-                          />
-                        </Box>
+                        ></Box>
                       </CardContent>
                     </Collapse>
                   </Card>
@@ -559,7 +584,7 @@ const Equipamentos = () => {
         visible={viewCadastrarEquipamentoModal.visible}
         setVisible={setViewCadastrarEquipamentoModal}
         equipamento={viewCadastrarEquipamentoModal.equipamento}
-        getEquipamentos={getEquipamentos}
+        getEquipamentos={getTodosEquipamentos}
       />
 
       {/* Modal para excluir equipamento */}
@@ -569,7 +594,7 @@ const Equipamentos = () => {
           setViewDeleteEquipamentoModal({ visible: false, equipamento: null })
         }
         equipamento={viewDeleteEquipamentoModal.equipamento}
-        getEquipamentos={getEquipamentos}
+        getEquipamentos={getTodosEquipamentos}
       />
 
       {/* Modal de confirmação */}
@@ -585,4 +610,4 @@ const Equipamentos = () => {
   );
 };
 
-export default Equipamentos;
+export default EquipamentosComum;

@@ -141,213 +141,206 @@ const Materiais = () => {
 
   return (
     <Layout rotaAtual="Materiais">
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          marginTop: "5%",
-          alignItems: "center",
+      <Container
+        style={{
+          marginTop: "8vh",
         }}
       >
-        <Container>
-          {/* Linha com botão "Adicionar" e campo de pesquisa */}
-          <Row className="mb-4" style={{ marginTop: "2%" }}>
-            <Col className="d-flex align-items-center justify-content-between">
-              <Button
-                color="secondary"
-                className="d-flex align-items-center"
-                style={buttonStyle}
-                onClick={cadastrarMaterial}
+        {/* Linha com botão "Adicionar" e campo de pesquisa */}
+        <Row className="mb-4" style={{ marginTop: "2%" }}>
+          <Col className="d-flex align-items-center justify-content-between">
+            <Button
+              color="secondary"
+              className="d-flex align-items-center"
+              style={buttonStyle}
+              onClick={cadastrarMaterial}
+            >
+              <FaPlus className="me-2" /> Adicionar
+            </Button>
+            <div className="d-flex align-items-center">
+              <Typography
+                variant="subtitle1"
+                className="me-2"
+                color={"secondary"}
+                style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
               >
-                <FaPlus className="me-2" /> Adicionar
+                Material:
+              </Typography>
+              <Input
+                type="text"
+                className="me-2"
+                style={inputStyle}
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+              <Button outline color="secondary" style={buttonStyle}>
+                <FaSearch />
               </Button>
-              <div className="d-flex align-items-center">
-                <Typography
-                  variant="subtitle1"
-                  className="me-2"
-                  color={"secondary"}
-                  style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                >
-                  Material:
-                </Typography>
-                <Input
-                  type="text"
-                  className="me-2"
-                  style={inputStyle}
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                />
-                <Button outline color="secondary" style={buttonStyle}>
-                  <FaSearch />
-                </Button>
-                <Typography
-                  variant="subtitle1"
-                  className="me-2 ms-4"
-                  color={"secondary"}
-                  style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                >
-                  Código:
-                </Typography>
-                <Input
-                  type="text"
-                  className="me-2"
-                  style={inputStyle}
-                  value={searchCod}
-                  onChange={handleSearchCod}
-                />
-                <Button outline color="secondary" style={buttonStyle}>
-                  <FaSearch />
-                </Button>
-              </div>
-            </Col>
-          </Row>
+              <Typography
+                variant="subtitle1"
+                className="me-2 ms-4"
+                color={"secondary"}
+                style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+              >
+                Código:
+              </Typography>
+              <Input
+                type="text"
+                className="me-2"
+                style={inputStyle}
+                value={searchCod}
+                onChange={handleSearchCod}
+              />
+              <Button outline color="secondary" style={buttonStyle}>
+                <FaSearch />
+              </Button>
+            </div>
+          </Col>
+        </Row>
 
-          {/* Tabela */}
-          {loading ? (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "start",
-                height: "100vh",
-              }}
-            >
-              <Spinner color="secondary" />
-            </Box>
-          ) : (
-            <Table
-              responsive
-              size="sm"
-              bordered
-              dark={darkMode}
-              style={{ borderRadius: "0px", marginTop: "2%" }}
-            >
-              <thead>
-                <tr>
-                  <th style={tableHeaderStyle}>Nome</th>
-                  <th style={tableHeaderStyle}>Código</th>
-                  <th style={tableHeaderStyle}>Principal Fornecedor</th>
-                  <th style={tableHeaderStyle}>Unidade</th>
-                  <th style={tableHeaderStyle}>Última Compra</th>
-                  <th style={tableHeaderStyle}>Validade</th>
-                  <th style={tableHeaderStyle}>Nota Fiscal</th>
-                  <th style={{ ...tableHeaderStyle, textAlign: "center" }}>
-                    Ações
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentMateriais.length > 0 ? (
-                  currentMateriais.map((material, index) => (
-                    <tr key={index}>
-                      <td style={tableCellStyle}>{material.nome}</td>
-                      <td style={tableCellStyle}>{material.codigo || "--"}</td>
-                      <td style={tableCellStyle}>
-                        {material.principalFornecedor || "--"}
-                      </td>
-                      <td style={tableCellStyle}>
-                        {material.unidadeMedida || "--"}
-                      </td>
-                      <td style={tableCellStyle}>
-                        {formatarData(material?.dataUltimaCompra) || "--"}
-                      </td>
-                      <td style={tableCellStyle}>
-                        {formatarData(material?.dataValidade) || "--"}
-                      </td>
-                      <td style={tableCellStyle}>
-                        {material.numeroNotaFiscal || "--"}
-                      </td>
-                      <td>
-                        <div
-                          style={{
-                            textAlign: "center",
-                          }}
-                        >
-                          <FaEdit
-                            style={{
-                              cursor: "pointer",
-                              marginRight: "10px",
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                            }}
-                            size={20}
-                            title="Editar"
-                            onClick={() => editarMaterial(material)}
-                          />
-                          <FaTrash
-                            style={{
-                              cursor: "pointer",
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                            }}
-                            size={20}
-                            title="Excluir"
-                            onClick={() => excluirMaterial(material)}
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan="8"
-                      style={{
-                        textAlign: "center",
-                        color: darkMode ? "#FFFFFF" : "#343A40",
-                      }}
-                    >
-                      Nenhum material encontrado
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </Table>
-          )}
-          {/* Botões de navegação */}
+        {/* Tabela */}
+        {loading ? (
           <Box
             sx={{
               display: "flex",
               justifyContent: "center",
-              paddingTop: "2%",
-              paddingBottom: "2%",
-              alignItems: "center",
+              alignItems: "start",
+              height: "100vh",
             }}
           >
-            <Button
-              variant="secondary"
-              style={{ ...buttonStyle, marginRight: "5px" }}
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              size="sm"
-            >
-              <FaChevronLeft size={10} />
-            </Button>
-            <Typography
-              variant="subtitle1"
-              style={{
-                color: darkMode ? "#FFFFFF" : "#343A40",
-                padding: "0% 1% 0% 1%",
-              }}
-            >
-              Página {currentPage} de{" "}
-              {Math.ceil(filteredMateriais.length / itemsPerPage)} (Total:{" "}
-              {filteredMateriais.length} materiais)
-            </Typography>
-            <Button
-              variant="secondary"
-              style={{ ...buttonStyle, marginLeft: "5px" }}
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={
-                currentPage ===
-                Math.ceil(filteredMateriais.length / itemsPerPage)
-              }
-              size="sm"
-            >
-              <FaChevronRight size={10} />
-            </Button>
+            <Spinner color="secondary" />
           </Box>
-        </Container>
-      </Box>
+        ) : (
+          <Table
+            responsive
+            size="sm"
+            bordered
+            dark={darkMode}
+            style={{ borderRadius: "0px", marginTop: "2%" }}
+          >
+            <thead>
+              <tr>
+                <th style={tableHeaderStyle}>Nome</th>
+                <th style={tableHeaderStyle}>Código</th>
+                <th style={tableHeaderStyle}>Principal Fornecedor</th>
+                <th style={tableHeaderStyle}>Unidade</th>
+                <th style={tableHeaderStyle}>Última Compra</th>
+                <th style={tableHeaderStyle}>Validade</th>
+                <th style={tableHeaderStyle}>Nota Fiscal</th>
+                <th style={{ ...tableHeaderStyle, textAlign: "center" }}>
+                  Ações
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentMateriais.length > 0 ? (
+                currentMateriais.map((material, index) => (
+                  <tr key={index}>
+                    <td style={tableCellStyle}>{material.nome}</td>
+                    <td style={tableCellStyle}>{material.codigo || "--"}</td>
+                    <td style={tableCellStyle}>
+                      {material.principalFornecedor || "--"}
+                    </td>
+                    <td style={tableCellStyle}>
+                      {material.unidadeMedida || "--"}
+                    </td>
+                    <td style={tableCellStyle}>
+                      {formatarData(material?.dataUltimaCompra) || "--"}
+                    </td>
+                    <td style={tableCellStyle}>
+                      {formatarData(material?.dataValidade) || "--"}
+                    </td>
+                    <td style={tableCellStyle}>
+                      {material.numeroNotaFiscal || "--"}
+                    </td>
+                    <td>
+                      <div
+                        style={{
+                          textAlign: "center",
+                        }}
+                      >
+                        <FaEdit
+                          style={{
+                            cursor: "pointer",
+                            marginRight: "10px",
+                            color: darkMode ? "#FFFFFF" : "#343A40",
+                          }}
+                          size={20}
+                          title="Editar"
+                          onClick={() => editarMaterial(material)}
+                        />
+                        <FaTrash
+                          style={{
+                            cursor: "pointer",
+                            color: darkMode ? "#FFFFFF" : "#343A40",
+                          }}
+                          size={20}
+                          title="Excluir"
+                          onClick={() => excluirMaterial(material)}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="8"
+                    style={{
+                      textAlign: "center",
+                      color: darkMode ? "#FFFFFF" : "#343A40",
+                    }}
+                  >
+                    Nenhum material encontrado
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+        )}
+        {/* Botões de navegação */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            paddingTop: "2%",
+            paddingBottom: "2%",
+            alignItems: "center",
+          }}
+        >
+          <Button
+            variant="secondary"
+            style={{ ...buttonStyle, marginRight: "5px" }}
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            size="sm"
+          >
+            <FaChevronLeft size={10} />
+          </Button>
+          <Typography
+            variant="subtitle1"
+            style={{
+              color: darkMode ? "#FFFFFF" : "#343A40",
+              padding: "0% 1% 0% 1%",
+            }}
+          >
+            Página {currentPage} de{" "}
+            {Math.ceil(filteredMateriais.length / itemsPerPage)} (Total:{" "}
+            {filteredMateriais.length} materiais)
+          </Typography>
+          <Button
+            variant="secondary"
+            style={{ ...buttonStyle, marginLeft: "5px" }}
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={
+              currentPage === Math.ceil(filteredMateriais.length / itemsPerPage)
+            }
+            size="sm"
+          >
+            <FaChevronRight size={10} />
+          </Button>
+        </Box>
+      </Container>
 
       <CadastrarMaterialModal
         visible={modalVisible.visible}

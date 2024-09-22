@@ -27,7 +27,7 @@ const CadastrarEquipamentoModal = ({
   const URL_API = process.env.REACT_APP_URL_API;
   const [loading, setLoading] = useState(false);
   const [state] = useUIContextController();
-  const { darkMode } = state;
+  const { darkMode, userType } = state;
   const [pesquisarObraVisible, setPesquisarObraVisible] = useState(false);
   const [pesquisarFuncionarioVisible, setPesquisarFuncionarioVisible] =
     useState(false);
@@ -232,6 +232,7 @@ const CadastrarEquipamentoModal = ({
                         onChange={(e) => {
                           setFieldValue("nome", e.target.value);
                         }}
+                        disabled={userType === 2} 
                       />
                       {errors.nome && touched.nome ? (
                         <div className="invalid-feedback">{errors.nome}</div>
@@ -249,6 +250,7 @@ const CadastrarEquipamentoModal = ({
                         onChange={(e) => {
                           setFieldValue("identificador", e.target.value);
                         }}
+                        disabled={userType === 2} 
                       />
                       {errors.identificador && touched.identificador ? (
                         <div className="invalid-feedback">{errors.identificador}</div>
@@ -268,6 +270,7 @@ const CadastrarEquipamentoModal = ({
                         onChange={(e) => {
                           setFieldValue("peso", e.target.value);
                         }}
+                        disabled={userType === 2} 
                       />
                     </div>
                   </Col>
@@ -309,6 +312,7 @@ const CadastrarEquipamentoModal = ({
                         value={values.obra || obraSelecionada?.nome}
                         onClick={() => setPesquisarObraVisible(true)}
                         readOnly
+                        disabled={userType === 2} 
                       />
                     </div>
                   </Col>
@@ -325,6 +329,7 @@ const CadastrarEquipamentoModal = ({
                           onChange={(e) =>
                             setFieldValue("dataCadastro", e.target.value)
                           }
+                          disabled={userType === 2} 
                         />
                       </div>
                     </div>
@@ -344,6 +349,7 @@ const CadastrarEquipamentoModal = ({
                             setFieldValue("dataAlocacao", e.target.value)
                           }
                           readOnly
+                          disabled={userType === 2} 
                         />
                       </div>
                     </div>
@@ -374,6 +380,7 @@ const CadastrarEquipamentoModal = ({
                         onChange={(e) => {
                           setFieldValue("derivado", e.target.value);
                         }}
+                        disabled={userType === 2} 
                       >
                         <option value="Compra do equipamento">
                           Compra do equipamento

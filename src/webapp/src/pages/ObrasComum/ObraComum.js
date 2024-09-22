@@ -15,10 +15,6 @@ import {
   Col,
   Button,
   FormControl,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
 } from "react-bootstrap";
 import {
   FaPlus,
@@ -131,13 +127,6 @@ const Obras = () => {
     fontSize: "1rem", // Tamanho menor para os ícones
   };
 
-  const cadastrarObra = () => {
-    setViewCadastrarObraModal({
-      visible: true,
-      obra: null,
-    });
-  };
-
   const editarObra = (obra) => {
     setViewCadastrarObraModal({
       visible: true,
@@ -160,17 +149,8 @@ const Obras = () => {
         }}
       >
         {/* Linha com botão "Adicionar" e campo de pesquisa */}
-        <Row className="mb-4" style={{ marginTop: "2%" }}>
-          <Col md={2} className="d-flex align-items-center">
-            <Button
-              variant="secondary"
-              className="d-flex align-items-center"
-              style={buttonStyle}
-              onClick={cadastrarObra}
-            >
-              <FaPlus className="me-2" /> Adicionar
-            </Button>
-          </Col>
+        <Row className="mb-4 justify-content-between" style={{ marginTop: "2%" }}>
+          
           <Col md={2} className="d-flex align-items-center">
             <Typography
               variant="subtitle1"
@@ -237,7 +217,7 @@ const Obras = () => {
         </Row>
 
         {/* Lista de Cards */}
-        <Container fluid style={{ maxWidth: "80%", marginTop: "5%" }}>
+        <Container fluid style={{ maxWidth: "90%", marginTop: "5%" }}>
           {currentItems.length > 0 ? (
             currentItems.map((obra, index) => (
               <Box key={index} sx={{ width: "100%", mb: 2 }}>
@@ -340,57 +320,9 @@ const Obras = () => {
           )}
         </Container>
 
-        {/* Botões de navegação */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            paddingTop: "2%",
-            paddingBottom: "2%",
-            alignItems: "center",
-          }}
-        >
-          <Button
-            variant="secondary"
-            style={{ ...buttonStyle, ...iconStyle }}
-            onClick={handlePrevPage}
-            disabled={currentPage === 1}
-            size="sm"
-          >
-            <FaChevronLeft size={10} />
-          </Button>
-          <Typography
-            variant="subtitle1"
-            style={{
-              ...paginationStyle,
-              color: darkMode ? "#FFFFFF" : "#343A40",
-              padding: "0% 1% 0% 1%",
-            }}
-          >
-            Página {currentPage} de{" "}
-            {Math.ceil(filteredObras.length / itemsPerPage)} (Total:{" "}
-            {filteredObras.length} obras)
-          </Typography>
-          <Button
-            variant="secondary"
-            style={{ ...buttonStyle, ...iconStyle }}
-            onClick={handleNextPage}
-            disabled={
-              currentPage === Math.ceil(filteredObras.length / itemsPerPage)
-            }
-            size="sm"
-          >
-            <FaChevronRight size={10} />
-          </Button>
-        </Box>
       </Container>
 
-      {/* Modal para cadastrar obra */}
-      <CadastrarObraModal
-        visible={viewCadastrarObraModal.visible}
-        setVisible={setViewCadastrarObraModal}
-        obra={viewCadastrarObraModal.obra}
-      />
+      
 
       {/* Modal para selecionar datas */}
       <DateSelectionModal
@@ -407,14 +339,6 @@ const Obras = () => {
         buttonStyle={buttonStyle}
       />
 
-      {/* Modal para excluir obra */}
-      <DeleteObraModal
-        visible={viewDeleteObraModal.visible}
-        setVisible={() =>
-          setViewDeleteObraModal({ visible: false, obra: null })
-        }
-        obra={viewDeleteObraModal.obra}
-      />
     </Layout>
   );
 };

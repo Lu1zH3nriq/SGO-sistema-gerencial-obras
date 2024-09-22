@@ -26,17 +26,9 @@ const Dashboard = () => {
 
   return (
     <Layout>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "start",
-          marginTop: "5%",
-          alignItems: "start",
-          // marginLeft: "1%",
-        }}
-      >
-        <Container height={'100%'} style={{ maxWidth: '85%' }}>
+        <Container style={{
+          marginTop: "8vh",
+        }}>
           {/* Linha com quatro colunas */}
           <Row className="mt-4">
             {[1, 2, 3, 4].map((info, index) => (
@@ -129,7 +121,7 @@ const Dashboard = () => {
             </Col>
           </Row>
         </Container>
-      </Box>
+      
     </Layout>
   );
 };
