@@ -7,3 +7,6 @@ loginRoutes.post('/login', LoginController.login);
 loginRoutes.put('/resetSenha', LoginController.redefSenha);
 
 module.exports = loginRoutes;
+
+
+

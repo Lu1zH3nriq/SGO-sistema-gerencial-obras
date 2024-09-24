@@ -11,6 +11,10 @@ const Obra = sequelize.define("Obra", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  identificador: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   endereco: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -21,24 +25,28 @@ const Obra = sequelize.define("Obra", {
   },
   dataFinal: {
     type: DataTypes.DATE,
-    allowNull: false,
+    allowNull: true,
   },
-  orcamento: {
-    type: DataTypes.FLOAT,
+  contrato: {
+    type: DataTypes.STRING,
     allowNull: false,
   },
   alvara: {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  orcamento: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+  },
   responsavel: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: false,
-  },
-  numeroContrato: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
+    references: {
+      model: 'Funcionarios', 
+      key: 'id'
+    }
+  }
 });
 
 module.exports = Obra;

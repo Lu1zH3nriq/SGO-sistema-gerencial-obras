@@ -22,7 +22,7 @@ const FuncionarioController = {
           nivelUsuario: 2,
           tipo: "Interno",
         };
-        
+
         try {
           const user = data;
           const password = Math.random().toString(36).slice(-8);
@@ -33,16 +33,16 @@ const FuncionarioController = {
             password: hashedPassword
           });
 
-          if(usuario){
+          if (usuario) {
 
 
-          // Enviar e-mail com a senha gerada
-          const subject =
-            "Bem-vindo ao Sistema Gerencial de Obras! Aqui está sua senha de acesso";
-          const text = `Olá ${usuario.nome},\n\nSua conta foi criada com sucesso! Aqui está sua senha para acessar o sistema: ${password}\n\nRecomendamos que você altere sua senha após o primeiro login.\n\nObrigado!`;
-          await sendEmail(user.email, subject, text);
+            // Enviar e-mail com a senha gerada
+            const subject =
+              "Bem-vindo ao Sistema Gerencial de Obras! Aqui está sua senha de acesso";
+            const text = `Olá ${usuario.nome},\n\nSua conta foi criada com sucesso! Aqui está sua senha para acessar o sistema: ${password}\n\nRecomendamos que você altere sua senha após o primeiro login.\n\nObrigado!`;
+            await sendEmail(user.email, subject, text);
 
-          res.status(201).json({ funcionario, usuario });
+            res.status(201).json({ funcionario, usuario });
           }
 
           else {
@@ -106,9 +106,16 @@ const FuncionarioController = {
   async deleteFuncionario(req, res) {
     try {
       const deleted = await Funcionario.destroy({
-        where: { id: req.query.id },
+        where: { email: req.query.id },
       });
       if (deleted) {
+
+        await Usuario.findOne({ where: { email: req.query.id } }).then(async (user) => {
+          if (user) {
+            await Usuario.destroy({ where: { email: req.query.id } });
+          }
+        });
+
         res.status(204).json();
       } else {
         res.status(404).json({ error: "Funcionario não encontrado" });
@@ -120,7 +127,7 @@ const FuncionarioController = {
 
   async buscaFuncionarioQuery(req, res) {
     try {
-      const { nome, email, cpf } = req.query;
+      const { nome, email, cpf, tipoFuncionario } = req.query;
       const where = {};
 
       if (nome) {
@@ -131,6 +138,9 @@ const FuncionarioController = {
       }
       if (cpf) {
         where.cpf = cpf;
+      }
+      if (tipoFuncionario && tipoFuncionario !== "Todos") {
+        where.tipo = tipoFuncionario;
       }
 
       const funcionario = await Funcionario.findAll({ where });

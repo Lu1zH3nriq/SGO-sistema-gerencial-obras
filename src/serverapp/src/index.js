@@ -36,3 +36,9 @@ sequelize.sync()
   .catch(err => {
     console.error('Erro ao sincronizar os modelos:', err);
   });
+
+
+
+
+
+  
