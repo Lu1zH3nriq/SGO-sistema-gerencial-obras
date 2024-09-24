@@ -27,6 +27,8 @@ const CadastrarClienteModal = ({
   setVisible,
   cliente = null,
   getClientes,
+  cadastroAoPesquisar,
+  returnCliente
 }) => {
   const URL_API = process.env.REACT_APP_URL_API;
 
@@ -67,7 +69,18 @@ const CadastrarClienteModal = ({
           _cliente
         );
       } else {
-        await axios.post(`${URL_API}/api/clientes/novoCliente`, _cliente);
+        const response = await axios.post(`${URL_API}/api/clientes/novoCliente`, _cliente);
+
+        if (cadastroAoPesquisar) {
+          returnCliente(response.data);
+          setVisible(false);
+          setConfirmacaoModal({
+            visible: true,
+            mensagem: "Cliente salvo com sucesso.",
+            sucesso: true,
+          });
+          return;
+        }
       }
 
       setConfirmacaoModal({

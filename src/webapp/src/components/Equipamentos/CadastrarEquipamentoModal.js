@@ -8,6 +8,7 @@ import {
   Row,
   Col,
   Spinner,
+  Container,
 } from "reactstrap";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup"; // Importando Yup para validação
@@ -175,27 +176,27 @@ const CadastrarEquipamentoModal = ({
   useEffect(() => {
     const getObra = async (obraId) => {
       axios.get(`${URL_API}/api/obras/obra?id=${obraId}`)
-      .then((response) => {
-        setObraSelecionada(response.data || null);
-      })
-      .catch((error) => {
-        console.log("Erro ao buscar obra", error);
-        setObraSelecionada(null);
-      });
+        .then((response) => {
+          setObraSelecionada(response.data || null);
+        })
+        .catch((error) => {
+          console.log("Erro ao buscar obra", error);
+          setObraSelecionada(null);
+        });
     };
     const getFuncionario = async (funcionarioId) => {
       axios.get(`${URL_API}/api/funcionarios/funcionario?id=${funcionarioId}`)
-      .then((response) => {
-        setFuncionarioSelecionado(response.data || null);
-      })
-      .catch((error) => {
-        console.log("Erro ao buscar funcionário", error);
-        setFuncionarioSelecionado(null);
-      });
+        .then((response) => {
+          setFuncionarioSelecionado(response.data || null);
+        })
+        .catch((error) => {
+          console.log("Erro ao buscar funcionário", error);
+          setFuncionarioSelecionado(null);
+        });
     };
     if (equipamento) {
       getObra(equipamento.obraId);
-      getFuncionario( equipamento.funcionarioId); 
+      getFuncionario(equipamento.funcionarioId);
     }
   }, [equipamento]);
 
@@ -207,7 +208,7 @@ const CadastrarEquipamentoModal = ({
   }, [initialValues.status]);
 
   return (
-    <>
+    <Container>
       <Modal size="lg" isOpen={visible} toggle={toggleModal} centered>
         <ModalHeader toggle={toggleModal} style={modalStyle}>
           {!equipamento ? "Cadastrar Equipamento" : "Editar Equipamento"}
@@ -232,7 +233,7 @@ const CadastrarEquipamentoModal = ({
                         onChange={(e) => {
                           setFieldValue("nome", e.target.value);
                         }}
-                        disabled={userType === 2} 
+                        disabled={userType === 2}
                       />
                       {errors.nome && touched.nome ? (
                         <div className="invalid-feedback">{errors.nome}</div>
@@ -250,7 +251,7 @@ const CadastrarEquipamentoModal = ({
                         onChange={(e) => {
                           setFieldValue("identificador", e.target.value);
                         }}
-                        disabled={userType === 2} 
+                        disabled={userType === 2}
                       />
                       {errors.identificador && touched.identificador ? (
                         <div className="invalid-feedback">{errors.identificador}</div>
@@ -270,7 +271,7 @@ const CadastrarEquipamentoModal = ({
                         onChange={(e) => {
                           setFieldValue("peso", e.target.value);
                         }}
-                        disabled={userType === 2} 
+                        disabled={userType === 2}
                       />
                     </div>
                   </Col>
@@ -312,7 +313,6 @@ const CadastrarEquipamentoModal = ({
                         value={values.obra || obraSelecionada?.nome}
                         onClick={() => setPesquisarObraVisible(true)}
                         readOnly
-                        disabled={userType === 2} 
                       />
                     </div>
                   </Col>
@@ -329,7 +329,7 @@ const CadastrarEquipamentoModal = ({
                           onChange={(e) =>
                             setFieldValue("dataCadastro", e.target.value)
                           }
-                          disabled={userType === 2} 
+                          disabled={userType === 2}
                         />
                       </div>
                     </div>
@@ -349,7 +349,7 @@ const CadastrarEquipamentoModal = ({
                             setFieldValue("dataAlocacao", e.target.value)
                           }
                           readOnly
-                          disabled={userType === 2} 
+                          disabled={userType === 2}
                         />
                       </div>
                     </div>
@@ -380,7 +380,7 @@ const CadastrarEquipamentoModal = ({
                         onChange={(e) => {
                           setFieldValue("derivado", e.target.value);
                         }}
-                        disabled={userType === 2} 
+                        disabled={userType === 2}
                       >
                         <option value="Compra do equipamento">
                           Compra do equipamento
@@ -426,7 +426,7 @@ const CadastrarEquipamentoModal = ({
         mensagem={confirmacaoVisible.mensagem}
         sucesso={confirmacaoVisible.sucesso}
       />
-    </>
+    </Container>
   );
 };
 

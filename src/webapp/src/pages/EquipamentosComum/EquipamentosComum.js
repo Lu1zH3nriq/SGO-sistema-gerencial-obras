@@ -6,6 +6,7 @@ import {
   CardContent,
   IconButton,
   Collapse,
+  Grid
 } from "@mui/material";
 import Layout from "../../components/layout/Layout.js";
 import { useUIContextController } from "../../context/index.js";
@@ -309,7 +310,7 @@ const EquipamentosComum = () => {
             <Spinner color="secondary" />
           </Box>
         ) : (
-          <Container fluid style={{ maxWidth: "80%", marginTop: "5%" }}>
+          <Container fluid style={{ maxWidth: "85%", marginTop: "5%" }}>
             {currentItems.length > 0 ? (
               currentItems.map((equipamento, index) => (
                 <Box key={index} sx={{ width: "100%", mb: 2 }}>
@@ -321,77 +322,66 @@ const EquipamentosComum = () => {
                         alignItems: "center",
                       }}
                     >
-                      <Box>
-                        <Typography
-                          variant="h6"
-                          style={{
-                            color: darkMode ? "#FFFFFF" : "#343A40",
-                          }}
-                        >
-                          {equipamento.nome}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          style={{
-                            color: darkMode ? "#FFFFFF" : "#343A40",
-                          }}
-                        >
-                          {equipamento.identificador}
-                        </Typography>
-                      </Box>
-                      <Box>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          style={{
-                            color: darkMode ? "#FFFFFF" : "#343A40",
-                          }}
-                        >
-                          Status do Equipamento
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          style={{
-                            color: darkMode ? "#FFFFFF" : "#343A40",
-                          }}
-                        >
-                          {equipamento.status === "Disponível" ? (
-                            <span
-                              style={{ color: "green", fontWeight: "bold" }}
+                      <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                          <Box>
+                            <Typography
+                              variant="h6"
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                              }}
                             >
-                              {equipamento.status}
-                            </span>
-                          ) : equipamento.status === "Em uso" ? (
-                            <span style={{ color: "red", fontWeight: "bold" }}>
-                              {equipamento.status}
-                            </span>
-                          ) : equipamento.status === "Manutenção" ? (
-                            <span
-                              style={{ color: "#FFA500", fontWeight: "bold" }}
+                              {equipamento.nome}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              color="textSecondary"
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                              }}
                             >
-                              {equipamento.status}
-                            </span>
-                          ) : null}
-                        </Typography>
-                      </Box>
-
+                              {equipamento.identificador}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Box>
+                            <Typography
+                              variant="body2"
+                              color="textSecondary"
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                              }}
+                            >
+                              Status do Equipamento
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              color="textSecondary"
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                              }}
+                            >
+                              {equipamento.status === "Disponível" ? (
+                                <span style={{ color: "green", fontWeight: "bold" }}>
+                                  {equipamento.status}
+                                </span>
+                              ) : equipamento.status === "Em uso" ? (
+                                <span style={{ color: "red", fontWeight: "bold" }}>
+                                  {equipamento.status}
+                                </span>
+                              ) : equipamento.status === "Manutenção" ? (
+                                <span style={{ color: "#FFA500", fontWeight: "bold" }}>
+                                  {equipamento.status}
+                                </span>
+                              ) : null}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                      </Grid>
                       <div>
                         {expanded === index ? (
                           <>
-                            <FaEdit
-                              style={{
-                                cursor: "pointer",
-                                marginRight: "10px",
-                                color: darkMode ? "#FFFFFF" : "#343A40",
-                              }}
-                              onClick={() => {
-                                editarEquipamento(equipamento);
-                              }}
-                              size={20}
-                              title="Editar"
-                            />
                             <FaChevronUp
                               onClick={() => {
                                 handleExpandClick(index);
@@ -422,98 +412,99 @@ const EquipamentosComum = () => {
                       unmountOnExit
                     >
                       <CardContent>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-center",
-                            alignItems: "center",
-                            paddingBottom: "10px",
-                          }}
-                        >
-                          <Box
-                            sx={{
-                              width: "48%",
-                            }}
-                          >
-                            <Typography
-                              variant="body2"
-                              color="textSecondary"
-                              style={{
-                                color: darkMode ? "#FFFFFF" : "#343A40",
-                              }}
-                            >
-                              Data Cadastro:{" "}
-                              {formatarData(equipamento.dataCadastro)}
-                            </Typography>
-                            <Typography
-                              variant="body2"
-                              color="textSecondary"
-                              style={{
-                                color: darkMode ? "#FFFFFF" : "#343A40",
-                              }}
-                            >
-                              Peso: {equipamento.peso}
-                            </Typography>
-                            <Typography
-                              variant="body2"
-                              color="textSecondary"
-                              style={{
-                                color: darkMode ? "#FFFFFF" : "#343A40",
-                              }}
-                            >
-                              Derivado: {equipamento.derivado}
-                            </Typography>
-                          </Box>
-
-                          {equipamento.status === "Em uso" &&
-                            (loadingUso ? (
-                              <Spinner color="light" size="sm" />
-                            ) : (
-                              <Box>
-                                <Typography
-                                  variant="body2"
-                                  color="textSecondary"
-                                  style={{
-                                    color: darkMode ? "#FFFFFF" : "#343A40",
-                                  }}
-                                >
-                                  Data Alocação:{" "}
-                                  {equipamento.dataAlocacao
-                                    ? formatarData(equipamento.dataAlocacao)
-                                    : "Não alocado"}
-                                </Typography>
-                                <Typography
-                                  variant="body2"
-                                  color="textSecondary"
-                                  style={{
-                                    color: darkMode ? "#FFFFFF" : "#343A40",
-                                  }}
-                                >
-                                  Obra :{" "}
-                                  {obraSelecionada?.nome || "Não alocado"}
-                                </Typography>
-                                <Typography
-                                  variant="body2"
-                                  color="textSecondary"
-                                  style={{
-                                    color: darkMode ? "#FFFFFF" : "#343A40",
-                                  }}
-                                >
-                                  Responsável:{" "}
-                                  {funcionarioSelecionado?.nome ||
-                                    "Não alocado"}
-                                </Typography>
-                              </Box>
-                            ))}
-                        </Box>
+                        <Grid container spacing={2}>
+                          <Grid item xs={6}>
+                            <Box>
+                              <Typography
+                                variant="body2"
+                                color="textSecondary"
+                                style={{
+                                  color: darkMode ? "#FFFFFF" : "#343A40",
+                                }}
+                              >
+                                Data Cadastro: {formatarData(equipamento.dataCadastro)}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                color="textSecondary"
+                                style={{
+                                  color: darkMode ? "#FFFFFF" : "#343A40",
+                                }}
+                              >
+                                Peso: {equipamento.peso}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                color="textSecondary"
+                                style={{
+                                  color: darkMode ? "#FFFFFF" : "#343A40",
+                                }}
+                              >
+                                Derivado: {equipamento.derivado}
+                              </Typography>
+                            </Box>
+                          </Grid>
+                          <Grid item xs={6}>
+                            {equipamento.status === "Em uso" &&
+                              (loadingUso ? (
+                                <Spinner color="light" size="sm" />
+                              ) : (
+                                <Box>
+                                  <Typography
+                                    variant="body2"
+                                    color="textSecondary"
+                                    style={{
+                                      color: darkMode ? "#FFFFFF" : "#343A40",
+                                    }}
+                                  >
+                                    Data Alocação:{" "}
+                                    {equipamento.dataAlocacao
+                                      ? formatarData(equipamento.dataAlocacao)
+                                      : "Não alocado"}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    color="textSecondary"
+                                    style={{
+                                      color: darkMode ? "#FFFFFF" : "#343A40",
+                                    }}
+                                  >
+                                    Obra: {obraSelecionada?.nome || "Não alocado"}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    color="textSecondary"
+                                    style={{
+                                      color: darkMode ? "#FFFFFF" : "#343A40",
+                                    }}
+                                  >
+                                    Responsável: {funcionarioSelecionado?.nome || "Não alocado"}
+                                  </Typography>
+                                </Box>
+                              ))}
+                          </Grid>
+                        </Grid>
                         <Box
                           sx={{
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
-                            marginTop: "10px",
+                            marginTop: "2rem",
                           }}
-                        ></Box>
+                        >
+                          <FaEdit
+                            style={{
+                              cursor: "pointer",
+                              marginRight: "10px",
+                              color: darkMode ? "#FFFFFF" : "#343A40",
+                            }}
+                            onClick={() => {
+                              editarEquipamento(equipamento);
+                            }}
+                            size={20}
+                            title="Editar"
+                          />
+                        </Box>
                       </CardContent>
                     </Collapse>
                   </Card>

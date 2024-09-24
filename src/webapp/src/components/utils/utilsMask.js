@@ -22,6 +22,7 @@ export function removerFormatacaoTelefone(numero) {
 }
 
 export function formatarCPF(cpf) {
+  if (!cpf) return '';
   const cpfLimpo = cpf.replace(/\D/g, ""); 
   
 
@@ -56,6 +57,7 @@ export function formatarDataISO(data) {
 }
 
 export function formatarCNPJ(cnpj) {
+  if (!cnpj) return '';
   const cnpjLimpo = cnpj.replace(/\D/g, ""); 
   
 

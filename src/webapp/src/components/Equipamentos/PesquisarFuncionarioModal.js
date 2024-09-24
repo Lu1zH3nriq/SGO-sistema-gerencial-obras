@@ -9,6 +9,7 @@ import {
   Col,
   Spinner,
   Table,
+  Container,
 } from "reactstrap";
 import { Formik, Form, Field } from "formik";
 import { useUIContextController } from "../../context/index.js";
@@ -110,9 +111,9 @@ const PesquisarFuncionarioModal = ({
   };
 
   return (
-    <>
+    <Container>
       <Modal
-        size="xl"
+        size="lg"
         isOpen={visible}
         toggle={() => setVisible(false)}
         centered
@@ -287,7 +288,7 @@ const PesquisarFuncionarioModal = ({
         mensagem={confirmacaoVisible.mensagem}
         sucesso={confirmacaoVisible.sucesso}
       />
-    </>
+    </Container>
   );
 };
 

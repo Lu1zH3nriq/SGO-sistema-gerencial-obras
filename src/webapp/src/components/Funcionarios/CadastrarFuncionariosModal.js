@@ -26,6 +26,8 @@ const CadastrarFuncionariosModal = ({
   setVisible,
   funcionario,
   getFuncionarios,
+  cadastroAoPesquisar,
+  returnFuncionario
 }) => {
   const URL_API = process.env.REACT_APP_URL_API;
   const [loading, setLoading] = useState(false);
@@ -50,7 +52,19 @@ const CadastrarFuncionariosModal = ({
     if (!funcionario) {
       axios
         .post(`${URL_API}/api/funcionarios/novoFuncionario`, data)
-        .then(() => {
+        .then((res) => {
+
+          if (cadastroAoPesquisar) {
+            returnFuncionario(res.data.funcionario);
+            setConfirmacaoVisible({
+              visible: true,
+              mensagem: "Funcionário cadastrado com sucesso!",
+              sucesso: true,
+            });
+            setVisible(false);
+            return;
+          }
+
           setConfirmacaoVisible({
             visible: true,
             mensagem: "Funcionário cadastrado com sucesso!",
