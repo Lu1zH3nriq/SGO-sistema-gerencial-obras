@@ -27,13 +27,13 @@ jobs:
       - name: List files after build
         run: |
           cd src/webapp
-          ls -R
+          ls -R  # Lista arquivos para verificar se a pasta build foi criada
       
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: src/webapp/build
+          path: src/webapp/build  # Verifique se a pasta build foi criada
 
   deploy:
     runs-on: ubuntu-latest
@@ -63,4 +63,4 @@ jobs:
         with:
           app-name: 'app-sgo-front'
           slot-name: 'Production'
-          package: src/webapp/build
+          package: src/webapp/build  # Verifique se o caminho está correto
