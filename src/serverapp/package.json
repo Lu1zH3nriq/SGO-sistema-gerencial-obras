@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon src/index.js",
-    "test": "npm test"
+    "test": "npm test",
+    "build": "npm install"
   },
   "author": "Luiz Henrique Rodrigues Mendes",
   "license": "ISC",
