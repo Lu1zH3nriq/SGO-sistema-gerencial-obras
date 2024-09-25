@@ -23,12 +23,15 @@ jobs:
 
       - name: npm install, build, and test
         run: |
+          cd src/serverapp  # Entra no diretório da API (serverapp)
           npm install
           npm run build --if-present
           npm run test --if-present
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+        run: |
+          cd src/serverapp  # Gera o zip a partir do diretório correto
+          zip -r ../../release.zip ./*
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -68,4 +71,3 @@ jobs:
           app-name: 'app-sgo-api'
           slot-name: 'Production'
           package: .
-          
