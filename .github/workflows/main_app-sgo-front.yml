@@ -63,4 +63,4 @@ jobs:
         with:
           app-name: 'app-sgo-front'
           slot-name: 'Production'
-          package: src/webapp/build  # Verifique se o caminho está correto
+          package: 'node-app.zip'  # Altere aqui
