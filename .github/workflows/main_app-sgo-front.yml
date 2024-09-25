@@ -1,4 +1,4 @@
-name: Build and deploy Node.js app to Azure Web App - app-sgo-front
+name: Build and Deploy Node.js app to Azure Web App - app-sgo-front
 
 on:
   push:
@@ -58,8 +58,8 @@ jobs:
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6D681E94FF4A4A9EBCABB486D9AB9B40 }}
 
       - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
         with:
           app-name: 'app-sgo-front'
           slot-name: 'Production'
