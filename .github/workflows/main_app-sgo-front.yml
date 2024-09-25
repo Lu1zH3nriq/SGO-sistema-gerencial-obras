@@ -7,8 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  id-token: write  # Necessário para o login no Azure
-  contents: read   # Permissão padrão para ler o conteúdo do repositório
+  contents: read
 
 jobs:
   build:
@@ -31,7 +30,7 @@ jobs:
       - name: List files after build
         run: |
           cd src/webapp
-          dir  # Use 'dir' em vez de 'ls' no Windows
+          dir
       
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -40,7 +39,7 @@ jobs:
           path: src/webapp/build
 
   deploy:
-    runs-on: windows-latest  # Altera para Windows para o deploy
+    runs-on: windows-latest
     needs: build
     steps:
       - name: Download artifact from build job
@@ -50,14 +49,14 @@ jobs:
 
       - name: List files after artifact download
         run: |
-          dir  # Use 'dir' para listar os arquivos no Windows
+          dir
 
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_75127E2E0A8E4CEAB54DF7DD53FC773D }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_FB503D77CB6A403E9FB43F7C7BE8F652 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6D681E94FF4A4A9EBCABB486D9AB9B40 }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}  # Use o client-id da app registration
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}  # Use o client secret da app registration
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}  # Tenant ID do Azure
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
@@ -65,4 +64,4 @@ jobs:
         with:
           app-name: 'app-sgo-front'
           slot-name: 'Production'
-          package: node-app.zip  # Certifique-se de que o nome do arquivo está correto
+          package: node-app.zip  # Verifique o caminho e o nome do arquivo
