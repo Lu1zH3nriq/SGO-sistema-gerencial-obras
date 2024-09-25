@@ -1,13 +1,10 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy Node.js app to Azure Web App - app-sgo-api
+name: Build and Deploy Node.js app to Azure Web App - app-sgo-api
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Build and Deploy Node.js app to Azure Web App - app-sgo-front"]  # Nome do workflow do frontend
+    types:
+      - completed
 
 jobs:
   build:
@@ -26,7 +23,6 @@ jobs:
           cd src/serverapp  # Entra no diretório da API (serverapp)
           npm install
           npm run build --if-present
-          # Removido o comando de teste
 
       - name: Zip artifact for deployment
         run: |
@@ -70,4 +66,4 @@ jobs:
         with:
           app-name: 'app-sgo-api'
           slot-name: 'Production'
-          package: .
+          package: .  # Certifique-se de que o caminho esteja correto
