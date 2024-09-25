@@ -27,28 +27,26 @@ jobs:
       - name: List files after build
         run: |
           cd src/webapp
-          ls -R  # Lista arquivos para verificar se a pasta build foi criada
+          dir  # Use 'dir' em vez de 'ls' no Windows
       
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: src/webapp/build  # Verifique se a pasta build foi criada
+          path: src/webapp/build
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest  # Altera para Windows para o deploy
     needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write  # Necessário para solicitar o JWT
-
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: node-app
+
+      - name: List files after artifact download
+        run: |
+          dir  # Use 'dir' para listar os arquivos no Windows
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -63,4 +61,4 @@ jobs:
         with:
           app-name: 'app-sgo-front'
           slot-name: 'Production'
-          package: 'node-app.zip'  # Altere aqui
+          package: node-app.zip  # Certifique-se de que o nome do arquivo está correto
