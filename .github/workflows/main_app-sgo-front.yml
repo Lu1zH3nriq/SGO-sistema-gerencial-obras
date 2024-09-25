@@ -1,4 +1,4 @@
-name: Build and Deploy Node.js app to Azure Web App - app-sgo-front
+name: Build and deploy Node.js app to Azure Web App - app-sgo-front
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: npm install, build, and test
+      - name: npm install and build
         run: |
           cd src/webapp  # Navega até o diretório do app React
           npm install
@@ -28,11 +28,11 @@ jobs:
         run: |
           cd src/webapp
           ls -R  # Lista arquivos para verificar se a pasta build foi criada
-      
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: node-app
+          name: react-build  # Nome do artefato
           path: src/webapp/build  # Verifique se a pasta build foi criada
 
   deploy:
@@ -48,7 +48,7 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: node-app
+          name: react-build  # Nome do artefato deve coincidir
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -58,9 +58,9 @@ jobs:
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6D681E94FF4A4A9EBCABB486D9AB9B40 }}
 
       - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
+        id: deploy-to-webapp
         with:
           app-name: 'app-sgo-front'
           slot-name: 'Production'
-          package: src/webapp/build  # Verifique se o caminho está correto
+          package: .  # Use '.' aqui, pois a pasta build é o artefato que foi baixado e descompactado.
