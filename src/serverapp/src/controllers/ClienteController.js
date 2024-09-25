@@ -69,7 +69,7 @@ const ClienteController = {
   },
   async buscaClienteQuery(req, res) {
     try {
-      const { nome, email, cpf, cnpj } = req.query;
+      const { nome, email, cpf, cnpj, tipoCliente } = req.query;
       const where = {};
 
       if (nome) {
@@ -83,6 +83,10 @@ const ClienteController = {
       }
       if (cnpj) {
         where.cnpj = cnpj;
+      }
+
+      if (tipoCliente && tipoCliente !== "Todos") {
+        where.tipoPessoa = tipoCliente;
       }
 
       const clientes = await Cliente.findAll({ where });

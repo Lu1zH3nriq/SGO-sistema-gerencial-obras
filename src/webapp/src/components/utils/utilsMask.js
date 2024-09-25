@@ -22,11 +22,9 @@ export function removerFormatacaoTelefone(numero) {
 }
 
 export function formatarCPF(cpf) {
+  if (!cpf) return '';
   const cpfLimpo = cpf.replace(/\D/g, ""); 
   
-  if (cpfLimpo.length > 11) {
-    throw new Error("CPF deve ter no máximo 11 dígitos.");
-  }
 
   const parte1 = cpfLimpo.slice(0, 3);
   const parte2 = cpfLimpo.slice(3, 6);
@@ -59,17 +57,23 @@ export function formatarDataISO(data) {
 }
 
 export function formatarCNPJ(cnpj) {
-  if (cnpj.length !== 14) {
-    throw new Error("CNPJ deve ter 14 dígitos.");
-  }
+  if (!cnpj) return '';
+  const cnpjLimpo = cnpj.replace(/\D/g, ""); 
+  
 
-  const parte1 = cnpj.slice(0, 2);
-  const parte2 = cnpj.slice(2, 5);
-  const parte3 = cnpj.slice(5, 8);
-  const parte4 = cnpj.slice(8, 12);
-  const parte5 = cnpj.slice(12);
+  const parte1 = cnpjLimpo.slice(0, 2);
+  const parte2 = cnpjLimpo.slice(2, 5);
+  const parte3 = cnpjLimpo.slice(5, 8);
+  const parte4 = cnpjLimpo.slice(8, 12);
+  const parte5 = cnpjLimpo.slice(12);
 
-  return `${parte1}.${parte2}.${parte3}/${parte4}-${parte5}`;
+  let cnpjFormatado = parte1;
+  if (parte2) cnpjFormatado += `.${parte2}`;
+  if (parte3) cnpjFormatado += `.${parte3}`;
+  if (parte4) cnpjFormatado += `/${parte4}`;
+  if (parte5) cnpjFormatado += `-${parte5}`;
+
+  return cnpjFormatado;
 }
 
 export function removerFormatacaoCNPJ(cnpj) {

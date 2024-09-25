@@ -56,6 +56,10 @@ const Funcionario = sequelize.define("Funcionario", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  isUser: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+  },
 });
 
 module.exports = Funcionario;

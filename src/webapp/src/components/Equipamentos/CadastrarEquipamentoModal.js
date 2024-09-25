@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   ModalHeader,
@@ -7,24 +7,106 @@ import {
   Button,
   Row,
   Col,
+  Spinner,
+  Container,
 } from "reactstrap";
 import { Formik, Form, Field } from "formik";
+import * as Yup from "yup"; // Importando Yup para validação
 import { useUIContextController } from "../../context/index.js";
 import "react-datepicker/dist/react-datepicker.css";
 import PesquisarObraModal from "./PesquisarObraModal";
 import PesquisarFuncionarioModal from "./PesquisarFuncionarioModal";
+import axios from "axios";
+import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
 
-const CadastrarEquipamentoModal = ({ visible, setVisible, equipamento }) => {
+const CadastrarEquipamentoModal = ({
+  visible,
+  setVisible,
+  equipamento,
+  getEquipamentos,
+}) => {
+  const URL_API = process.env.REACT_APP_URL_API;
+  const [loading, setLoading] = useState(false);
   const [state] = useUIContextController();
-  const { darkMode } = state;
+  const { darkMode, userType } = state;
   const [pesquisarObraVisible, setPesquisarObraVisible] = useState(false);
   const [pesquisarFuncionarioVisible, setPesquisarFuncionarioVisible] =
     useState(false);
   const [obraSelecionada, setObraSelecionada] = useState(null);
+  const [funcionarioSelecionado, setFuncionarioSelecionado] = useState(null);
+  const [confirmacaoVisible, setConfirmacaoVisible] = useState({
+    visible: false,
+    mensagem: "",
+    sucesso: false,
+  });
 
   const handleSubmit = (values) => {
-    // Lógica para salvar os dados do formulário
-    console.log(values);
+    setLoading(true);
+
+    const _equipamento = {
+      ...values,
+      obraId: obraSelecionada ? obraSelecionada.id : null,
+      funcionarioId: funcionarioSelecionado ? funcionarioSelecionado.id : null,
+    };
+
+    delete _equipamento.obra;
+    delete _equipamento.responsavel;
+
+    if (_equipamento.dataAlocacao === "--") {
+      _equipamento.dataAlocacao = null;
+    }
+
+    if (equipamento) {
+      axios
+        .put(
+          `${URL_API}/api/equipamentos/alterarEquipamento?id=${equipamento.id}`,
+          _equipamento
+        )
+        .then(() => {
+          setConfirmacaoVisible({
+            visible: true,
+            mensagem: "Equipamento alterado com sucesso",
+            sucesso: true,
+          });
+          setObraSelecionada(null);
+          setFuncionarioSelecionado(null);
+          getEquipamentos();
+          setLoading(false);
+          setVisible(false);
+        })
+        .catch(() => {
+          setConfirmacaoVisible({
+            visible: true,
+            mensagem: "Erro ao editar equipamento",
+            sucesso: false,
+          });
+          setLoading(false);
+          setVisible(false);
+        });
+      return;
+    } else {
+      axios
+        .post(`${URL_API}/api/equipamentos/novoEquipamento`, _equipamento)
+        .then(() => {
+          setConfirmacaoVisible({
+            visible: true,
+            mensagem: "Equipamento cadastrado com sucesso",
+            sucesso: true,
+          });
+          getEquipamentos();
+          setLoading(false);
+          setVisible(false);
+        })
+        .catch(() => {
+          setConfirmacaoVisible({
+            visible: true,
+            mensagem: "Erro ao cadastrar equipamento",
+            sucesso: false,
+          });
+          setLoading(false);
+          setVisible(false);
+        });
+    }
   };
 
   const toggleModal = () => {
@@ -62,17 +144,8 @@ const CadastrarEquipamentoModal = ({ visible, setVisible, equipamento }) => {
     marginBottom: "10px", // Espaçamento vertical entre os inputs
   };
 
-  const datePickerStyle = {
-    backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
-    color: darkMode ? "#FFFFFF" : "#000000",
-    border: "1px solid #ced4da",
-    borderRadius: ".25rem",
-    width: "100%",
-    padding: ".375rem .75rem",
-  };
-
   const saveButtonStyle = {
-    backgroundColor: "#47FF63",
+    backgroundColor: "#1ED760",
     color: "#FFFFFF",
     border: "none",
   };
@@ -89,18 +162,64 @@ const CadastrarEquipamentoModal = ({ visible, setVisible, equipamento }) => {
       ? new Date(equipamento.dataAlocacao).toISOString().split("T")[0]
       : "--",
     derivado: equipamento?.derivado || "Compra de Equipamento",
-    obra: obraSelecionada?.nome || "Compra do equipamento",
+    obra: obraSelecionada?.nome || null,
+    responsavel: funcionarioSelecionado?.nome || null,
   };
 
+  // Adicionando validação com Yup
+  const validationSchema = Yup.object().shape({
+    nome: Yup.string().required("Nome é obrigatório"),
+    identificador: Yup.string().required("Identificador é obrigatório"),
+    status: Yup.string().required("Status é obrigatório"),
+  });
+
+  useEffect(() => {
+    const getObra = async (obraId) => {
+      axios.get(`${URL_API}/api/obras/obra?id=${obraId}`)
+        .then((response) => {
+          setObraSelecionada(response.data || null);
+        })
+        .catch((error) => {
+          console.log("Erro ao buscar obra", error);
+          setObraSelecionada(null);
+        });
+    };
+    const getFuncionario = async (funcionarioId) => {
+      axios.get(`${URL_API}/api/funcionarios/funcionario?id=${funcionarioId}`)
+        .then((response) => {
+          setFuncionarioSelecionado(response.data || null);
+        })
+        .catch((error) => {
+          console.log("Erro ao buscar funcionário", error);
+          setFuncionarioSelecionado(null);
+        });
+    };
+    if (equipamento) {
+      getObra(equipamento.obraId);
+      getFuncionario(equipamento.funcionarioId);
+    }
+  }, [equipamento]);
+
+  useEffect(() => {
+    if (initialValues.status === "Disponível") {
+      setObraSelecionada(null);
+      setFuncionarioSelecionado(null);
+    }
+  }, [initialValues.status]);
+
   return (
-    <>
+    <Container>
       <Modal size="lg" isOpen={visible} toggle={toggleModal} centered>
         <ModalHeader toggle={toggleModal} style={modalStyle}>
           {!equipamento ? "Cadastrar Equipamento" : "Editar Equipamento"}
         </ModalHeader>
         <ModalBody style={formStyle}>
-          <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-            {({ setFieldValue, values }) => (
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema} // Adicionando validação ao Formik
+            onSubmit={handleSubmit}
+          >
+            {({ setFieldValue, values, errors, touched }) => (
               <Form style={formStyle}>
                 <Row form>
                   <Col md={6}>
@@ -109,12 +228,16 @@ const CadastrarEquipamentoModal = ({ visible, setVisible, equipamento }) => {
                       <Field
                         type="text"
                         name="nome"
-                        className="form-control"
+                        className={`form-control ${errors.nome && touched.nome ? 'is-invalid' : ''}`}
                         style={inputStyle}
                         onChange={(e) => {
                           setFieldValue("nome", e.target.value);
                         }}
+                        disabled={userType === 2}
                       />
+                      {errors.nome && touched.nome ? (
+                        <div className="invalid-feedback">{errors.nome}</div>
+                      ) : null}
                     </div>
                   </Col>
                   <Col md={6}>
@@ -123,12 +246,16 @@ const CadastrarEquipamentoModal = ({ visible, setVisible, equipamento }) => {
                       <Field
                         type="text"
                         name="identificador"
-                        className="form-control"
+                        className={`form-control ${errors.identificador && touched.identificador ? 'is-invalid' : ''}`}
                         style={inputStyle}
                         onChange={(e) => {
                           setFieldValue("identificador", e.target.value);
                         }}
+                        disabled={userType === 2}
                       />
+                      {errors.identificador && touched.identificador ? (
+                        <div className="invalid-feedback">{errors.identificador}</div>
+                      ) : null}
                     </div>
                   </Col>
                 </Row>
@@ -144,6 +271,7 @@ const CadastrarEquipamentoModal = ({ visible, setVisible, equipamento }) => {
                         onChange={(e) => {
                           setFieldValue("peso", e.target.value);
                         }}
+                        disabled={userType === 2}
                       />
                     </div>
                   </Col>
@@ -153,16 +281,23 @@ const CadastrarEquipamentoModal = ({ visible, setVisible, equipamento }) => {
                       <Field
                         as="select"
                         name="status"
-                        className="form-control"
+                        className={`form-control ${errors.status && touched.status ? 'is-invalid' : ''}`}
                         style={inputStyle}
                         onChange={(e) => {
                           setFieldValue("status", e.target.value);
+                          if (e.target.value === "Disponível") {
+                            setObraSelecionada(null);
+                            setFuncionarioSelecionado(null);
+                          }
                         }}
                       >
                         <option value="Em uso">Em uso</option>
                         <option value="Disponível">Disponível</option>
                         <option value="Manutenção">Manutenção</option>
                       </Field>
+                      {errors.status && touched.status ? (
+                        <div className="invalid-feedback">{errors.status}</div>
+                      ) : null}
                     </div>
                   </Col>
                 </Row>
@@ -175,7 +310,7 @@ const CadastrarEquipamentoModal = ({ visible, setVisible, equipamento }) => {
                         name="obra"
                         className="form-control"
                         style={inputStyle}
-                        value={values.obra}
+                        value={values.obra || obraSelecionada?.nome}
                         onClick={() => setPesquisarObraVisible(true)}
                         readOnly
                       />
@@ -194,6 +329,7 @@ const CadastrarEquipamentoModal = ({ visible, setVisible, equipamento }) => {
                           onChange={(e) =>
                             setFieldValue("dataCadastro", e.target.value)
                           }
+                          disabled={userType === 2}
                         />
                       </div>
                     </div>
@@ -212,6 +348,8 @@ const CadastrarEquipamentoModal = ({ visible, setVisible, equipamento }) => {
                           onChange={(e) =>
                             setFieldValue("dataAlocacao", e.target.value)
                           }
+                          readOnly
+                          disabled={userType === 2}
                         />
                       </div>
                     </div>
@@ -225,6 +363,9 @@ const CadastrarEquipamentoModal = ({ visible, setVisible, equipamento }) => {
                         className="form-control"
                         style={inputStyle}
                         onClick={() => setPesquisarFuncionarioVisible(true)}
+                        value={
+                          values.responsavel || funcionarioSelecionado?.nome
+                        }
                       />
                     </div>
                   </Col>
@@ -239,8 +380,11 @@ const CadastrarEquipamentoModal = ({ visible, setVisible, equipamento }) => {
                         onChange={(e) => {
                           setFieldValue("derivado", e.target.value);
                         }}
+                        disabled={userType === 2}
                       >
-                        <option value="Compra do equipamento">Compra do equipamento</option>
+                        <option value="Compra do equipamento">
+                          Compra do equipamento
+                        </option>
                         <option value="Aluguél">Aluguél</option>
                       </Field>
                     </div>
@@ -255,7 +399,7 @@ const CadastrarEquipamentoModal = ({ visible, setVisible, equipamento }) => {
                     Fechar
                   </Button>
                   <Button color="primary" type="submit" style={saveButtonStyle}>
-                    Salvar
+                    {loading ? <Spinner size="sm" color="light" /> : "Salvar"}
                   </Button>
                 </ModalFooter>
               </Form>
@@ -271,9 +415,18 @@ const CadastrarEquipamentoModal = ({ visible, setVisible, equipamento }) => {
       <PesquisarFuncionarioModal
         visible={pesquisarFuncionarioVisible}
         setVisible={setPesquisarFuncionarioVisible}
-        onSelectFuncionario={() => {}}
+        onSelectFuncionario={(funcionario) => {
+          setFuncionarioSelecionado(funcionario);
+        }}
       />
-    </>
+
+      <ConfirmacaoModal
+        visible={confirmacaoVisible.visible}
+        setVisible={setConfirmacaoVisible}
+        mensagem={confirmacaoVisible.mensagem}
+        sucesso={confirmacaoVisible.sucesso}
+      />
+    </Container>
   );
 };
 

@@ -26,6 +26,8 @@ const CadastrarFuncionariosModal = ({
   setVisible,
   funcionario,
   getFuncionarios,
+  cadastroAoPesquisar,
+  returnFuncionario
 }) => {
   const URL_API = process.env.REACT_APP_URL_API;
   const [loading, setLoading] = useState(false);
@@ -38,7 +40,7 @@ const CadastrarFuncionariosModal = ({
     mensagem: "",
     sucesso: false,
   });
-
+  const [erroCPF, setErroCPF] = React.useState("");
   const handleSubmit = (values) => {
     setLoading(true);
     const data = {
@@ -50,7 +52,19 @@ const CadastrarFuncionariosModal = ({
     if (!funcionario) {
       axios
         .post(`${URL_API}/api/funcionarios/novoFuncionario`, data)
-        .then(() => {
+        .then((res) => {
+
+          if (cadastroAoPesquisar) {
+            returnFuncionario(res.data.funcionario);
+            setConfirmacaoVisible({
+              visible: true,
+              mensagem: "Funcionário cadastrado com sucesso!",
+              sucesso: true,
+            });
+            setVisible(false);
+            return;
+          }
+
           setConfirmacaoVisible({
             visible: true,
             mensagem: "Funcionário cadastrado com sucesso!",
@@ -131,7 +145,7 @@ const CadastrarFuncionariosModal = ({
   };
 
   const saveButtonStyle = {
-    backgroundColor: "#47FF63",
+    backgroundColor: "#1ED760",
     color: "#FFFFFF",
     border: "none",
   };
@@ -147,8 +161,8 @@ const CadastrarFuncionariosModal = ({
     email: funcionario?.email || "",
     endereco: funcionario?.endereco || "",
     cpf: funcionario?.cpf || "",
-    tipo: funcionario?.tipo|| "",
-    status: funcionario?.status|| "",
+    tipo: funcionario?.tipo || "",
+    status: funcionario?.status || "",
     sexo: funcionario?.sexo || "",
     cargo: funcionario?.cargo || "",
     dataContratacao: funcionario?.dataContratacao
@@ -157,6 +171,7 @@ const CadastrarFuncionariosModal = ({
     dataDemissao: funcionario?.dataDemissao
       ? new Date(funcionario?.dataDemissao).toISOString().split("T")[0]
       : "" || "",
+    isUser: funcionario?.isUser ? true : false,
   };
 
   return (
@@ -169,7 +184,7 @@ const CadastrarFuncionariosModal = ({
           <Formik initialValues={initialValues} onSubmit={handleSubmit}>
             {({ values, setFieldValue }) => (
               <Form style={formStyle}>
-                <Row form>
+                <Row form style={{ padding: "0.5rem 0rem 0.5rem 0rem" }}>
                   <Col md={6}>
                     <div className="form-group">
                       <label htmlFor="nome">Nome</label>
@@ -190,10 +205,38 @@ const CadastrarFuncionariosModal = ({
                         type="text"
                         name="cpf"
                         className="form-control"
-                        style={inputStyle}
-                        value={formatarCPF(values.cpf)}
-                        onChange={(e) => setFieldValue("cpf", e.target.value)}
+                        style={{
+                          ...inputStyle,
+                          borderColor: erroCPF ? "red" : "",
+                        }}
+                        value={values.cpf}
+                        onChange={(e) => {
+                          const rawValue = removerFormatacaoCPF(e.target.value);
+                          if (rawValue.length !== 11) {
+                            if (rawValue.length === 0) {
+                              setErroCPF("");
+                            } else {
+                              setErroCPF("CPF inválido.");
+                            }
+                          } else {
+                            setErroCPF("");
+                          }
+                          const formatedValue = formatarCPF(rawValue);
+                          setFieldValue("cpf", formatedValue);
+                        }}
                       />
+                      <div style={{ marginTop: "-15px" }}>
+                        <small style={{ color: "Grey", fontSize: "11px" }}>
+                          * Somente números
+                        </small>
+                      </div>
+                      <div style={{ marginTop: "-15px" }}>
+                        {erroCPF ? (
+                          <small style={{ color: "red", fontSize: "11px" }}>
+                            {erroCPF}
+                          </small>
+                        ) : null}
+                      </div>
                     </div>
                   </Col>
                 </Row>
@@ -256,6 +299,11 @@ const CadastrarFuncionariosModal = ({
                           setFieldValue("telefone", e.target.value)
                         }
                       />
+                    </div>
+                    <div style={{ marginTop: "-15px" }}>
+                      <small style={{ color: "Grey", fontSize: "11px" }}>
+                        * Somente números
+                      </small>
                     </div>
                   </Col>
                   <Col md={6}>
@@ -329,6 +377,30 @@ const CadastrarFuncionariosModal = ({
                         />
                         <label className="form-check-label" htmlFor="efetivo">
                           Efetivo
+                        </label>
+                      </div>
+                    </div>
+                  </Col>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label htmlFor="isUser">Usuário:</label>
+                      <div>
+                        <Field
+                          type="checkbox"
+                          name="isUser"
+                          className="form-check-input"
+                          style={checkboxStyle}
+                          checked={values.isUser ? true : false}
+                          onChange={(e) => {
+                            setFieldValue("isUser", e.target.checked);
+                          }}
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="isUser"
+                          style={{ marginLeft: "0.5rem" }}
+                        >
+                          Sim
                         </label>
                       </div>
                     </div>
