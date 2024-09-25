@@ -39,13 +39,9 @@ const Obra = sequelize.define("Obra", {
     type: DataTypes.FLOAT,
     allowNull: true,
   },
-  responsavel: {
+  responsavelId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: {
-      model: 'Funcionarios', 
-      key: 'id'
-    }
   }
 });
 
