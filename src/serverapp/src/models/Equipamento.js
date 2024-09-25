@@ -16,7 +16,7 @@ const Equipamento = sequelize.define("Equipamento", {
     allowNull: false,
   },
   peso: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.STRING,
     allowNull: true,
   },
   status: {

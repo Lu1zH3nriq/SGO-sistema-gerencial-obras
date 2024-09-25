@@ -26,7 +26,9 @@ const CadastrarClienteModal = ({
   visible = false,
   setVisible,
   cliente = null,
-  getClientes = () => {},
+  getClientes,
+  cadastroAoPesquisar,
+  returnCliente
 }) => {
   const URL_API = process.env.REACT_APP_URL_API;
 
@@ -37,6 +39,8 @@ const CadastrarClienteModal = ({
     mensagem: "",
     sucesso: false,
   });
+  const [erroCPF, setErroCPF] = React.useState("");
+  const [erroCNPJ, setErroCNPJ] = React.useState("");
   const { darkMode } = state;
 
   const handleSubmit = async (values) => {
@@ -65,7 +69,18 @@ const CadastrarClienteModal = ({
           _cliente
         );
       } else {
-        await axios.post(`${URL_API}/api/clientes/novoCliente`, _cliente);
+        const response = await axios.post(`${URL_API}/api/clientes/novoCliente`, _cliente);
+
+        if (cadastroAoPesquisar) {
+          returnCliente(response.data);
+          setVisible(false);
+          setConfirmacaoModal({
+            visible: true,
+            mensagem: "Cliente salvo com sucesso.",
+            sucesso: true,
+          });
+          return;
+        }
       }
 
       setConfirmacaoModal({
@@ -119,7 +134,7 @@ const CadastrarClienteModal = ({
   };
 
   const saveButtonStyle = {
-    backgroundColor: "#47FF63",
+    backgroundColor: "#1ED760",
     color: "#FFFFFF",
     border: "none",
   };
@@ -188,6 +203,11 @@ const CadastrarClienteModal = ({
                         }
                       />
                     </div>
+                    <div style={{ marginTop: "-15px" }}>
+                      <small style={{ color: "Grey", fontSize: "11px" }}>
+                        * Somente números
+                      </small>
+                    </div>
                   </Col>
                   <Col md={6}>
                     <div className="form-group">
@@ -252,16 +272,42 @@ const CadastrarClienteModal = ({
                             type="text"
                             name="cpf"
                             className="form-control"
-                            style={inputStyle}
+                            style={{
+                              ...inputStyle,
+                              borderColor: erroCPF ? "red" : "",
+                            }}
                             value={values.cpf}
                             onChange={(e) => {
                               const rawValue = removerFormatacaoCPF(
                                 e.target.value
                               );
+                              if (rawValue.length !== 11) {
+                                if (rawValue.length === 0) {
+                                  setErroCPF("");
+                                } else {
+                                  setErroCPF(
+                                    "CPF inválido."
+                                  );
+                                }
+                              } else {
+                                setErroCPF("");
+                              }
                               const formatedValue = formatarCPF(rawValue);
                               setFieldValue("cpf", formatedValue);
                             }}
                           />
+                          <div style={{ marginTop: "-15px" }}>
+                            <small style={{ color: "Grey", fontSize: "11px" }}>
+                              * Somente números
+                            </small>
+                          </div>
+                          <div style={{ marginTop: "-15px" }}>
+                            {erroCPF ? (
+                              <small style={{ color: "red", fontSize: "11px" }}>
+                                {erroCPF}
+                              </small>
+                            ) : null}
+                          </div>
                         </div>
                       </Col>
                       <Col md={6}>
@@ -272,10 +318,10 @@ const CadastrarClienteModal = ({
                             name="sexo"
                             className="form-control"
                             style={inputStyle}
-                            value={values.sexo} // Adicione esta linha para garantir que o valor inicial seja selecionado
+                            value={values.sexo}
                             onChange={(e) =>
                               setFieldValue("sexo", e.target.value)
-                            } // Adicione esta linha para atualizar o valor do campo
+                            }
                           >
                             <option value="--">--</option>
                             <option value="Masculino">Masculino</option>
@@ -296,16 +342,42 @@ const CadastrarClienteModal = ({
                             type="text"
                             name="cnpj"
                             className="form-control"
-                            style={inputStyle}
+                            style={{
+                              ...inputStyle,
+                              borderColor: erroCNPJ ? "red" : "",
+                            }}
                             value={values.cnpj}
                             onChange={(e) => {
                               const rawValue = removerFormatacaoCNPJ(
                                 e.target.value
                               );
+                              if (rawValue.length !== 14) {
+                                if (rawValue.length === 0) {
+                                  setErroCNPJ("");
+                                } else {
+                                  setErroCNPJ(
+                                    "CNPJ inválido."
+                                  );
+                                }
+                              } else {
+                                setErroCNPJ("");
+                              }
                               const formatedValue = formatarCNPJ(rawValue);
                               setFieldValue("cnpj", formatedValue);
                             }}
                           />
+                          <div style={{ marginTop: "-15px" }}>
+                            <small style={{ color: "Grey", fontSize: "11px" }}>
+                              * Somente números
+                            </small>
+                          </div>
+                          <div style={{ marginTop: "-15px" }}>
+                            {erroCNPJ ? (
+                              <small style={{ color: "red", fontSize: "11px" }}>
+                                {erroCNPJ}
+                              </small>
+                            ) : null}
+                          </div>
                         </div>
                       </Col>
                       <Col md={6}>

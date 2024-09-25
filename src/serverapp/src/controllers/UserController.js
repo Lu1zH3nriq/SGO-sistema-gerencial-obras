@@ -10,7 +10,7 @@ const createUsuario = async (req, res) => {
   try {
     const { email, nivelUsuario } = req.body;
     const password = Math.random().toString(36).slice(-8);
-    console.log("password", password);
+    
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const usuario = await Usuario.create({

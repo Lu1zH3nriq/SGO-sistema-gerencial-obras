@@ -9,6 +9,7 @@ import {
   Col,
   Spinner,
   Table,
+  Container,
 } from "reactstrap";
 import { Formik, Form, Field } from "formik";
 import { useUIContextController } from "../../context/index.js";
@@ -70,7 +71,7 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
   };
 
   const saveButtonStyle = {
-    backgroundColor: "#47FF63",
+    backgroundColor: "#1ED760",
     color: "#FFFFFF",
     border: "none",
   };
@@ -89,7 +90,7 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
   };
 
   return (
-    <>
+    <Container>
       <Modal
         size="lg"
         isOpen={visible}
@@ -233,7 +234,7 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
         mensagem={confirmacaoVisible.mensagem}
         sucesso={confirmacaoVisible.sucesso}
       />
-    </>
+    </Container>
   );
 };
 

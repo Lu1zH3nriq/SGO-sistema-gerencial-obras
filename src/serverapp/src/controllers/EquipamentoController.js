@@ -1,4 +1,5 @@
 const { Equipamento } = require('../models');
+const Usuario = require("../models/User");
 
 const EquipamentoController = {
   async createEquipamento(req, res) {
@@ -61,7 +62,21 @@ const EquipamentoController = {
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
-  }
+  }, 
+
+
+  async getEquipamentosUsuario(req, res) {
+    const userEmail = req.query.userId;
+    try {
+      const user = await Usuario.findOne({ where: { email: userEmail } });
+      const equipamentos = await Equipamento.findAll({
+        where: { funcionarioId: user.id }
+      });
+      res.status(200).json(equipamentos);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
 };
 
 module.exports = EquipamentoController;

@@ -39,7 +39,7 @@ const DeleteFuncionarioModal = ({
 
     axios
       .delete(
-        `${URL_API}/api/funcionarios/deleteFuncionario?id=${funcionario.id}`
+        `${URL_API}/api/funcionarios/deleteFuncionario?id=${funcionario.email}`
       )
       .then((response) => {
         setConfirmacaoModal({

@@ -89,12 +89,16 @@ const Usuarios = () => {
 
   const tableHeaderStyle = {
     textAlign: "center",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    padding: "0rem 1rem 0rem 1rem",
   };
 
   const tableCellStyle = {
-    textAlign: "center",
+    textAlign: "start",
     backgroundColor: darkMode ? "#676767" : "#f0f0f0",
-    padding: "0.5rem",
+    padding: "0.3rem 1rem 0.3rem 1rem",
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -148,219 +152,211 @@ const Usuarios = () => {
 
   return (
     <Layout rotaAtual="Usuários">
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          marginTop: "5%",
-          alignItems: "center",
-          maxWidth: "95%",
+      <Container
+        style={{
+          marginTop: "8vh",
         }}
       >
-        <Container>
-          {/* Linha com botão "Adicionar" e campo de pesquisa */}
-          <Row className="mb-4" style={{ marginTop: "2%", maxWidth: "100%" }}>
-            <Col className="d-flex align-items-center justify-content-between">
-              <Button
-                color="secondary"
-                className="d-flex align-items-center"
-                style={buttonStyle}
-                onClick={cadastrarUsuario}
+        {/* Linha com botão "Adicionar" e campo de pesquisa */}
+        <Row className="mb-4" style={{ marginTop: "2%", maxWidth: "100%" }}>
+          <Col className="d-flex align-items-center justify-content-between">
+            <Button
+              color="secondary"
+              className="d-flex align-items-center"
+              style={buttonStyle}
+              onClick={cadastrarUsuario}
+            >
+              <FaPlus className="me-2" /> Adicionar
+            </Button>
+            <div
+              className="d-flex align-items-center"
+              style={{ whiteSpace: "nowrap" }}
+            >
+              <Typography
+                variant="subtitle1"
+                className="me-2"
+                color={"secondary"}
+                style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
               >
-                <FaPlus className="me-2" /> Adicionar
+                Usuário:
+              </Typography>
+              <Input
+                type="text"
+                className="me-2"
+                style={inputStyle}
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+              <Button outline color="secondary" style={buttonStyle}>
+                <FaSearch />
               </Button>
-              <div
-                className="d-flex align-items-center"
-                style={{ whiteSpace: "nowrap" }}
+              <Typography
+                variant="subtitle1"
+                className="me-2 ms-4"
+                color={"secondary"}
+                style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
               >
-                <Typography
-                  variant="subtitle1"
-                  className="me-2"
-                  color={"secondary"}
-                  style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                >
-                  Usuário:
-                </Typography>
-                <Input
-                  type="text"
-                  className="me-2"
-                  style={inputStyle}
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                />
-                <Button outline color="secondary" style={buttonStyle}>
-                  <FaSearch />
-                </Button>
-                <Typography
-                  variant="subtitle1"
-                  className="me-2 ms-4"
-                  color={"secondary"}
-                  style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                >
-                  E-mail:
-                </Typography>
-                <Input
-                  type="text"
-                  className="me-2"
-                  style={inputStyle}
-                  value={searchEmail}
-                  onChange={handleSearchEmail}
-                />
-                <Button outline color="secondary" style={buttonStyle}>
-                  <FaSearch />
-                </Button>
-              </div>
-            </Col>
-          </Row>
+                E-mail:
+              </Typography>
+              <Input
+                type="text"
+                className="me-2"
+                style={inputStyle}
+                value={searchEmail}
+                onChange={handleSearchEmail}
+              />
+              <Button outline color="secondary" style={buttonStyle}>
+                <FaSearch />
+              </Button>
+            </div>
+          </Col>
+        </Row>
 
-          {/* Tabela */}
-          {loading ? (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "start",
-                height: "100vh",
-              }}
-            >
-              <Spinner color="secondary" />
-            </Box>
-          ) : (
-            <Table
-              responsive
-              size="sm"
-              bordered
-              dark={darkMode}
-              style={{
-                borderRadius: "0px",
-                marginTop: "2%",
-                tableLayout: "auto",
-              }}
-            >
-              <thead>
-                <tr>
-                  <th style={tableHeaderStyle}>Nome</th>
-                  <th style={tableHeaderStyle}>Email</th>
-                  <th style={tableHeaderStyle}>Telefone</th>
-                  <th style={tableHeaderStyle}>Cargo</th>
-                  <th style={tableHeaderStyle}>Data de Cadastro</th>
-                  <th style={tableHeaderStyle}>Status</th>
-                  <th style={tableHeaderStyle}>Usuário</th>
-                  <th style={tableHeaderStyle}>Tipo</th>
-                  <th style={{ ...tableHeaderStyle, textAlign: "center" }}>
-                    Ações
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentUsuarios.length > 0 ? (
-                  currentUsuarios.map((usuario, index) => (
-                    <tr key={index}>
-                      <td style={tableCellStyle}>{usuario.nome}</td>
-                      <td style={tableCellStyle}>{usuario.email || "--"}</td>
-                      <td style={tableCellStyle}>
-                        {formatarTelefone(usuario.telefone) || "--"}
-                      </td>
-                      <td style={tableCellStyle}>{usuario.cargo || "--"}</td>
-                      <td style={tableCellStyle}>
-                        {formatarData(usuario.dataCadastro) || "--"}
-                      </td>
-                      <td style={tableCellStyle}>{usuario.status || "--"}</td>
-                      <td style={tableCellStyle}>
-                        {nivelUsuario[usuario.nivelUsuario] || "--"}
-                      </td>
-                      <td style={tableCellStyle}>{usuario.tipo || "--"}</td>
-                      <td>
-                        <div
-                          style={{
-                            textAlign: "center",
-                          }}
-                        >
-                          <FaEdit
-                            style={{
-                              cursor: "pointer",
-                              marginRight: "10px",
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                            }}
-                            size={20}
-                            title="Editar"
-                            onClick={() => editarUsuario(usuario)}
-                          />
-                          <FaTrash
-                            style={{
-                              cursor: "pointer",
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                            }}
-                            size={20}
-                            title="Excluir"
-                            onClick={() => excluirUsuario(usuario)}
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan="9"
-                      style={{
-                        textAlign: "center",
-                        color: darkMode ? "#FFFFFF" : "#343A40",
-                      }}
-                    >
-                      Nenhum usuário encontrado
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </Table>
-          )}
-          {/* Botões de navegação */}
+        {/* Tabela */}
+        {loading ? (
           <Box
             sx={{
               display: "flex",
               justifyContent: "center",
-              paddingTop: "2%",
-              paddingBottom: "2%",
-              alignItems: "center",
+              alignItems: "start",
+              height: "100vh",
             }}
           >
-            <Button
-              variant="secondary"
-              style={{ ...buttonStyle, marginRight: "5px" }}
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              size="sm"
-            >
-              <FaChevronLeft size={10} />
-            </Button>
-            <Typography
-              variant="subtitle1"
-              style={{
-                color: darkMode ? "#FFFFFF" : "#343A40",
-                padding: "0% 1% 0% 1%",
-              }}
-            >
-              Página {currentPage} de{" "}
-              {Math.ceil(filteredUsuarios.length / itemsPerPage)} (Total:{" "}
-              {filteredUsuarios.length} usuários)
-            </Typography>
-            <Button
-              variant="secondary"
-              style={{ ...buttonStyle, marginLeft: "5px" }}
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={
-                currentPage ===
-                Math.ceil(filteredUsuarios.length / itemsPerPage)
-              }
-              size="sm"
-            >
-              <FaChevronRight size={10} />
-            </Button>
+            <Spinner color="secondary" />
           </Box>
-        </Container>
-      </Box>
+        ) : (
+          <Table
+            responsive
+            size="sm"
+            bordered
+            dark={darkMode}
+            style={{
+              borderRadius: "0px",
+              marginTop: "2%",
+              tableLayout: "auto",
+            }}
+          >
+            <thead>
+              <tr>
+                <th style={tableHeaderStyle}>Nome</th>
+                <th style={tableHeaderStyle}>Email</th>
+                <th style={tableHeaderStyle}>Telefone</th>
+                <th style={tableHeaderStyle}>Cargo</th>
+                <th style={tableHeaderStyle}>Data de Cadastro</th>
+                <th style={tableHeaderStyle}>Status</th>
+                <th style={tableHeaderStyle}>Usuário</th>
+                <th style={tableHeaderStyle}>Tipo</th>
+                <th style={{ ...tableHeaderStyle, textAlign: "center" }}>
+                  Ações
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentUsuarios.length > 0 ? (
+                currentUsuarios.map((usuario, index) => (
+                  <tr key={index}>
+                    <td style={tableCellStyle}>{usuario.nome}</td>
+                    <td style={tableCellStyle}>{usuario.email || "--"}</td>
+                    <td style={tableCellStyle}>
+                      {formatarTelefone(usuario.telefone) || "--"}
+                    </td>
+                    <td style={tableCellStyle}>{usuario.cargo || "--"}</td>
+                    <td style={tableCellStyle}>
+                      {formatarData(usuario.dataCadastro) || "--"}
+                    </td>
+                    <td style={tableCellStyle}>{usuario.status || "--"}</td>
+                    <td style={tableCellStyle}>
+                      {nivelUsuario[usuario.nivelUsuario] || "--"}
+                    </td>
+                    <td style={tableCellStyle}>{usuario.tipo || "--"}</td>
+                    <td>
+                      <div
+                        style={{
+                          textAlign: "center",
+                        }}
+                      >
+                        <FaEdit
+                          style={{
+                            cursor: "pointer",
+                            marginRight: "10px",
+                            color: darkMode ? "#FFFFFF" : "#343A40",
+                          }}
+                          size={20}
+                          title="Editar"
+                          onClick={() => editarUsuario(usuario)}
+                        />
+                        <FaTrash
+                          style={{
+                            cursor: "pointer",
+                            color: darkMode ? "#FFFFFF" : "#343A40",
+                          }}
+                          size={20}
+                          title="Excluir"
+                          onClick={() => excluirUsuario(usuario)}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="9"
+                    style={{
+                      textAlign: "center",
+                      color: darkMode ? "#FFFFFF" : "#343A40",
+                    }}
+                  >
+                    Nenhum usuário encontrado
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+        )}
+        {/* Botões de navegação */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            paddingTop: "2%",
+            paddingBottom: "2%",
+            alignItems: "center",
+          }}
+        >
+          <Button
+            variant="secondary"
+            style={{ ...buttonStyle, marginRight: "5px" }}
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            size="sm"
+          >
+            <FaChevronLeft size={10} />
+          </Button>
+          <Typography
+            variant="subtitle1"
+            style={{
+              color: darkMode ? "#FFFFFF" : "#343A40",
+              padding: "0% 1% 0% 1%",
+            }}
+          >
+            Página {currentPage} de{" "}
+            {Math.ceil(filteredUsuarios.length / itemsPerPage)} (Total:{" "}
+            {filteredUsuarios.length} usuários)
+          </Typography>
+          <Button
+            variant="secondary"
+            style={{ ...buttonStyle, marginLeft: "5px" }}
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={
+              currentPage === Math.ceil(filteredUsuarios.length / itemsPerPage)
+            }
+            size="sm"
+          >
+            <FaChevronRight size={10} />
+          </Button>
+        </Box>
+      </Container>
 
       <CadastrarUsuarioModal
         visible={modalVisible.visible}

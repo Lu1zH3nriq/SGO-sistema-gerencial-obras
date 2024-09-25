@@ -8,6 +8,8 @@ import { useUIContextController } from '../../context/index.js';
 
 import LogoutModal from "components/logout/LogoutModal.js";
 
+const drawerWidth = "15vw"; // Largura fixa da sidebar
+
 const SideBar = ({ trocaRotas }) => {
     const [controller] = useUIContextController();
     const { darkMode, userType } = controller;
@@ -75,7 +77,7 @@ const SideBar = ({ trocaRotas }) => {
                         height: '100vh',
                         marginTop: '0px',
                         marginLeft: '0px',
-                        width: '15%',
+                        width: drawerWidth,
                     }
                 }}
                 variant="permanent"

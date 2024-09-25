@@ -18,6 +18,8 @@ import { CiLogout } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
 import LogoutModal from "components/logout/LogoutModal.js";
 
+const drawerWidth = 240; // Largura fixa da sidebar
+
 export default function PermanentDrawerLeft({ rotaAtual }) {
   let navigate = useNavigate();
   const [controller, dispatch] = useUIContextController();
@@ -40,12 +42,14 @@ export default function PermanentDrawerLeft({ rotaAtual }) {
       <CssBaseline />
       <AppBar
         position="fixed"
-        sx={{ width: "85%" }}
+        sx={{
+          height: "calc(100vh - 94vh)",
+          maxWidth: "calc(100vw - 15vw)",
+        }}
         style={{
           borderRadius: 0,
           margin: 0,
           backgroundColor: darkMode ? "#414141" : "#D9D9D6",
-          height: "9%",
         }}
       >
         <Toolbar>
@@ -119,6 +123,7 @@ export default function PermanentDrawerLeft({ rotaAtual }) {
         ModalProps={{
           keepMounted: true,
         }}
+        sx={{ width: drawerWidth, flexShrink: 0 }}
       >
         <List>
           <ListItem button>

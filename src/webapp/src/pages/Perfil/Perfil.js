@@ -298,350 +298,336 @@ const Perfil = () => {
   return (
     <Layout rotaAtual="Obras">
       {!loading ? (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            marginTop: "7%",
-            alignItems: "center",
-          }}
-        >
-          <Container style={{ height: "100%" }}>
-            <Row>
-              <Col md={4}>
-                <Card style={cardStyle}>
-                  <CardContent
+        <Container style={{ marginTop: "8vh" }}>
+          <Row>
+            <Col md={4}>
+              <Card style={cardStyle}>
+                <CardContent
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      width: "100%",
+                    }}
+                  >
+                    <Typography
+                      variant="h6"
+                      style={{ marginBottom: "10px", ...textStyle }}
+                    >
+                      Foto
+                    </Typography>
+                    <Box>
+                      <IconButton
+                        style={textStyle}
+                        onClick={() => setOpen(true)}
+                      >
+                        <FaEdit />
+                      </IconButton>
+                      <IconButton
+                        style={textStyle}
+                        onClick={() => {
+                          setDeleteFoto(true);
+                        }}
+                      >
+                        <FaTrash />
+                      </IconButton>
+                    </Box>
+                  </Box>
+                  <div
+                    style={{
+                      width: "150px",
+                      height: "150px",
+                      borderRadius: "50%",
+                      overflow: "hidden",
+                      marginTop: "10px",
+                      border: darkMode
+                        ? "2px solid #FFFFFF"
+                        : "2px solid #ced4da",
+                    }}
+                  >
+                    <img
+                      src={
+                        userFoto ||
+                        "https://t4.ftcdn.net/jpg/00/64/67/27/360_F_64672736_U5kpdGs9keUll8CRQ3p3YaEv2M6qkVY5.jpg"
+                      }
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </Col>
+            <Col md={4}>
+              <Card style={cardStyle}>
+                <CardContent>
+                  <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      marginBottom: "10px",
+                      ...textStyle,
+                    }}
+                  >
+                    Informações Pessoais
+                  </Typography>
+                  <div
                     style={{
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "center",
-                      alignItems: "center",
                       height: "100%",
                     }}
                   >
-                    <Box
-                      sx={{
+                    <Typography variant="h6" style={textStyle}>
+                      Nome:{" "}
+                      <span style={{ fontWeight: "lighter" }}>{user.nome}</span>
+                    </Typography>
+                    <Typography variant="h6" style={textStyle}>
+                      Email:{" "}
+                      <span style={{ fontWeight: "lighter" }}>
+                        {user.email}
+                      </span>
+                    </Typography>
+                    <Typography variant="h6" style={textStyle}>
+                      Cargo:{" "}
+                      <span style={{ fontWeight: "lighter" }}>
+                        {user.cargo}
+                      </span>
+                    </Typography>
+                    <Typography variant="h6" style={textStyle}>
+                      Tipo:{" "}
+                      <span style={{ fontWeight: "lighter" }}>{user.tipo}</span>
+                    </Typography>
+                    <Typography variant="h6" style={textStyle}>
+                      Telefone:{" "}
+                      <span style={{ fontWeight: "lighter" }}>
+                        {formatarTelefone(user.telefone)}
+                      </span>
+                    </Typography>
+                  </div>
+                </CardContent>
+              </Card>
+            </Col>
+            <Col md={4}>
+              <Card style={cardStyle}>
+                <CardContent>
+                  <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      marginBottom: "10px",
+                      ...textStyle,
+                    }}
+                  >
+                    Alterar Senha
+                  </Typography>
+                  <Form.Group>
+                    <Form.Label
+                      className="col-sm-2 col-form-label col-form-label-sm"
+                      style={textStyle}
+                    >
+                      E-mail
+                    </Form.Label>
+                    <FormControl
+                      type="text"
+                      value={user.email}
+                      readOnly
+                      style={inputStyle}
+                    />
+                  </Form.Group>
+                  <Form.Group
+                    style={{ marginTop: "10px", position: "relative" }}
+                  >
+                    <Form.Label
+                      className="col-sm col-form-label col-form-label-sm"
+                      style={textStyle}
+                    >
+                      Nova Senha *
+                    </Form.Label>
+                    <Form.Group
+                      style={{
                         display: "flex",
                         justifyContent: "space-between",
-                        width: "100%",
                       }}
                     >
-                      <Typography
-                        variant="h6"
-                        style={{ marginBottom: "10px", ...textStyle }}
-                      >
-                        Foto
-                      </Typography>
-                      <Box>
-                        <IconButton
-                          style={textStyle}
-                          onClick={() => setOpen(true)}
-                        >
-                          <FaEdit />
-                        </IconButton>
-                        <IconButton
-                          style={textStyle}
-                          onClick={() => {
-                            setDeleteFoto(true);
-                          }}
-                        >
-                          <FaTrash />
-                        </IconButton>
-                      </Box>
-                    </Box>
-                    <div
-                      style={{
-                        width: "150px",
-                        height: "150px",
-                        borderRadius: "50%",
-                        overflow: "hidden",
-                        marginTop: "10px",
-                        border: darkMode
-                          ? "2px solid #FFFFFF"
-                          : "2px solid #ced4da",
-                      }}
-                    >
-                      <img
-                        src={
-                          userFoto ||
-                          "https://t4.ftcdn.net/jpg/00/64/67/27/360_F_64672736_U5kpdGs9keUll8CRQ3p3YaEv2M6qkVY5.jpg"
-                        }
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                        }}
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Col>
-              <Col md={4}>
-                <Card style={cardStyle}>
-                  <CardContent>
-                    <Typography
-                      variant="h6"
-                      style={{
-                        textAlign: "center",
-                        marginBottom: "10px",
-                        ...textStyle,
-                      }}
-                    >
-                      Informações Pessoais
-                    </Typography>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        height: "100%",
-                      }}
-                    >
-                      <Typography variant="h6" style={textStyle}>
-                        Nome:{" "}
-                        <span style={{ fontWeight: "lighter" }}>
-                          {user.nome}
-                        </span>
-                      </Typography>
-                      <Typography variant="h6" style={textStyle}>
-                        Email:{" "}
-                        <span style={{ fontWeight: "lighter" }}>
-                          {user.email}
-                        </span>
-                      </Typography>
-                      <Typography variant="h6" style={textStyle}>
-                        Cargo:{" "}
-                        <span style={{ fontWeight: "lighter" }}>
-                          {user.cargo}
-                        </span>
-                      </Typography>
-                      <Typography variant="h6" style={textStyle}>
-                        Tipo:{" "}
-                        <span style={{ fontWeight: "lighter" }}>
-                          {user.tipo}
-                        </span>
-                      </Typography>
-                      <Typography variant="h6" style={textStyle}>
-                        Telefone:{" "}
-                        <span style={{ fontWeight: "lighter" }}>
-                          {formatarTelefone(user.telefone)}
-                        </span>
-                      </Typography>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Col>
-              <Col md={4}>
-                <Card style={cardStyle}>
-                  <CardContent>
-                    <Typography
-                      variant="h6"
-                      style={{
-                        textAlign: "center",
-                        marginBottom: "10px",
-                        ...textStyle,
-                      }}
-                    >
-                      Alterar Senha
-                    </Typography>
-                    <Form.Group>
-                      <Form.Label
-                        className="col-sm-2 col-form-label col-form-label-sm"
-                        style={textStyle}
-                      >
-                        E-mail
-                      </Form.Label>
                       <FormControl
-                        type="text"
-                        value={user.email}
-                        readOnly
-                        style={inputStyle}
-                      />
-                    </Form.Group>
-                    <Form.Group
-                      style={{ marginTop: "10px", position: "relative" }}
-                    >
-                      <Form.Label
-                        className="col-sm col-form-label col-form-label-sm"
-                        style={textStyle}
-                      >
-                        Nova Senha *
-                      </Form.Label>
-                      <Form.Group
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <FormControl
-                          type={showPassword ? "text" : "password"}
-                          style={{ ...inputStyle, flex: 1 }}
-                          onChange={(e) => {
-                            setNovaSenha(e.target.value);
-                          }}
-                        />
-                        <IconButton
-                          style={{
-                            marginLeft: "10px",
-                            color: darkMode ? "#FFFFFF" : "#000000",
-                          }}
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? <FaEyeSlash /> : <FaEye />}
-                        </IconButton>
-                      </Form.Group>
-                    </Form.Group>
-
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        marginTop: "20px",
-                      }}
-                    >
-                      <Button
-                        variant="primary"
-                        style={{
-                          backgroundColor: darkMode ? "#313131" : "#CECFCB",
-                          color: darkMode ? "#FFFFFF" : "#343A40",
-                          border: "none",
-                        }}
-                        onClick={() => {
-                          sendNewSenha();
-                        }}
-                      >
-                        {loadingSenha ? (
-                          <Spinner color="light" size={"sm"} />
-                        ) : (
-                          "Alterar"
-                        )}
-                      </Button>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Col>
-            </Row>
-            <Row style={{ marginTop: "20px" }}>
-              <Col md={4}>
-                <Card style={cardStyle}>
-                  <CardContent>
-                    <Form.Group>
-                      <Form.Label style={textStyle}>E-mail</Form.Label>
-                      <FormControl
-                        type="text"
-                        value={user.email}
-                        readOnly
-                        style={inputStyle}
-                      />
-                    </Form.Group>
-                    <Form.Group style={{ marginTop: "10px" }}>
-                      <Form.Label style={textStyle}>Telefone</Form.Label>
-                      <FormControl
-                        type="text"
-                        value={formatarTelefone(telefoneEdit)}
-                        style={inputStyle}
+                        type={showPassword ? "text" : "password"}
+                        style={{ ...inputStyle, flex: 1 }}
                         onChange={(e) => {
-                          setTelefoneEdit(e.target.value);
+                          setNovaSenha(e.target.value);
                         }}
                       />
+                      <IconButton
+                        style={{
+                          marginLeft: "10px",
+                          color: darkMode ? "#FFFFFF" : "#000000",
+                        }}
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                      </IconButton>
                     </Form.Group>
-                  </CardContent>
-                </Card>
-              </Col>
-              <Col md={4}>
-                <Card style={cardStyle}>
-                  <CardContent>
-                    <Typography
-                      variant="h6"
+                  </Form.Group>
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      marginTop: "20px",
+                    }}
+                  >
+                    <Button
+                      variant="primary"
                       style={{
-                        textAlign: "center",
-                        marginBottom: "10px",
-                        ...textStyle,
+                        backgroundColor: darkMode ? "#313131" : "#CECFCB",
+                        color: darkMode ? "#FFFFFF" : "#343A40",
+                        border: "none",
+                      }}
+                      onClick={() => {
+                        sendNewSenha();
                       }}
                     >
-                      Status
-                    </Typography>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={user.status === "Ativo" ? true : false}
-                        />
-                      }
-                      label={user.status === "Ativo" ? "Ativo" : "Inativo"}
-                      style={textStyle}
+                      {loadingSenha ? (
+                        <Spinner color="light" size={"sm"} />
+                      ) : (
+                        "Alterar"
+                      )}
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Col>
+          </Row>
+          <Row style={{ marginTop: "20px" }}>
+            <Col md={4}>
+              <Card style={cardStyle}>
+                <CardContent>
+                  <Form.Group>
+                    <Form.Label style={textStyle}>E-mail</Form.Label>
+                    <FormControl
+                      type="text"
+                      value={user.email}
+                      readOnly
+                      style={inputStyle}
                     />
-                  </CardContent>
-                </Card>
-              </Col>
-              <Col md={4}>
-                <Card style={cardStyle}>
-                  <CardContent>
-                    <Typography
-                      variant="h6"
-                      style={{
-                        textAlign: "center",
-                        marginBottom: "10px",
-                        ...textStyle,
-                      }}
-                    >
-                      Nível do Usuário
-                    </Typography>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          disabled
-                          checked={nivelUsuario === 1 ? true : false}
-                        />
-                      }
-                      label="Administrador"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        ...textStyle,
+                  </Form.Group>
+                  <Form.Group style={{ marginTop: "10px" }}>
+                    <Form.Label style={textStyle}>Telefone</Form.Label>
+                    <FormControl
+                      type="text"
+                      value={formatarTelefone(telefoneEdit)}
+                      style={inputStyle}
+                      onChange={(e) => {
+                        setTelefoneEdit(e.target.value);
                       }}
                     />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          disabled
-                          checked={nivelUsuario === 2 ? true : false}
-                        />
-                      }
-                      label="Comum"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        marginTop: "10px",
-                        ...textStyle,
-                      }}
-                    />
-                  </CardContent>
-                </Card>
-              </Col>
-            </Row>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                marginTop: "20px",
+                  </Form.Group>
+                </CardContent>
+              </Card>
+            </Col>
+            <Col md={4}>
+              <Card style={cardStyle}>
+                <CardContent>
+                  <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      marginBottom: "10px",
+                      ...textStyle,
+                    }}
+                  >
+                    Status
+                  </Typography>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={user.status === "Ativo" ? true : false}
+                      />
+                    }
+                    label={user.status === "Ativo" ? "Ativo" : "Inativo"}
+                    style={textStyle}
+                  />
+                </CardContent>
+              </Card>
+            </Col>
+            <Col md={4}>
+              <Card style={cardStyle}>
+                <CardContent>
+                  <Typography
+                    variant="h6"
+                    style={{
+                      textAlign: "center",
+                      marginBottom: "10px",
+                      ...textStyle,
+                    }}
+                  >
+                    Nível do Usuário
+                  </Typography>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        disabled
+                        checked={nivelUsuario === 1 ? true : false}
+                      />
+                    }
+                    label="Administrador"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      ...textStyle,
+                    }}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        disabled
+                        checked={nivelUsuario === 2 ? true : false}
+                      />
+                    }
+                    label="Comum"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginTop: "10px",
+                      ...textStyle,
+                    }}
+                  />
+                </CardContent>
+              </Card>
+            </Col>
+          </Row>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "20px",
+            }}
+          >
+            <Button
+              variant="primary"
+              style={{
+                ...buttonStyle,
+                marginBottom: "10px",
+              }}
+              onClick={() => {
+                updateUser();
               }}
             >
-              <Button
-                variant="primary"
-                style={{
-                  ...buttonStyle,
-                  marginBottom: "10px",
-                }}
-                onClick={() => {
-                  updateUser();
-                }}
-              >
-                {loading ? <Spinner color="light" size={"sm"} /> : "Salvar"}
-              </Button>
-            </Box>
-          </Container>
-        </Box>
+              {loading ? <Spinner color="light" size={"sm"} /> : "Salvar"}
+            </Button>
+          </Box>
+        </Container>
       ) : (
         <Box
           sx={{

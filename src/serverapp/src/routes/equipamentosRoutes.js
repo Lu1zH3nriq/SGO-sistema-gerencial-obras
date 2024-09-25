@@ -8,5 +8,6 @@ equipamentosRoutes.get('/equipamentos', EquipamentoController.getEquipamentos);
 equipamentosRoutes.get('/equipamento', EquipamentoController.getEquipamentoById);
 equipamentosRoutes.put('/alterarEquipamento', EquipamentoController.updateEquipamento);
 equipamentosRoutes.delete('/deleteEquipamento', EquipamentoController.deleteEquipamento);
+equipamentosRoutes.get('/equipamentosPorUser', EquipamentoController.getEquipamentosUsuario);
 
 module.exports = equipamentosRoutes;

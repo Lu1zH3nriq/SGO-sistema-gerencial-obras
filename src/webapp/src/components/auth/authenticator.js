@@ -12,6 +12,9 @@ import Perfil from "../../pages/Perfil/Perfil.js";
 import Materiais from "pages/Materiais/Materiais.js";
 import Usuarios from "pages/Usuarios/Usuarios.js";
 
+import EquipamentosComum from "pages/EquipamentosComum/EquipamentosComum.js";
+import ObrasComum from "../../pages/ObrasComum/ObraComum.js";
+
 import Unauthorized from "../../pages/Unauthorized/Unauthorized.js";
 
 import {
@@ -26,7 +29,7 @@ import {
 const Authenticator = () => {
   const navigate = useNavigate();
   const [controller, dispatch] = useUIContextController();
-  const { userLogin } = controller;
+  const { userLogin, userType } = controller;
 
   const setUserDetails = () => {
     //sincroniza o context com os dados do sessionStorage
@@ -46,13 +49,13 @@ const Authenticator = () => {
       setUserDetails();
       // Redireciona para o dashboard se não estiver em uma rota válida
       if (currentPath === "/" || currentPath === "/authentication/login") {
-        navigate("/dashboard");
+        navigate(userType === 1 ? "/dashboard" : "/resumo");
       }
     } else {
       // Se o usuário não estiver logado, redireciona para a página de login
       navigate("/authentication/login");
     }
-  }, []); 
+  }, [userType]);
 
   const handleLogin = (data) => {
     if (
@@ -80,7 +83,11 @@ const Authenticator = () => {
     sessionStorage.setItem("userName", data.user.nome);
     sessionStorage.setItem("userId", data.user.email);
 
-    navigate("/dashboard");
+    if (data.user.nivelUsuario === 1) {
+      navigate("/dashboard");
+    } else {
+      navigate("/resumo");
+    }
   };
 
   return (
@@ -102,15 +109,52 @@ const Authenticator = () => {
         </Routes>
       ) : (
         <Routes>
-          <Route path="/" element={<Navigate to={"/dashboard"} />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/obras" element={<Obras />} />
-          <Route path="/funcionarios" element={<Funcionarios />} />
-          <Route path="/clientes" element={<Clientes />} />
-          <Route path="/equipamentos" element={<Equipamentos />} />
+          <Route
+            path="/"
+            element={
+              userType !== undefined ? (
+                <Navigate to={userType === 1 ? "/dashboard" : "/resumo"} />
+              ) : null
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              userType === 1 ? <Dashboard /> : <Navigate to={"/unauthorized"} />
+            }
+          />
+          <Route path="/resumo" element={<Dashboard />} />
+          <Route path="/obras" element={ userType === 1 ? <Obras/> : <ObrasComum/> } />
+          <Route
+            path="/funcionarios"
+            element={
+              userType === 1 ? (
+                <Funcionarios />
+              ) : (
+                <Navigate to={"/unauthorized"} />
+              )
+            }
+          />
+          <Route
+            path="/clientes"
+            element={
+              userType === 1 ? <Clientes /> : <Navigate to={"/unauthorized"} />
+            }
+          />
+          <Route path="/equipamentos" element={ userType === 1 ? (<Equipamentos/>) : (<EquipamentosComum/>) } />
           <Route path="/perfil" element={<Perfil />} />
-          <Route path="/materiais" element={<Materiais />} />
-          <Route path="/usuarios" element={<Usuarios />} />
+          <Route
+            path="/materiais"
+            element={
+              userType === 1 ? <Materiais /> : <Navigate to={"/unauthorized"} />
+            }
+          />
+          <Route
+            path="/usuarios"
+            element={
+              userType === 1 ? <Usuarios /> : <Navigate to={"/unauthorized"} />
+            }
+          />
           <Route path="/resetSenha" element={<ResetPass />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
         </Routes>
