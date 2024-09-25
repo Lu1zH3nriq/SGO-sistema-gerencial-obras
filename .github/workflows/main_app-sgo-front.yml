@@ -6,6 +6,10 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  id-token: write  # Necessário para o login no Azure
+  contents: read   # Permissão padrão para ler o conteúdo do repositório
+
 jobs:
   build:
     runs-on: windows-latest
