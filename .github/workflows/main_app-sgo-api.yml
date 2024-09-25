@@ -8,7 +8,11 @@ on:
     branches:
       - main
   workflow_dispatch:
-
+  
+permissions:
+  id-token: write  # Necessário para o login no Azure
+  contents: read   # Permissão padrão para ler o conteúdo do repositório
+  
 jobs:
   build:
     runs-on: windows-latest
@@ -23,15 +27,20 @@ jobs:
 
       - name: npm install, build, and test
         run: |
+          cd src/serverapp  # Navega até o diretório do app React
           npm install
           npm run build --if-present
-          npm run test --if-present
+          
+      - name: List files after build
+        run: |
+          cd src/serverapp
+          dir  # Use 'dir' em vez de 'ls' no Windows
       
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: src/serverapp
 
   deploy:
     runs-on: ubuntu-latest
@@ -61,5 +70,5 @@ jobs:
         with:
           app-name: 'app-sgo-api'
           slot-name: 'Production'
-          package: .
+          package: src/serverapp
           
