@@ -27,14 +27,14 @@ jobs:
 
       - name: Zip artifact for deployment
         run: |
-          cd src/serverapp  # Navega até a pasta do backend
-          zip -r ../release.zip ./*  # Cria o zip no diretório raiz
+          cd src/serverapp  # Garante que ainda está na pasta do backend
+          zip release.zip ./* -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: release.zip  # Caminho correto para o zip
+          path: src/serverapp/release.zip  # Caminho correto para o zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -52,8 +52,7 @@ jobs:
           name: node-app
 
       - name: Unzip artifact for deployment
-        run: |
-          unzip release.zip -d ./  # Extrai tudo para a raiz
+        run: unzip release.zip  # Corrigido para usar o caminho padrão onde o artefato foi baixado
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -69,11 +68,4 @@ jobs:
           app-name: 'app-sgo-api-2'
           slot-name: 'Production'
           package: .
-
-      - name: Set startup command
-        uses: azure/appservice-settings@v2
-        with:
-          app-name: 'app-sgo-api-2'
-          resource-group: 'your-resource-group-name'  # Substitua pelo nome do seu resource group
-          settings: |
-            WEBSITE_STARTUP_COMMAND="pm2-runtime start src/index.js --name app-sgo-api"
+          startup-command: 'pm2-runtime start src/index.js --name app-sgo-api'  # Comando de inicialização do PM2
