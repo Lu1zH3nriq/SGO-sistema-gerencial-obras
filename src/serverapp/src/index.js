@@ -27,7 +27,7 @@ app.use('/api/obras', obrasRoutes);
 app.use('/api', loginRoutes);
 
 app.get('/', (req, res) => {
-  res.send('API está rodando!');
+  res.send('API está rodando!, teste de deploy');
 });
 
 
