@@ -52,7 +52,7 @@ jobs:
           name: node-app
 
       - name: Unzip artifact for deployment
-        run: unzip src/serverapp/release.zip  # Caminho correto do zip
+        run: unzip release.zip  # Corrigido para usar o caminho padrão onde o artefato foi baixado
 
       - name: Login to Azure
         uses: azure/login@v2
