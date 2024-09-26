@@ -15,7 +15,7 @@ import {
   DialogActions,
   Typography,
 } from "@mui/material";
-import { json, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import bgImageLogin from "../../assets/images/bgImageLogin.jpg";
 
 import { useUIContextController } from "../../context/index.js";
@@ -25,13 +25,13 @@ import { Spinner } from "reactstrap";
 import axios from "axios";
 import { makeStyles } from "@mui/styles";
 
-// Estilos personalizados
+
 const useStyles = makeStyles((theme) => ({
   dialogPaper: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    width: "70%", // Ajuste a largura conforme necessário
+    width: "70%", 
     margin: "auto",
   },
   dialogContent: {

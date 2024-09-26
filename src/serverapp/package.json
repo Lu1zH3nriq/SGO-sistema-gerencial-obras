@@ -4,7 +4,9 @@
   "description": "server da aplicação do sgo",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js"
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "production": "pm2 start src/index.js --name app-sgo-api"
   },
   "author": "Luiz Henrique Rodrigues Mendes",
   "license": "ISC",
