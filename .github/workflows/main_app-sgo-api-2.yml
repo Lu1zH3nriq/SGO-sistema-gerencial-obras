@@ -1,13 +1,10 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy Node.js app to Azure Web App - app-sgo-api-2
+name: Build and Deploy Node.js app to Azure Web App - app-sgo-api
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Build and Deploy Node.js app to Azure Web App - app-sgo-front"]  # Nome do workflow do frontend
+    types:
+      - completed
 
 jobs:
   build:
@@ -21,14 +18,16 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: npm install, build, and test
+      - name: npm install and build
         run: |
+          cd src/serverapp  # Entra no diretório da API (serverapp)
           npm install
           npm run build --if-present
-          npm run test --if-present
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+        run: |
+          cd src/serverapp  # Gera o zip a partir do diretório correto
+          zip -r ../../release.zip ./*
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -43,7 +42,7 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: write # This is required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
@@ -57,15 +56,14 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_0B05D553DD3F4AD19E6D18C0B2E643D8 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_80F2307914944ECF9CF1BAF386A440C3 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_79F3FCE88AD949ABA2E2C955FAFDD5EA }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_18DFD1C7554A41AE84C6F2C60D01F66C }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_FD619640DF98499F9E382C5C4B6E0C42 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DB87601492404EB2A0EC17682F0EF6F3 }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'app-sgo-api-2'
+          app-name: 'app-sgo-api'
           slot-name: 'Production'
-          package: .
-          
+          package: .  # Certifique-se de que o caminho esteja correto
