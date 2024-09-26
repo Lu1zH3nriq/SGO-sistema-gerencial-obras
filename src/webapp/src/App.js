@@ -1,15 +1,14 @@
-import { useEffect } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import React from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./assets/theme/index.js";
 import themeDark from "./assets/theme-dark/index.js";
 
-import { useUIContextController, setUserLogin, setUserType } from "context";
+import { useUIContextController} from "context";
 import Authenticator from "./components/auth/Authenticator.js";
 
 
 export default function App() {
-  const [controller, dispatch] = useUIContextController();
+  const [controller] = useUIContextController();
   const { darkMode } = controller;
 
   return (
