@@ -25,9 +25,11 @@ app.use('/api/materiais', materiaisRoutes);
 app.use('/api/equipamentos', equipamentosRoutes);
 app.use('/api/obras', obrasRoutes);
 app.use('/api', loginRoutes);
+
 app.get('/', (req, res) => {
   res.send('API está rodando!');
 });
+
 
 sequelize.sync()
   .then(() => {
