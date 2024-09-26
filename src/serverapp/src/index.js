@@ -4,7 +4,7 @@ const cors = require('cors');
 const { sequelize } = require('./models');
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 const usersRoutes = require('./routes/usersRoutes');
 const clientesRoutes = require('./routes/clientesRoutes');
@@ -35,7 +35,7 @@ sequelize.sync()
   .then(() => {
     console.log('Modelos sincronizados com sucesso.');
     app.listen(port, () => {
-      console.log(`Servidor rodando em http://localhost:${port}`);
+      console.log(`Servidor rodando na porta ${port}`);
     });
   })
   .catch(err => {
