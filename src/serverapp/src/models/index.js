@@ -22,8 +22,6 @@ Equipamento.belongsTo(Obra, { foreignKey: "obraId" });
 Funcionario.hasMany(Equipamento, { foreignKey: "funcionarioId" });
 Equipamento.belongsTo(Funcionario, { foreignKey: "funcionarioId" });
 
-Funcionario.hasMany(Obra, { foreignKey: "responsavelId" });
-Obra.belongsTo(Funcionario, { foreignKey: "responsavelId", as: "responsavelFuncionario" });
 
 module.exports = {
   sequelize,

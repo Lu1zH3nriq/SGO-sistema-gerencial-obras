@@ -59,7 +59,7 @@ const Funcionario = sequelize.define("Funcionario", {
   isUser: {
     type: DataTypes.BOOLEAN,
     allowNull: true,
-  },
+  }
 });
 
 module.exports = Funcionario;
