@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
-    "production": "pm2 start src/index.js --name app-sgo-api"
+    "production": "./node_modules/.bin/pm2 start src/index.js --name app-sgo-api"
   },
   "author": "Luiz Henrique Rodrigues Mendes",
   "license": "ISC",
@@ -23,6 +23,7 @@
     "mysql2": "^3.11.0",
     "nodemailer": "^6.9.14",
     "openssl": "^2.0.0",
+    "pm2": "^5.4.2",
     "sequelize": "^6.37.3",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
