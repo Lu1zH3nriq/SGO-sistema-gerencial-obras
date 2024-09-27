@@ -28,7 +28,7 @@ const CadastrarClienteModal = ({
   cliente = null,
   getClientes,
   cadastroAoPesquisar,
-  returnCliente
+  returnCliente,
 }) => {
   const URL_API = process.env.REACT_APP_URL_API;
 
@@ -69,7 +69,10 @@ const CadastrarClienteModal = ({
           _cliente
         );
       } else {
-        const response = await axios.post(`${URL_API}/api/clientes/novoCliente`, _cliente);
+        const response = await axios.post(
+          `${URL_API}/api/clientes/novoCliente`,
+          _cliente
+        );
 
         if (cadastroAoPesquisar) {
           returnCliente(response.data);
@@ -158,261 +161,289 @@ const CadastrarClienteModal = ({
           {!cliente ? "Cadastrar Cliente" : "Editar Cliente"}
         </ModalHeader>
         <ModalBody style={formStyle}>
-          <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-            {({ values, setFieldValue }) => (
-              <Form style={formStyle}>
-                <Row form="true">
-                  <Col md={6}>
-                    <div className="form-group">
-                      <label htmlFor="nome">Nome</label>
-                      <Field
-                        type="text"
-                        name="nome"
-                        className="form-control"
-                        style={inputStyle}
-                      />
-                    </div>
-                  </Col>
-                  <Col md={6}>
-                    <div className="form-group">
-                      <label htmlFor="email">Email</label>
-                      <Field
-                        type="email"
-                        name="email"
-                        className="form-control"
-                        style={inputStyle}
-                      />
-                    </div>
-                  </Col>
-                </Row>
-                <Row form="true">
-                  <Col md={6}>
-                    <div className="form-group">
-                      <label htmlFor="telefone">Telefone</label>
-                      <Field
-                        type="text"
-                        name="telefone"
-                        className="form-control"
-                        style={inputStyle}
-                        value={formatarTelefone(values.telefone)}
-                        onChange={(e) =>
-                          setFieldValue(
-                            "telefone",
-                            removerFormatacaoTelefone(e.target.value)
-                          )
-                        }
-                      />
-                    </div>
-                    <div style={{ marginTop: "-15px" }}>
-                      <small style={{ color: "Grey", fontSize: "11px" }}>
-                        * Somente números
-                      </small>
-                    </div>
-                  </Col>
-                  <Col md={6}>
-                    <div className="form-group">
-                      <label htmlFor="endereco">Endereço</label>
-                      <Field
-                        type="text"
-                        name="endereco"
-                        className="form-control"
-                        style={inputStyle}
-                        value={values.endereco || ""}
-                        onChange={(e) =>
-                          setFieldValue("endereco", e.target.value)
-                        }
-                      />
-                    </div>
-                  </Col>
-                  <Col md={6}>
-                    <div className="form-group">
-                      <label htmlFor="tipoPessoa">Tipo</label>
-                      <div>
+          <div style={{ padding: "1rem" }}>
+            <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+              {({ values, setFieldValue }) => (
+                <Form style={formStyle}>
+                  <Row form="true">
+                    <Col md={6}>
+                      <div className="form-group">
+                        <label htmlFor="nome">Nome</label>
                         <Field
-                          type="radio"
-                          name="tipoPessoa"
-                          value="Fisica"
-                          className="form-check-input"
-                          style={buttonStyle}
-                          checked={values.tipoPessoa === "Fisica"}
+                          type="text"
+                          name="nome"
+                          className="form-control"
+                          style={inputStyle}
+                        />
+                      </div>
+                    </Col>
+                    <Col md={6}>
+                      <div className="form-group">
+                        <label htmlFor="email">Email</label>
+                        <Field
+                          type="email"
+                          name="email"
+                          className="form-control"
+                          style={inputStyle}
+                        />
+                      </div>
+                    </Col>
+                  </Row>
+                  <Row form="true">
+                    <Col md={6}>
+                      <div className="form-group">
+                        <label htmlFor="telefone">Telefone</label>
+                        <Field
+                          type="text"
+                          name="telefone"
+                          className="form-control"
+                          style={inputStyle}
+                          value={formatarTelefone(values.telefone)}
                           onChange={(e) =>
-                            setFieldValue("tipoPessoa", e.target.value)
+                            setFieldValue(
+                              "telefone",
+                              removerFormatacaoTelefone(e.target.value)
+                            )
                           }
                         />
-                        <label className="form-check-label" htmlFor="Fisica">
-                          Pessoa Física
-                        </label>
                       </div>
-                      <div>
+                      <div style={{ marginTop: "-15px" }}>
+                        <small
+                          style={{
+                            color: darkMode ? "#FFFFFF" : "Grey",
+                            fontSize: "11px",
+                          }}
+                        >
+                          * Somente números
+                        </small>
+                      </div>
+                    </Col>
+                    <Col md={6}>
+                      <div className="form-group">
+                        <label htmlFor="endereco">Endereço</label>
                         <Field
-                          type="radio"
-                          name="tipoPessoa"
-                          value="Juridica"
-                          className="form-check-input"
-                          style={buttonStyle}
-                          checked={values.tipoPessoa === "Juridica"}
+                          type="text"
+                          name="endereco"
+                          className="form-control"
+                          style={inputStyle}
+                          value={values.endereco || ""}
                           onChange={(e) =>
-                            setFieldValue("tipoPessoa", e.target.value)
+                            setFieldValue("endereco", e.target.value)
                           }
                         />
-                        <label className="form-check-label" htmlFor="Juridica">
-                          Pessoa Jurídica
-                        </label>
                       </div>
-                    </div>
-                  </Col>
-                </Row>
-                {values.tipoPessoa === "Fisica" && (
-                  <>
-                    <Row form="true">
-                      <Col md={6}>
-                        <div className="form-group">
-                          <label htmlFor="cpf">CPF</label>
+                    </Col>
+                    <Col md={6}>
+                      <div className="form-group">
+                        <label htmlFor="tipoPessoa">Tipo</label>
+                        <div>
                           <Field
-                            type="text"
-                            name="cpf"
-                            className="form-control"
-                            style={{
-                              ...inputStyle,
-                              borderColor: erroCPF ? "red" : "",
-                            }}
-                            value={values.cpf}
-                            onChange={(e) => {
-                              const rawValue = removerFormatacaoCPF(
-                                e.target.value
-                              );
-                              if (rawValue.length !== 11) {
-                                if (rawValue.length === 0) {
-                                  setErroCPF("");
-                                } else {
-                                  setErroCPF(
-                                    "CPF inválido."
-                                  );
-                                }
-                              } else {
-                                setErroCPF("");
-                              }
-                              const formatedValue = formatarCPF(rawValue);
-                              setFieldValue("cpf", formatedValue);
-                            }}
-                          />
-                          <div style={{ marginTop: "-15px" }}>
-                            <small style={{ color: "Grey", fontSize: "11px" }}>
-                              * Somente números
-                            </small>
-                          </div>
-                          <div style={{ marginTop: "-15px" }}>
-                            {erroCPF ? (
-                              <small style={{ color: "red", fontSize: "11px" }}>
-                                {erroCPF}
-                              </small>
-                            ) : null}
-                          </div>
-                        </div>
-                      </Col>
-                      <Col md={6}>
-                        <div className="form-group">
-                          <label htmlFor="sexo">Sexo</label>
-                          <Field
-                            as="select"
-                            name="sexo"
-                            className="form-control"
-                            style={inputStyle}
-                            value={values.sexo}
+                            type="radio"
+                            name="tipoPessoa"
+                            value="Fisica"
+                            className="form-check-input"
+                            style={buttonStyle}
+                            checked={values.tipoPessoa === "Fisica"}
                             onChange={(e) =>
-                              setFieldValue("sexo", e.target.value)
+                              setFieldValue("tipoPessoa", e.target.value)
                             }
+                          />
+                          <label className="form-check-label" htmlFor="Fisica">
+                            Pessoa Física
+                          </label>
+                        </div>
+                        <div>
+                          <Field
+                            type="radio"
+                            name="tipoPessoa"
+                            value="Juridica"
+                            className="form-check-input"
+                            style={buttonStyle}
+                            checked={values.tipoPessoa === "Juridica"}
+                            onChange={(e) =>
+                              setFieldValue("tipoPessoa", e.target.value)
+                            }
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="Juridica"
                           >
-                            <option value="--">--</option>
-                            <option value="Masculino">Masculino</option>
-                            <option value="Feminino">Feminino</option>
-                          </Field>
+                            Pessoa Jurídica
+                          </label>
                         </div>
-                      </Col>
-                    </Row>
-                  </>
-                )}
-                {values.tipoPessoa === "Juridica" && (
-                  <>
-                    <Row form="true">
-                      <Col md={6}>
-                        <div className="form-group">
-                          <label htmlFor="cnpj">CNPJ</label>
-                          <Field
-                            type="text"
-                            name="cnpj"
-                            className="form-control"
-                            style={{
-                              ...inputStyle,
-                              borderColor: erroCNPJ ? "red" : "",
-                            }}
-                            value={values.cnpj}
-                            onChange={(e) => {
-                              const rawValue = removerFormatacaoCNPJ(
-                                e.target.value
-                              );
-                              if (rawValue.length !== 14) {
-                                if (rawValue.length === 0) {
-                                  setErroCNPJ("");
+                      </div>
+                    </Col>
+                  </Row>
+                  {values.tipoPessoa === "Fisica" && (
+                    <>
+                      <Row form="true">
+                        <Col md={6}>
+                          <div className="form-group">
+                            <label htmlFor="cpf">CPF</label>
+                            <Field
+                              type="text"
+                              name="cpf"
+                              className="form-control"
+                              style={{
+                                ...inputStyle,
+                                borderColor: erroCPF ? "red" : "",
+                              }}
+                              value={values.cpf}
+                              onChange={(e) => {
+                                const rawValue = removerFormatacaoCPF(
+                                  e.target.value
+                                );
+                                if (rawValue.length !== 11) {
+                                  if (rawValue.length === 0) {
+                                    setErroCPF("");
+                                  } else {
+                                    setErroCPF("CPF inválido.");
+                                  }
                                 } else {
-                                  setErroCNPJ(
-                                    "CNPJ inválido."
-                                  );
+                                  setErroCPF("");
                                 }
-                              } else {
-                                setErroCNPJ("");
-                              }
-                              const formatedValue = formatarCNPJ(rawValue);
-                              setFieldValue("cnpj", formatedValue);
-                            }}
-                          />
-                          <div style={{ marginTop: "-15px" }}>
-                            <small style={{ color: "Grey", fontSize: "11px" }}>
-                              * Somente números
-                            </small>
-                          </div>
-                          <div style={{ marginTop: "-15px" }}>
-                            {erroCNPJ ? (
-                              <small style={{ color: "red", fontSize: "11px" }}>
-                                {erroCNPJ}
+                                const formatedValue = formatarCPF(rawValue);
+                                setFieldValue("cpf", formatedValue);
+                              }}
+                            />
+                            <div style={{ marginTop: "-15px" }}>
+                              <small
+                                style={{
+                                  color: darkMode ? "#FFFFFF" : "Grey",
+                                  fontSize: "11px",
+                                }}
+                              >
+                                * Somente números
                               </small>
-                            ) : null}
+                            </div>
+                            <div style={{ marginTop: "-15px" }}>
+                              {erroCPF ? (
+                                <small
+                                  style={{ color: "red", fontSize: "11px" }}
+                                >
+                                  {erroCPF}
+                                </small>
+                              ) : null}
+                            </div>
                           </div>
-                        </div>
-                      </Col>
-                      <Col md={6}>
-                        <div className="form-group">
-                          <label htmlFor="razaoSocial">Razão Social</label>
-                          <Field
-                            type="text"
-                            name="razaoSocial"
-                            className="form-control"
-                            style={inputStyle}
-                            value={values.razaoSocial || ""}
-                            onChange={(e) =>
-                              setFieldValue("razaoSocial", e.target.value)
-                            }
-                          />
-                        </div>
-                      </Col>
-                    </Row>
-                  </>
-                )}
-                <ModalFooter style={modalStyle}>
-                  <Button
-                    color="secondary"
-                    onClick={toggleModal}
-                    style={buttonStyle}
-                  >
-                    Fechar
-                  </Button>
-                  <Button color="primary" type="submit" style={saveButtonStyle}>
-                    {loading ? <Spinner size="sm" color="light" /> : "Salvar"}
-                  </Button>
-                </ModalFooter>
-              </Form>
-            )}
-          </Formik>
+                        </Col>
+                        <Col md={6}>
+                          <div className="form-group">
+                            <label htmlFor="sexo">Sexo</label>
+                            <Field
+                              as="select"
+                              name="sexo"
+                              className="form-control"
+                              style={inputStyle}
+                              value={values.sexo}
+                              onChange={(e) =>
+                                setFieldValue("sexo", e.target.value)
+                              }
+                            >
+                              <option value="--">--</option>
+                              <option value="Masculino">Masculino</option>
+                              <option value="Feminino">Feminino</option>
+                            </Field>
+                          </div>
+                        </Col>
+                      </Row>
+                    </>
+                  )}
+                  {values.tipoPessoa === "Juridica" && (
+                    <>
+                      <Row form="true">
+                        <Col md={6}>
+                          <div className="form-group">
+                            <label htmlFor="cnpj">CNPJ</label>
+                            <Field
+                              type="text"
+                              name="cnpj"
+                              className="form-control"
+                              style={{
+                                ...inputStyle,
+                                borderColor: erroCNPJ ? "red" : "",
+                              }}
+                              value={values.cnpj}
+                              onChange={(e) => {
+                                const rawValue = removerFormatacaoCNPJ(
+                                  e.target.value
+                                );
+                                if (rawValue.length !== 14) {
+                                  if (rawValue.length === 0) {
+                                    setErroCNPJ("");
+                                  } else {
+                                    setErroCNPJ("CNPJ inválido.");
+                                  }
+                                } else {
+                                  setErroCNPJ("");
+                                }
+                                const formatedValue = formatarCNPJ(rawValue);
+                                setFieldValue("cnpj", formatedValue);
+                              }}
+                            />
+                            <div style={{ marginTop: "-15px" }}>
+                              <small
+                                style={{
+                                  color: darkMode ? "#FFFFFF" : "Grey",
+                                  fontSize: "11px",
+                                }}
+                              >
+                                * Somente números
+                              </small>
+                            </div>
+                            <div style={{ marginTop: "-15px" }}>
+                              {erroCNPJ ? (
+                                <small
+                                  style={{ color: "red", fontSize: "11px" }}
+                                >
+                                  {erroCNPJ}
+                                </small>
+                              ) : null}
+                            </div>
+                          </div>
+                        </Col>
+                        <Col md={6}>
+                          <div className="form-group">
+                            <label htmlFor="razaoSocial">Razão Social</label>
+                            <Field
+                              type="text"
+                              name="razaoSocial"
+                              className="form-control"
+                              style={inputStyle}
+                              value={values.razaoSocial || ""}
+                              onChange={(e) =>
+                                setFieldValue("razaoSocial", e.target.value)
+                              }
+                            />
+                          </div>
+                        </Col>
+                      </Row>
+                    </>
+                  )}
+                  <ModalFooter style={modalStyle}>
+                    <Button
+                      color="secondary"
+                      onClick={toggleModal}
+                      style={{
+                        backgroundColor: darkMode ? "#4A4A4A" : "#CECFCB",
+                        color: darkMode ? "#FFFFFF" : "#4A4A4A",
+                        border: "none",
+                      }}
+                    >
+                      Fechar
+                    </Button>
+                    <Button
+                      color="primary"
+                      type="submit"
+                      style={saveButtonStyle}
+                    >
+                      {loading ? <Spinner size="sm" color="light" /> : "Salvar"}
+                    </Button>
+                  </ModalFooter>
+                </Form>
+              )}
+            </Formik>
+          </div>
         </ModalBody>
       </Modal>
 

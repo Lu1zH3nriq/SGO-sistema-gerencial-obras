@@ -147,7 +147,16 @@ const Funcionarios = () => {
         }}
       >
         {/* Linha com botão "Adicionar" e campo de pesquisa */}
-        <Row className="mb-4" style={{ marginTop: "2%" }}>
+        <Row
+          className="d-flex align-items-center mb-4"
+          style={{
+            marginTop: "2%",
+            backgroundColor: "#FFFFFF",
+            padding: "1rem 0.5rem 1rem 0.5rem",
+            borderRadius: "0.5rem",
+            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+          }}
+        >
           <Col className="d-flex align-items-center justify-content-between flex-wrap">
             <Button
               color="secondary"
@@ -218,7 +227,11 @@ const Funcionarios = () => {
             size="sm"
             bordered
             dark={darkMode}
-            style={{ borderRadius: "0px", marginTop: "2%" }}
+            style={{
+              borderRadius: "0.5rem",
+              marginTop: "2vh",
+              boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+            }}
           >
             <thead>
               <tr>
@@ -252,6 +265,7 @@ const Funcionarios = () => {
                     <td>
                       <div
                         style={{
+                          ...tableCellStyle,
                           textAlign: "center",
                         }}
                       >
