@@ -48,7 +48,7 @@ const Obra = sequelize.define("Obra", {
     allowNull: true,
   },
   urlContrato: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(2048),
     allowNull: true,
   },
   status: {

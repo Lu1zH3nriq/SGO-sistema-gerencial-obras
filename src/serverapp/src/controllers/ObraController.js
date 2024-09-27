@@ -50,7 +50,9 @@ const ObraController = {
 
   async getObras(req, res) {
     try {
-      const obras = await Obra.findAll();
+      const obras = await Obra.findAll({
+        order: [['createdAt', 'DESC']]
+      });
       res.status(200).json(obras);
     } catch (error) {
       res.status(400).json({ error: error.message });
