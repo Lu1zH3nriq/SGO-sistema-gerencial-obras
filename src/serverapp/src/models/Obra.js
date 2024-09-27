@@ -42,7 +42,23 @@ const Obra = sequelize.define("Obra", {
   responsavelId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-  }
+  },
+  responsavel: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  urlContrato: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  status: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  cliente: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 });
 
 module.exports = Obra;

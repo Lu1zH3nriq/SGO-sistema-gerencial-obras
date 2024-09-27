@@ -16,20 +16,16 @@ const LogoutModal = ({ visible, setVisible }) => {
   const handleClose = () => setVisible(false);
 
   const handleLogout = () => {
-    sessionStorage.setItem("userLogin", "false");
-    sessionStorage.setItem("userType", null);
-    sessionStorage.setItem("userToken", null);
-    sessionStorage.setItem("userName", null);
-    sessionStorage.setItem("userId", null);
-
+    sessionStorage.clear();
+  
     setUserType(dispatch, 2);
     setUserLogin(dispatch, false);
     setUserToken(dispatch, "");
     setUserName(dispatch, "");
     setUserId(dispatch, "");
-
-    window.location.reload();
     handleClose();
+  
+    window.location.reload();
   };
 
   const modalStyle = {

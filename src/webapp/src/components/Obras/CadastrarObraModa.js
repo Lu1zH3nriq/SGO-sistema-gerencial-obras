@@ -15,13 +15,14 @@ import axios from "axios";
 
 import PesquisarClienteModal from "./PesquisarClienteModal.js";
 import PesquisarResponsavelModal from "./PesquisarResponsavelModal.js";
+import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
 import {
   formatarCPF,
   formatarCNPJ,
   formatarTelefone,
 } from "../utils/utilsMask.js";
 
-const CadastrarObraModal = ({ visible, setVisible, obra }) => {
+const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
   const URL_API = process.env.REACT_APP_URL_API;
 
   const [state] = useUIContextController();
@@ -33,6 +34,11 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
   const [funcionarioResponsavel, setFuncionarioResponsavel] = useState({});
   const [viewClientModal, setViewClientModal] = useState(false);
   const [viewResponsibleModal, setViewResponsibleModal] = useState(false);
+  const [visibleConfirmacao, setVisibleConfirmacao] = useState({
+    visible: false,
+    mensagem: "",
+    sucesso: false,
+  });
 
   const [formValues, setFormValues] = useState({
     nome: obra?.nome || "",
@@ -46,6 +52,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
     orcamento: obra?.orcamento || "",
     responsavel: obra?.responsavel || "",
     responsavelId: obra?.responsavelId || null,
+    status: obra?.status || "Não iniciada",
   });
 
   useEffect(() => {
@@ -77,19 +84,53 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
       });
   };
 
-  const handleSubmit = (values) => {
-    setLoading(true);
 
+  const handleSubmit = async (values) => {
+    setLoading(true);
+  
+    // Preparar os dados da obra
     const data = {
       ...values,
       clienteId: clienteDaObra.id,
       responsavelId: funcionarioResponsavel.id,
       responsavel: funcionarioResponsavel.nome,
+      cliente: clienteDaObra.nome,
+      status: values.status || "Não iniciada",
     };
-
-    console.log("OBRA A SER CADASTRADA:  ", data);
-
-    setLoading(false);
+  
+    const formData = new FormData();
+    if (file) {
+      formData.append("contrato", file);
+    }
+    for (const key in data) {
+      formData.append(key, data[key]);
+    }
+  
+    try {
+      // Enviar a requisição com o FormData
+      const res = await axios.post(`${URL_API}/api/obras/novaObra`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log('Res: ', res);
+      setVisibleConfirmacao({
+        visible: true,
+        mensagem: "Obra salva com sucesso!",
+        sucesso: true,
+      });
+      getObras();
+    } catch (error) {
+      console.log('Error: ', error);
+      setVisibleConfirmacao({
+        visible: true,
+        mensagem: "Erro ao salvar a obra.",
+        sucesso: false,
+      });
+    } finally {
+      setLoading(false);
+      toggleModal();
+    }
   };
 
   const handleFileChange = (event) => {
@@ -136,7 +177,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
   const inputStyle = {
     backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
     color: darkMode ? "#FFFFFF" : "#000000",
-    marginBottom: "10px", 
+    marginBottom: "10px",
   };
 
   const saveButtonStyle = {
@@ -149,7 +190,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
     backgroundColor: darkMode ? "#676767" : "#CECFCB",
     color: darkMode ? "#FFFFFF" : "#343A40",
     border: "none",
-    marginBottom: "10px", 
+    marginBottom: "10px",
   };
 
   return (
@@ -166,24 +207,22 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
           >
             {({ values, handleChange }) => (
               <Form style={formStyle} id="form">
-                <Row form>
+                <Row form={true.toString()}>
                   <div
                     style={{
                       width: "100%",
                       display: "flex",
                       justifyContent: "start",
                       marginBottom: "10px",
-                      borderBottom: `1px solid ${
-                        darkMode
-                          ? "rgba(255, 255, 255, 0.8)"
-                          : "rgba(103, 103, 103, 0.5)"
-                      }`,
+                      borderBottom: `1px solid ${darkMode
+                        ? "rgba(255, 255, 255, 0.8)"
+                        : "rgba(103, 103, 103, 0.5)"}`
                     }}
                   >
                     <h5
                       style={{
                         opacity: 0.8,
-                        color: darkMode ? "#FFFFFF" : "#676767",
+                        color: darkMode ? "#FFFFFF" : "#676767"
                       }}
                     >
                       Informações do Cliente
@@ -223,12 +262,10 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
                     </div>
                   </Col>
                 </Row>
-                <Row form>
+                <Row form={true.toString()}>
                   <Col md={6}>
                     <div className="form-group">
-                      <label htmlFor="enderecoCliente">
-                        Endereço do cliente:
-                      </label>
+                      <label htmlFor="enderecoCliente">Endereço do cliente:</label>
                       <Field
                         type="text"
                         name="enderecoCliente"
@@ -241,9 +278,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
                   </Col>
                   <Col md={6}>
                     <div className="form-group">
-                      <label htmlFor="telefoneCliente">
-                        Telefone do cliente
-                      </label>
+                      <label htmlFor="telefoneCliente">Telefone do cliente</label>
                       <Field
                         type="text"
                         name="telefoneCliente"
@@ -261,23 +296,21 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
                     display: "flex",
                     justifyContent: "start",
                     margin: "1.5rem 0",
-                    borderBottom: `1px solid ${
-                      darkMode
-                        ? "rgba(255, 255, 255, 0.8)"
-                        : "rgba(103, 103, 103, 0.5)"
-                    }`,
+                    borderBottom: `1px solid ${darkMode
+                      ? "rgba(255, 255, 255, 0.8)"
+                      : "rgba(103, 103, 103, 0.5)"}`
                   }}
                 >
                   <h5
                     style={{
                       opacity: 0.8,
-                      color: darkMode ? "#FFFFFF" : "#676767",
+                      color: darkMode ? "#FFFFFF" : "#676767"
                     }}
                   >
                     Informações da Obra
                   </h5>
                 </div>
-                <Row form>
+                <Row form={true.toString()}>
                   <Col md={6}>
                     <div className="form-group">
                       <label htmlFor="nome">Obra:</label>
@@ -291,7 +324,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
                           handleChange(e);
                           setFormValues({
                             ...formValues,
-                            nome: e.target.value,
+                            nome: e.target.value
                           });
                         }}
                       />
@@ -310,14 +343,14 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
                           handleChange(e);
                           setFormValues({
                             ...formValues,
-                            identificador: e.target.value,
+                            identificador: e.target.value
                           });
                         }}
                       />
                     </div>
                   </Col>
                 </Row>
-                <Row form>
+                <Row form={true.toString()}>
                   <Col md={12}>
                     <div className="form-group">
                       <label htmlFor="endereco">Endereço:</label>
@@ -331,14 +364,14 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
                           handleChange(e);
                           setFormValues({
                             ...formValues,
-                            endereco: e.target.value,
+                            endereco: e.target.value
                           });
                         }}
                       />
                     </div>
                   </Col>
                 </Row>
-                <Row form>
+                <Row form={true.toString()}>
                   <Col md={6}>
                     <div className="form-group">
                       <label htmlFor="dataInicio">Data de início:</label>
@@ -352,7 +385,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
                           handleChange(e);
                           setFormValues({
                             ...formValues,
-                            dataInicio: e.target.value,
+                            dataInicio: e.target.value
                           });
                         }}
                       />
@@ -360,9 +393,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
                   </Col>
                   <Col md={6}>
                     <div className="form-group">
-                      <label htmlFor="previsaoTermino">
-                        Previsão de término:
-                      </label>
+                      <label htmlFor="previsaoTermino">Previsão de término:</label>
                       <Field
                         type="date"
                         name="previsaoTermino"
@@ -373,14 +404,14 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
                           handleChange(e);
                           setFormValues({
                             ...formValues,
-                            dataPrevistaTermino: e.target.value,
+                            dataPrevistaTermino: e.target.value
                           });
                         }}
                       />
                     </div>
                   </Col>
                 </Row>
-                <Row form>
+                <Row form={true.toString()}>
                   <Col md={6}>
                     <div className="form-group">
                       <label htmlFor="contrato">Contrato:</label>
@@ -394,7 +425,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
                           handleChange(e);
                           setFormValues({
                             ...formValues,
-                            contrato: e.target.value,
+                            contrato: e.target.value
                           });
                         }}
                       />
@@ -413,14 +444,14 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
                           handleChange(e);
                           setFormValues({
                             ...formValues,
-                            alvara: e.target.value,
+                            alvara: e.target.value
                           });
                         }}
                       />
                     </div>
                   </Col>
                 </Row>
-                <Row form>
+                <Row form={true.toString()}>
                   <Col md={6}>
                     <div className="form-group">
                       <label htmlFor="orcamento">Orçamento inicial:</label>
@@ -434,7 +465,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
                           handleChange(e);
                           setFormValues({
                             ...formValues,
-                            orcamento: e.target.value,
+                            orcamento: e.target.value
                           });
                         }}
                       />
@@ -457,13 +488,39 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
                     </div>
                   </Col>
                 </Row>
+                <Row form={true.toString()}>
+                  <Col md={12}>
+                    <div className="form-group">
+                      <label htmlFor="statusObra">Status da Obra:</label>
+                      <Field
+                        as="select"
+                        name="statusObra"
+                        className="form-control"
+                        style={inputStyle}
+                        value={formValues.status}
+                        onChange={(e) => {
+                          setFormValues({
+                            ...formValues,
+                            status: e.target.value
+                          });
+                        }}
+                      >
+
+                        <option value="Não iniciada">Não iniciada</option>
+                        <option value="Em andamento">Em andamento</option>
+                        <option value="Concluida">Concluída</option>
+                        <option value="Cancelada">Cancelada</option>
+                      </Field>
+                    </div>
+                  </Col>
+                </Row>
                 {!obra && (
-                  <Row form>
+                  <Row form={true.toString()}>
                     <Col md={12}>
                       <div
                         className="form-group"
                         style={{
-                          marginTop: "2rem",
+                          marginTop: "2rem"
                         }}
                       >
                         <label htmlFor="documento">Documento contratual:</label>
@@ -478,35 +535,34 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
                     </Col>
                   </Row>
                 )}
-                {/* Adicione mais campos do formulário aqui */}
+                <ModalFooter
+                  style={{
+                    backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
+                    color: darkMode ? "#FFFFFF" : "#000000",
+                    border: "none"
+                  }}
+                >
+                  <Button
+                    style={{
+                      backgroundColor: darkMode ? "#4A4A4A" : "#CECFCB",
+                      color: darkMode ? "#FFFFFF" : "#343A40",
+                      border: "none"
+                    }}
+                    onClick={toggleModal}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    style={saveButtonStyle}
+                    type="submit"
+                  >
+                    {loading ? <Spinner size="sm" color="light" /> : "Salvar"}
+                  </Button>
+                </ModalFooter>
               </Form>
             )}
           </Formik>
         </ModalBody>
-        <ModalFooter
-          style={{
-            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
-            color: darkMode ? "#FFFFFF" : "#000000",
-            border: "none",
-          }}
-        >
-          <Button
-            style={{
-              backgroundColor: darkMode ? "#4A4A4A" : "#CECFCB",
-              color: darkMode ? "#FFFFFF" : "#343A40",
-              border: "none",
-            }}
-            onClick={toggleModal}
-          >
-            Cancelar
-          </Button>
-          <Button
-            style={saveButtonStyle}
-            onClick={() => document.getElementById("form").submit()}
-          >
-            {loading ? <Spinner size="sm" color="light" /> : "Salvar"}
-          </Button>
-        </ModalFooter>
       </Modal>
 
       <PesquisarClienteModal
@@ -523,6 +579,13 @@ const CadastrarObraModal = ({ visible, setVisible, obra }) => {
         setFuncionario={(funcionario) => {
           setFuncionarioResponsavel(funcionario);
         }}
+      />
+
+      <ConfirmacaoModal
+        visible={visibleConfirmacao.visible}
+        setVisible={setVisibleConfirmacao}
+        mensagem={visibleConfirmacao.mensagem}
+        sucesso={visibleConfirmacao.sucesso}
       />
     </>
   );

@@ -1,12 +1,48 @@
-const { Obra } = require("../models");
+const { Obra, Cliente } = require("../models");
 const { Funcionario } = require("../models");
 const Usuario = require("../models/User");
+const { BlobServiceClient } = require("@azure/storage-blob");
+
+
+const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION_STRING);
 
 const ObraController = {
   async createObra(req, res) {
     try {
-      const obra = await Obra.create(req.body);
-      res.status(201).json(obra);
+      const data = {
+        nome: req.body.nome,
+        identificador: req.body.identificador,
+        endereco: req.body.endereco,
+        dataInicio: req.body.dataInicio,
+        dataFinal: req.body.dataFinal,
+        contrato: req.body.contrato,
+        alvara: req.body.alvara,
+        orcamento: req.body.orcamento,
+        responsavelId: req.body.responsavelId,
+        responsavel: req.body.responsavel,
+        status: req.body.status,
+        clienteId: req.body.clienteId,
+        cliente: req.body.cliente,
+      };
+      const file = req.file;
+
+      const obra = await Obra.create(data);
+
+      if (!obra) {
+        return res.status(400).json({ error: "Erro ao criar a obra" });
+      } else {
+        const funcResponsavel = await Funcionario.findByPk(data.responsavelId);
+        funcResponsavel.obraId = obra.id;
+
+        if (file) {
+          const urlContrato = await ObraController.uploadDocContrato(obra.id, file);
+          obra.urlContrato = urlContrato;
+        }
+
+        await obra.save();
+        await funcResponsavel.save();
+        res.status(201).json({ message: "Obra criada com sucesso", obra: obra });
+      }
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
@@ -124,7 +160,28 @@ const ObraController = {
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-  }
+  },
+
+  async uploadDocContrato(_id, _file) {
+    try {
+      const id = _id;
+      const file = _file;
+
+      const containerName = "contratos";
+      const blobName = `${id}-${file.originalname}-${new Date()}`;
+      const containerClient = blobServiceClient.getContainerClient(containerName);
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+      await blockBlobClient.uploadData(file.buffer);
+
+      // Obter a URL do contrato no Azure Blob Storage
+      const contratoURL = blockBlobClient.url;
+
+      return contratoURL;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
 };
 
 module.exports = ObraController;

@@ -151,10 +151,12 @@ const Funcionarios = () => {
           className="d-flex align-items-center mb-4"
           style={{
             marginTop: "2%",
-            backgroundColor: "#FFFFFF",
+            backgroundColor: darkMode ? "#414141" : "#FFFFFF",
             padding: "1rem 0.5rem 1rem 0.5rem",
             borderRadius: "0.5rem",
-            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+            boxShadow: darkMode
+              ? "0px 0px 10px rgba(255, 255, 255, 0.1)"
+              : "0px 0px 10px rgba(0, 0, 0, 0.1)"
           }}
         >
           <Col className="d-flex align-items-center justify-content-between flex-wrap">
