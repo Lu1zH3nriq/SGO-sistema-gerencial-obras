@@ -163,7 +163,7 @@ const PesquisarClienteModal = ({ visible, setVisible, setFuncionario }) => {
         centered
       >
         <ModalHeader toggle={() => setVisible(false)} style={modalStyle}>
-          <h5>Pesquisar Funcionario</h5>
+          Pesquisar Funcionario
         </ModalHeader>
         <ModalBody
           style={{ backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF" }}

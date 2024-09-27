@@ -29,13 +29,14 @@ import {
   FaTrash,
   FaChevronLeft,
   FaChevronRight,
+  FaExpandArrowsAlt,
 } from "react-icons/fa";
 import { Spinner } from "reactstrap";
 import CadastrarObraModal from "components/Obras/CadastrarObraModa.js";
 import DateSelectionModal from "components/Obras/CustomDates.js";
 import DeleteObraModal from "components/Obras/DeleteObraModal.js";
 import axios from "axios";
-import { formatarDataISO } from "components/utils/utilsMask.js";
+import { formatarData } from "components/utils/utilsMask.js";
 
 const Obras = () => {
   const URL_API = process.env.REACT_APP_URL_API;
@@ -374,14 +375,24 @@ const Obras = () => {
                           color="textSecondary"
                           style={{
                             color: darkMode ? "#FFFFFF" : "#343A40",
+                            marginBottom: "0.5rem",
+                          }}
+                        >
+                          Status da Obra:
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="textSecondary"
+                          style={{
+                            color: darkMode ? "#FFFFFF" : "#343A40",
                           }}
                         >
                           {obra.status === "Em andamento" ? (
-                            <span style={{ color: "#FFA500", fontWeight: "bold" }}>
+                            <span style={{ color: darkMode ? " #23A9F2 " : "#008AD3", fontWeight: "bold" }}>
                               {obra.status}
                             </span>
-                          ) : obra.status === "Concluída" ? (
-                            <span style={{ color: "green", fontWeight: "bold" }}>
+                          ) : obra.status === "Concluida" ? (
+                            <span style={{ color: darkMode ? "#00EA00" : "#00B900", fontWeight: "bold" }}>
                               {obra.status}
                             </span>
                           ) : obra.status === "Cancelada" ? (
@@ -389,7 +400,7 @@ const Obras = () => {
                               {obra.status}
                             </span>
                           ) : (
-                            <span style={{ color: "gray", fontWeight: "bold" }}>
+                            <span style={{ color: "#FFA500", fontWeight: "bold" }}>
                               {obra.status}
                             </span>
                           )}
@@ -422,7 +433,7 @@ const Obras = () => {
                           color="textSecondary"
                           style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
                         >
-                          Data Início: {formatarDataISO(obra.dataInicio)}
+                          Data Início: {formatarData(obra.dataInicio)}
                         </Typography>
 
                         <Typography
@@ -430,7 +441,7 @@ const Obras = () => {
                           color="textSecondary"
                           style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
                         >
-                          Previsão para entrega: {formatarDataISO(obra?.dataFinal) || "Não informado"}
+                          Previsão para entrega: {obra?.dataFinal ? formatarData(obra.dataFinal) : "Não informado"}
                         </Typography>
 
                         <Typography
@@ -463,6 +474,18 @@ const Obras = () => {
                             marginTop: "2.5rem",
                           }}
                         >
+                          <FaExpandArrowsAlt
+                            style={{
+                              cursor: "pointer",
+                              marginRight: "10px",
+                              color: darkMode ? "#FFFFFF" : "#343A40",
+                            }}
+                            size={20}
+                            title="Detalhes"
+                            onClick={() => {
+                              console.log("Detalhes da obra : ", obra);
+                            }}
+                          />
                           <FaEdit
                             style={{
                               cursor: "pointer",

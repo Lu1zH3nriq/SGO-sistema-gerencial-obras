@@ -25,7 +25,7 @@ const DeleteObraModal = ({ visible, setVisible, obra, onDelete }) => {
   };
 
   const buttonStyle = {
-    backgroundColor: darkMode ? "#676767" : "#CECFCB",
+    backgroundColor: darkMode ? "#424242" : "#CECFCB",
     color: darkMode ? "#FFFFFF" : "#343A40",
     border: "none",
   };
@@ -38,10 +38,19 @@ const DeleteObraModal = ({ visible, setVisible, obra, onDelete }) => {
 
   return (
     <Modal isOpen={visible} toggle={toggleModal} centered>
-      <ModalHeader toggle={toggleModal} style={modalStyle}>
+      <ModalHeader toggle={toggleModal} style={{
+        ...modalStyle,
+        borderBottom: darkMode ? "1px solid rgba(255, 255, 255, 0.2)" : "1px solid rgba(52, 58, 64, 0.2)"
+      }}>
         Confirmar Exclusão
       </ModalHeader>
-      <ModalBody style={modalStyle}>
+      <ModalBody style={{
+        ...modalStyle,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}>
         {obra ? (
           <>
             Tem certeza de que deseja excluir a obra "{obra.nome}" do cliente "

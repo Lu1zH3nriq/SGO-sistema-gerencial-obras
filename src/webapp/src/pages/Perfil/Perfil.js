@@ -31,7 +31,7 @@ import { formatarTelefone } from "components/utils/utilsMask.js";
 import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
 
 const Perfil = () => {
-  const [loadingUser, setLoadingUser] = useState(true);
+  const [loadingUser, setLoadingUser] = useState(false);
   const [state] = useUIContextController();
   const { userId, darkMode } = state;
   const [user, setUser] = useState({});
@@ -63,7 +63,6 @@ const Perfil = () => {
   const URL_API = process.env.REACT_APP_URL_API;
 
   const getPerfil = async () => {
-    setLoadingUser(true);
     axios
       .get(`${URL_API}/api/users/usuario?email=${userId}`)
       .then((response) => {
@@ -78,7 +77,6 @@ const Perfil = () => {
             "https://t4.ftcdn.net/jpg/00/64/67/27/360_F_64672736_U5kpdGs9keUll8CRQ3p3YaEv2M6qkVY5.jpg"
           );
         }
-        setLoadingUser(false);
       })
       .catch((error) => {
         setConfirmacaoModal({
@@ -92,7 +90,11 @@ const Perfil = () => {
   };
 
   useEffect(() => {
-    getPerfil();
+    setLoadingUser(true);
+    getPerfil().then(() => {
+      setLoadingUser(false);
+    });
+
   }, []);
 
   const cardStyle = {
@@ -297,7 +299,7 @@ const Perfil = () => {
 
   return (
     <Layout rotaAtual="Obras">
-      {!loading ? (
+      {!loadingUser ? (
         <Container style={{ marginTop: "8vh" }}>
           <Row>
             <Col md={4}>
@@ -633,11 +635,12 @@ const Perfil = () => {
           sx={{
             display: "flex",
             justifyContent: "center",
-            alignItems: "center",
+            alignItems: "start",
+            marginTop: "10vh",
             height: "100vh",
           }}
         >
-          <Spinner color="secondary" />
+          <Spinner color={darkMode ? "light" : "secondary"} />
         </Box>
       )}
 
