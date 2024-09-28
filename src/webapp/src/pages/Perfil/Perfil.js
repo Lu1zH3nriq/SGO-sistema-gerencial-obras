@@ -91,9 +91,11 @@ const Perfil = () => {
 
   useEffect(() => {
     setLoadingUser(true);
-    getPerfil().then(() => {
+    getPerfil();
+
+    setInterval(() => {
       setLoadingUser(false);
-    });
+    }, 2000);
 
   }, []);
 

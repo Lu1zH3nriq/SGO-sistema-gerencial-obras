@@ -45,8 +45,8 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
     identificador: obra?.identificador || "",
     endereco: obra?.endereco || "",
     clienteId: obra?.clienteId || null,
-    dataInicio: obra?.dataInicio || "",
-    dataPrevistaTermino: obra?.dataFinal || "",
+    dataInicio: obra?.dataInicio ? new Date(obra?.dataInicio).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+    dataFinal: obra?.dataFinal ? new Date(obra?.dataInicio).toISOString().split("T")[0] : "",
     contrato: obra?.contrato || "",
     alvara: obra?.alvara || "",
     orcamento: obra?.orcamento || "",
@@ -59,6 +59,20 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
     if (obra) {
       getClienteDaObra(obra.clienteId);
       getFuncionarioResponsavel(obra.responsavelId);
+      setFormValues({
+        nome: obra.nome,
+        identificador: obra.identificador,
+        endereco: obra.endereco,
+        clienteId: obra.clienteId,
+        dataInicio: obra?.dataInicio ? new Date(obra?.dataInicio).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+        dataFinal: obra.dataFinal,
+        contrato: obra.contrato,
+        alvara: obra.alvara,
+        orcamento: obra.orcamento,
+        responsavel: obra.responsavel,
+        responsavelId: obra.responsavelId,
+        status: obra.status,
+      });
     }
   }, [obra]);
 
@@ -84,10 +98,9 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
       });
   };
 
-
   const handleSubmit = async (values) => {
     setLoading(true);
-  
+
     // Preparar os dados da obra
     const data = {
       ...values,
@@ -97,39 +110,68 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
       cliente: clienteDaObra.nome,
       status: values.status || "Não iniciada",
     };
-  
-    const formData = new FormData();
-    if (file) {
-      formData.append("contrato", file);
-    }
-    for (const key in data) {
-      formData.append(key, data[key]);
-    }
-  
-    try {
-      // Enviar a requisição com o FormData
-      const res = await axios.post(`${URL_API}/api/obras/novaObra`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      console.log('Res: ', res);
-      setVisibleConfirmacao({
-        visible: true,
-        mensagem: "Obra salva com sucesso!",
-        sucesso: true,
-      });
-      getObras();
-    } catch (error) {
-      console.log('Error: ', error);
-      setVisibleConfirmacao({
-        visible: true,
-        mensagem: "Erro ao salvar a obra.",
-        sucesso: false,
-      });
-    } finally {
-      setLoading(false);
-      toggleModal();
+
+    if (obra) {
+      data.id = obra.id;
+      try {
+        const res = await axios.put(`${URL_API}/api/obras/alterarObra?id=${obra.id}`, data);
+        console.log("Res: ", res);
+        setVisibleConfirmacao({
+          visible: true,
+          mensagem: res.data.message,
+          sucesso: true,
+        });
+        getObras();
+      } catch (error) {
+        console.log("Error: ", error);
+        setVisibleConfirmacao({
+          visible: true,
+          mensagem: "Erro ao editar a obra.",
+          sucesso: false,
+        });
+      } finally {
+        setLoading(false);
+        toggleModal();
+      }
+    } 
+    else {
+      const formData = new FormData();
+      if (file) {
+        formData.append("contrato", file);
+      }
+      for (const key in data) {
+        formData.append(key, data[key]);
+      }
+
+      try {
+        // Enviar a requisição com o FormData
+        const res = await axios.post(
+          `${URL_API}/api/obras/novaObra`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        console.log("Res: ", res);
+        setVisibleConfirmacao({
+          visible: true,
+          mensagem: res.data.message,
+          sucesso: true,
+        });
+        getObras();
+      } catch (error) {
+        console.log("Error: ", error);
+        setVisibleConfirmacao({
+          visible: true,
+          mensagem: "Erro ao salvar a obra.",
+          sucesso: false,
+        });
+      } finally {
+        setLoading(false);
+        toggleModal();
+      }
     }
   };
 
@@ -166,7 +208,6 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
     color: darkMode ? "#FFFFFF" : "#000000",
     border: "none",
   };
-
 
   const formStyle = {
     backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
@@ -214,15 +255,17 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                       display: "flex",
                       justifyContent: "start",
                       marginBottom: "10px",
-                      borderBottom: `1px solid ${darkMode
-                        ? "rgba(255, 255, 255, 0.8)"
-                        : "rgba(103, 103, 103, 0.5)"}`
+                      borderBottom: `1px solid ${
+                        darkMode
+                          ? "rgba(255, 255, 255, 0.8)"
+                          : "rgba(103, 103, 103, 0.5)"
+                      }`,
                     }}
                   >
                     <h5
                       style={{
                         opacity: 0.8,
-                        color: darkMode ? "#FFFFFF" : "#676767"
+                        color: darkMode ? "#FFFFFF" : "#676767",
                       }}
                     >
                       Informações do Cliente
@@ -265,7 +308,9 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                 <Row form={true.toString()}>
                   <Col md={6}>
                     <div className="form-group">
-                      <label htmlFor="enderecoCliente">Endereço do cliente:</label>
+                      <label htmlFor="enderecoCliente">
+                        Endereço do cliente:
+                      </label>
                       <Field
                         type="text"
                         name="enderecoCliente"
@@ -278,7 +323,9 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                   </Col>
                   <Col md={6}>
                     <div className="form-group">
-                      <label htmlFor="telefoneCliente">Telefone do cliente</label>
+                      <label htmlFor="telefoneCliente">
+                        Telefone do cliente
+                      </label>
                       <Field
                         type="text"
                         name="telefoneCliente"
@@ -296,15 +343,17 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                     display: "flex",
                     justifyContent: "start",
                     margin: "1.5rem 0",
-                    borderBottom: `1px solid ${darkMode
-                      ? "rgba(255, 255, 255, 0.8)"
-                      : "rgba(103, 103, 103, 0.5)"}`
+                    borderBottom: `1px solid ${
+                      darkMode
+                        ? "rgba(255, 255, 255, 0.8)"
+                        : "rgba(103, 103, 103, 0.5)"
+                    }`,
                   }}
                 >
                   <h5
                     style={{
                       opacity: 0.8,
-                      color: darkMode ? "#FFFFFF" : "#676767"
+                      color: darkMode ? "#FFFFFF" : "#676767",
                     }}
                   >
                     Informações da Obra
@@ -324,7 +373,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                           handleChange(e);
                           setFormValues({
                             ...formValues,
-                            nome: e.target.value
+                            nome: e.target.value,
                           });
                         }}
                       />
@@ -343,7 +392,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                           handleChange(e);
                           setFormValues({
                             ...formValues,
-                            identificador: e.target.value
+                            identificador: e.target.value,
                           });
                         }}
                       />
@@ -364,7 +413,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                           handleChange(e);
                           setFormValues({
                             ...formValues,
-                            endereco: e.target.value
+                            endereco: e.target.value,
                           });
                         }}
                       />
@@ -380,12 +429,11 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                         name="dataInicio"
                         className="form-control"
                         style={inputStyle}
-                        value={values.dataInicio}
                         onChange={(e) => {
                           handleChange(e);
                           setFormValues({
                             ...formValues,
-                            dataInicio: e.target.value
+                            dataInicio: e.target.value,
                           });
                         }}
                       />
@@ -393,18 +441,19 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                   </Col>
                   <Col md={6}>
                     <div className="form-group">
-                      <label htmlFor="previsaoTermino">Previsão de término:</label>
+                      <label htmlFor="previsaoTermino">
+                        Previsão de término:
+                      </label>
                       <Field
                         type="date"
-                        name="previsaoTermino"
+                        name="dataFinal"
                         className="form-control"
                         style={inputStyle}
-                        value={values.dataPrevistaTermino}
                         onChange={(e) => {
                           handleChange(e);
                           setFormValues({
                             ...formValues,
-                            dataPrevistaTermino: e.target.value
+                            dataPrevistaTermino: e.target.value,
                           });
                         }}
                       />
@@ -425,7 +474,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                           handleChange(e);
                           setFormValues({
                             ...formValues,
-                            contrato: e.target.value
+                            contrato: e.target.value,
                           });
                         }}
                       />
@@ -444,7 +493,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                           handleChange(e);
                           setFormValues({
                             ...formValues,
-                            alvara: e.target.value
+                            alvara: e.target.value,
                           });
                         }}
                       />
@@ -465,7 +514,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                           handleChange(e);
                           setFormValues({
                             ...formValues,
-                            orcamento: e.target.value
+                            orcamento: e.target.value,
                           });
                         }}
                       />
@@ -501,15 +550,14 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                         onChange={(e) => {
                           setFormValues({
                             ...formValues,
-                            status: e.target.value
+                            status: e.target.value,
                           });
                         }}
                       >
-
                         <option value="Não iniciada">Não iniciada</option>
                         <option value="Em andamento">Em andamento</option>
                         <option value="Concluida">Concluída</option>
-                        <option value="Cancelada">Cancelada</option>
+                        <option value="Atrasada">Atrasada</option>
                       </Field>
                     </div>
                   </Col>
@@ -520,7 +568,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                       <div
                         className="form-group"
                         style={{
-                          marginTop: "2rem"
+                          marginTop: "2rem",
                         }}
                       >
                         <label htmlFor="documento">Documento contratual:</label>
@@ -539,23 +587,20 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                   style={{
                     backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
                     color: darkMode ? "#FFFFFF" : "#000000",
-                    border: "none"
+                    border: "none",
                   }}
                 >
                   <Button
                     style={{
                       backgroundColor: darkMode ? "#4A4A4A" : "#CECFCB",
                       color: darkMode ? "#FFFFFF" : "#343A40",
-                      border: "none"
+                      border: "none",
                     }}
                     onClick={toggleModal}
                   >
                     Cancelar
                   </Button>
-                  <Button
-                    style={saveButtonStyle}
-                    type="submit"
-                  >
+                  <Button style={saveButtonStyle} type="submit">
                     {loading ? <Spinner size="sm" color="light" /> : "Salvar"}
                   </Button>
                 </ModalFooter>

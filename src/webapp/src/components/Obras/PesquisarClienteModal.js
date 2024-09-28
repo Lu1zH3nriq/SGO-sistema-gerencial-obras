@@ -110,12 +110,6 @@ const PesquisarClienteModal = ({ visible, setVisible, setCliente }) => {
     border: "none",
   };
 
-  const buttonStyle = {
-    backgroundColor: darkMode ? "#424242" : "#7A7A7A",
-    color: darkMode ? "#FFFFFF" : "#FFFFFF",
-    border: "none",
-  };
-
   const inputStyle = {
     backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
     color: darkMode ? "#FFFFFF" : "#000000",

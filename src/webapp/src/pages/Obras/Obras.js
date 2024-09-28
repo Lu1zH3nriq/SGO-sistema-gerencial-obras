@@ -40,7 +40,7 @@ import { formatarData } from "components/utils/utilsMask.js";
 
 const Obras = () => {
   const URL_API = process.env.REACT_APP_URL_API;
-  const [obras, setObras] = useState([])
+  const [obras, setObras] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingInfo, setLoadingInfo] = useState(false);
   const [state] = useUIContextController();
@@ -56,12 +56,8 @@ const Obras = () => {
   });
   const [filtro, setFiltro] = useState("Nenhum");
   const [modalDatasOpen, setModalDatasOpen] = useState(false);
-  const [dataInicial, setDataInicial] = useState("");
-  const [dataFinal, setDataFinal] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [searchContract, setSearchContract] = useState("");
-  const [clienteDaObra, setClienteDaObra] = useState(null);
-  const [funcionarioResponsavel, setFuncionarioResponsavel] = useState(null);
 
   // Estado para paginação
   const [currentPage, setCurrentPage] = useState(1);
@@ -72,23 +68,53 @@ const Obras = () => {
   };
 
   const handleFiltroChange = (e) => {
+    setLoading(true);
     const value = e.target.value;
     setFiltro(value);
+
     if (value === "Datas") {
       setModalDatasOpen(true);
+    } else {
+      let obrasFiltradas = [];
+
+      switch (value) {
+        case "Em andamento":
+          obrasFiltradas = obras.filter(
+            (obra) => obra.status === "Em andamento"
+          );
+          break;
+        case "Concluidas":
+          obrasFiltradas = obras.filter((obra) => obra.status === "Concluida");
+          break;
+        case "Não iniciadas":
+          obrasFiltradas = obras.filter(
+            (obra) => obra.status === "Não iniciada"
+          );
+          break;
+        case "Atrasadas":
+          obrasFiltradas = obras.filter((obra) => obra.status === "Atrasada");
+          break;
+        default:
+          getObras();
+          break;
+      }
+
+      setObrasAFiltrar(obrasFiltradas);
     }
+
+    setLoading(false);
   };
 
   const handleModalClose = () => {
     setModalDatasOpen(false);
-    setFiltro("Nenhum");
+    setObrasAFiltrar(obras);
   };
 
-  const filteredObras = obras.filter((obra) => {
+  const [obrasAFiltrar, setObrasAFiltrar] = useState(obras);
+
+  const filteredObras = obrasAFiltrar.filter((obra) => {
     if (searchTerm === "") {
-      return obra.contrato
-        .toLowerCase()
-        .includes(searchContract.toLowerCase());
+      return obra.contrato.toLowerCase().includes(searchContract.toLowerCase());
     } else if (searchContract === "") {
       return obra.cliente.toLowerCase().includes(searchTerm.toLowerCase());
     } else {
@@ -116,75 +142,74 @@ const Obras = () => {
     }
   };
 
-  const buttonStyle = {
-    backgroundColor: darkMode ? "#676767" : "#CECFCB",
-    color: darkMode ? "#FFFFFF" : "#343A40",
-  };
-
-  const inputStyle = {
-    backgroundColor: darkMode ? "#676767" : "#FFFFFF",
-    color: darkMode ? "#FFFFFF" : "#343A40",
-  };
-
-  const cardStyle = {
-    backgroundColor: darkMode ? "#676767" : "#FFFFFF",
-    color: darkMode ? "#FFFFFF" : "#343A40",
-  };
-
-  const paginationStyle = {
-    fontSize: "0.875rem", // Tamanho menor para o texto
-  };
-
-  const iconStyle = {
-    fontSize: "1rem", // Tamanho menor para os ícones
-  };
-
   const getObras = async () => {
     setLoading(true);
-    axios.get(`${URL_API}/api/obras/obras`)
+    axios
+      .get(`${URL_API}/api/obras/obras`)
       .then((response) => {
-        console.log('OBRAS :', response.data);
+        console.log("OBRAS :", response.data);
         setObras(response.data);
+        setObrasAFiltrar(response.data);
       })
       .catch((error) => {
-        console.error('ERRO AO BUSCAR OBRAS:', error);
+        console.error("ERRO AO BUSCAR OBRAS:", error);
       })
       .finally(() => {
         setLoading(false);
       });
   };
-  const getClienteDaObra = async (id) => {
-    axios
-      .get(`${URL_API}/api/clientes/cliente?id=${id}`)
-      .then((response) => {
-        setClienteDaObra(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
 
-  const getFuncionarioResponsavel = async (id) => {
-    axios
-      .get(`${URL_API}/api/funcionarios/funcionario?id=${id}`)
-      .then((response) => {
-        setFuncionarioResponsavel(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  const getInfos = async (obra) => {
-    setLoadingInfo(true);
-    getClienteDaObra(obra.clienteId);
-    setLoadingInfo(false);
-  };
   useEffect(() => {
-
     getObras();
   }, []);
 
+  const filtrarPorDatas = async (dataInicial, dataFinal, selectDateFilter) => {
+    setLoading(true);
+
+    if (selectDateFilter === "Data de Início") {
+      axios
+        .get(`${URL_API}/api/obras/buscaObraPorPeriodo`, {
+          params: {
+            dataInicial: dataInicial,
+            dataFinal: dataFinal,
+          },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          console.log("OBRAS FILTRADAS POR DATAS: ", response.data);
+          setObrasAFiltrar(response.data);
+        })
+        .catch((error) => {
+          console.error("ERRO AO FILTRAR OBRAS POR DATAS: ", error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else if (selectDateFilter === "Data de Término") {
+      axios
+      .get(`${URL_API}/api/obras/buscaObraPorDataFinal`, {
+        params: {
+          dataInicial: dataInicial,
+          dataFinal: dataFinal,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        console.log("OBRAS FILTRADAS POR DATAS: ", response.data);
+        setObrasAFiltrar(response.data);
+      })
+      .catch((error) => {
+        console.error("ERRO AO FILTRAR OBRAS POR DATAS: ", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+    }
+  };
   const cadastrarObra = () => {
     setViewCadastrarObraModal({
       visible: true,
@@ -214,7 +239,8 @@ const Obras = () => {
         }}
       >
         {/* Linha com botão "Adicionar" e campo de pesquisa */}
-        <Row className="mb-4"
+        <Row
+          className="mb-4"
           style={{
             marginTop: "2%",
             backgroundColor: darkMode ? "#414141" : "#FFFFFF",
@@ -222,14 +248,17 @@ const Obras = () => {
             borderRadius: "0.5rem",
             boxShadow: darkMode
               ? "0px 0px 10px rgba(255, 255, 255, 0.1)"
-              : "0px 0px 10px rgba(0, 0, 0, 0.1)"
+              : "0px 0px 10px rgba(0, 0, 0, 0.1)",
           }}
         >
           <Col md={2} className="d-flex align-items-center">
             <Button
               variant="secondary"
               className="d-flex align-items-center"
-              style={buttonStyle}
+              style={{
+                backgroundColor: darkMode ? "#676767" : "#CECFCB",
+                color: darkMode ? "#FFFFFF" : "#343A40",
+              }}
               onClick={cadastrarObra}
             >
               <FaPlus className="me-2" /> Adicionar
@@ -247,15 +276,18 @@ const Obras = () => {
             <FormControl
               as="select"
               className="me-2"
-              style={inputStyle}
+              style={{
+                backgroundColor: darkMode ? "#676767" : "#FFFFFF",
+                color: darkMode ? "#FFFFFF" : "#343A40",
+              }}
               value={filtro}
               onChange={handleFiltroChange}
             >
               <option value="Nenhum">Nenhum</option>
               <option value="Datas">Datas</option>
-              <option value="Andamento">Andamento</option>
-              <option value="Concluídas">Concluídas</option>
-              <option value="Não Iniciadas">Não Iniciadas</option>
+              <option value="Em andamento">Andamento</option>
+              <option value="Concluidas">Concluídas</option>
+              <option value="Não iniciadas">Não Iniciadas</option>
               <option value="Atrasadas">Atrasadas</option>
             </FormControl>
           </Col>
@@ -271,11 +303,20 @@ const Obras = () => {
             <FormControl
               type="text"
               className="me-2"
-              style={{ ...inputStyle }}
+              style={{
+                backgroundColor: darkMode ? "#676767" : "#FFFFFF",
+                color: darkMode ? "#FFFFFF" : "#343A40",
+              }}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <Button variant="outline-secondary" style={buttonStyle}>
+            <Button
+              variant="outline-secondary"
+              style={{
+                backgroundColor: darkMode ? "#676767" : "#CECFCB",
+                color: darkMode ? "#FFFFFF" : "#343A40",
+              }}
+            >
               <FaSearch />
             </Button>
           </Col>
@@ -291,11 +332,20 @@ const Obras = () => {
             <FormControl
               type="text"
               className="me-2"
-              style={{ ...inputStyle }}
+              style={{
+                backgroundColor: darkMode ? "#676767" : "#FFFFFF",
+                color: darkMode ? "#FFFFFF" : "#343A40",
+              }}
               value={searchContract}
               onChange={(e) => setSearchContract(e.target.value)}
             />
-            <Button variant="outline-secondary" style={buttonStyle}>
+            <Button
+              variant="outline-secondary"
+              style={{
+                backgroundColor: darkMode ? "#676767" : "#CECFCB",
+                color: darkMode ? "#FFFFFF" : "#343A40",
+              }}
+            >
               <FaSearch />
             </Button>
           </Col>
@@ -327,7 +377,12 @@ const Obras = () => {
                       : "0px 0px 10px rgba(0, 0, 0, 0.1)",
                   }}
                 >
-                  <Card style={cardStyle}>
+                  <Card
+                    style={{
+                      backgroundColor: darkMode ? "#676767" : "#FFFFFF",
+                      color: darkMode ? "#FFFFFF" : "#343A40",
+                    }}
+                  >
                     <CardContent
                       sx={{
                         display: "flex",
@@ -338,7 +393,7 @@ const Obras = () => {
                     >
                       <Box sx={{ flex: 1 }}>
                         <Typography
-                          variant="h6"
+                          variant="h5"
                           style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
                         >
                           {obra.nome}
@@ -349,7 +404,10 @@ const Obras = () => {
                           color="textSecondary"
                           style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
                         >
-                          Endereço: {obra.endereco}
+                          <strong style={{ marginRight: "0.5rem" }}>
+                            Endereço:
+                          </strong>
+                          {obra.endereco}
                         </Typography>
 
                         <Typography
@@ -357,7 +415,10 @@ const Obras = () => {
                           color="textSecondary"
                           style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
                         >
-                          Responsável pela obra: {obra.responsavel || "Não informado"}
+                          <strong style={{ marginRight: "0.5rem" }}>
+                            Responsável pela obra:
+                          </strong>
+                          {obra.responsavel || "Não informado"}
                         </Typography>
                       </Box>
 
@@ -388,19 +449,36 @@ const Obras = () => {
                           }}
                         >
                           {obra.status === "Em andamento" ? (
-                            <span style={{ color: darkMode ? " #23A9F2 " : "#008AD3", fontWeight: "bold" }}>
+                            <span
+                              style={{
+                                color: darkMode ? " #23A9F2 " : "#008AD3",
+                                fontWeight: "bold",
+                              }}
+                            >
                               {obra.status}
                             </span>
                           ) : obra.status === "Concluida" ? (
-                            <span style={{ color: darkMode ? "#00EA00" : "#00B900", fontWeight: "bold" }}>
+                            <span
+                              style={{
+                                color: darkMode ? "#00EA00" : "#00B900",
+                                fontWeight: "bold",
+                              }}
+                            >
                               {obra.status}
                             </span>
-                          ) : obra.status === "Cancelada" ? (
-                            <span style={{ color: "red", fontWeight: "bold" }}>
+                          ) : obra.status === "Atrasada" ? (
+                            <span
+                              style={{
+                                color: darkMode ? "#FF4848" : "red",
+                                fontWeight: "bold",
+                              }}
+                            >
                               {obra.status}
                             </span>
                           ) : (
-                            <span style={{ color: "#FFA500", fontWeight: "bold" }}>
+                            <span
+                              style={{ color: "#FFA500", fontWeight: "bold" }}
+                            >
                               {obra.status}
                             </span>
                           )}
@@ -416,17 +494,25 @@ const Obras = () => {
                           right: 0,
                         }}
                       >
-                        {expanded === index ? <FaChevronUp /> : <FaChevronDown />}
+                        {expanded === index ? (
+                          <FaChevronUp />
+                        ) : (
+                          <FaChevronDown />
+                        )}
                       </IconButton>
                     </CardContent>
-                    <Collapse in={expanded === index} timeout="auto" unmountOnExit>
+                    <Collapse
+                      in={expanded === index}
+                      timeout="auto"
+                      unmountOnExit
+                    >
                       <CardContent>
                         <Typography
                           variant="body2"
                           color="textSecondary"
                           style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
                         >
-                          Cliente: {obra.clienteId}
+                          Cliente: {obra.cliente}
                         </Typography>
                         <Typography
                           variant="body2"
@@ -441,7 +527,10 @@ const Obras = () => {
                           color="textSecondary"
                           style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
                         >
-                          Previsão para entrega: {obra?.dataFinal ? formatarData(obra.dataFinal) : "Não informado"}
+                          Previsão para entrega:{" "}
+                          {obra?.dataFinal
+                            ? formatarData(obra.dataFinal)
+                            : "Não informado"}
                         </Typography>
 
                         <Typography
@@ -481,7 +570,7 @@ const Obras = () => {
                               color: darkMode ? "#FFFFFF" : "#343A40",
                             }}
                             size={20}
-                            title="Detalhes"
+                            title="Gerenciar"
                             onClick={() => {
                               console.log("Detalhes da obra : ", obra);
                             }}
@@ -526,7 +615,8 @@ const Obras = () => {
                 Nenhuma obra encontrada
               </Typography>
             )}
-          </Container>)}
+          </Container>
+        )}
 
         {/* Botões de navegação */}
         <Box
@@ -540,7 +630,11 @@ const Obras = () => {
         >
           <Button
             variant="secondary"
-            style={{ ...buttonStyle, ...iconStyle }}
+            style={{
+              backgroundColor: darkMode ? "#676767" : "#CECFCB",
+              color: darkMode ? "#FFFFFF" : "#343A40",
+              fontSize: "1rem",
+            }}
             onClick={handlePrevPage}
             disabled={currentPage === 1}
             size="sm"
@@ -550,7 +644,7 @@ const Obras = () => {
           <Typography
             variant="subtitle1"
             style={{
-              ...paginationStyle,
+              fontSize: "0.875rem",
               color: darkMode ? "#FFFFFF" : "#343A40",
               padding: "0% 1% 0% 1%",
             }}
@@ -561,7 +655,11 @@ const Obras = () => {
           </Typography>
           <Button
             variant="secondary"
-            style={{ ...buttonStyle, ...iconStyle }}
+            style={{
+              backgroundColor: darkMode ? "#676767" : "#CECFCB",
+              color: darkMode ? "#FFFFFF" : "#343A40",
+              fontSize: "1rem",
+            }}
             onClick={handleNextPage}
             disabled={
               currentPage === Math.ceil(filteredObras.length / itemsPerPage)
@@ -586,14 +684,9 @@ const Obras = () => {
         show={modalDatasOpen}
         onHide={handleModalClose}
         darkMode={darkMode}
-        dataInicial={dataInicial}
-        setDataInicial={setDataInicial}
-        dataFinal={dataFinal}
-        setDataFinal={setDataFinal}
-        handleModalClose={handleModalClose}
-        setModalDatasOpen={setModalDatasOpen}
-        inputStyle={inputStyle}
-        buttonStyle={buttonStyle}
+        setCustomDates={(dataInicio, dataFinal, selectDateFilter) => {
+          filtrarPorDatas(dataInicio, dataFinal, selectDateFilter);
+        }}
       />
 
       {/* Modal para excluir obra */}
@@ -603,6 +696,7 @@ const Obras = () => {
           setViewDeleteObraModal({ visible: false, obra: null })
         }
         obra={viewDeleteObraModal.obra}
+        onDelete={getObras}
       />
     </Layout>
   );
