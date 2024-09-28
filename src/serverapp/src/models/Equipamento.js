@@ -42,7 +42,16 @@ const Equipamento = sequelize.define("Equipamento", {
       model: 'Funcionarios', 
       key: 'id'
     }
-  }
+  },
+  responsavel: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  obraAlocado: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
 });
 
 module.exports = Equipamento;

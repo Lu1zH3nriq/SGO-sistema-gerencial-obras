@@ -47,6 +47,8 @@ const CadastrarEquipamentoModal = ({
       ...values,
       obraId: obraSelecionada ? obraSelecionada.id : null,
       funcionarioId: funcionarioSelecionado ? funcionarioSelecionado.id : null,
+      responsavel: funcionarioSelecionado ? funcionarioSelecionado.nome : null,
+      obraAlocado: obraSelecionada ? obraSelecionada.nome : null,
     };
 
     delete _equipamento.obra;
