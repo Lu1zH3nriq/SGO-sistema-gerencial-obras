@@ -13,20 +13,24 @@ const ConfirmacaoModal = ({ visible, setVisible, mensagem, sucesso }) => {
   const modalStyle = {
     display: "flex",
     alignItems: "center",
+    justifyContent: "center",
     backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
     color: darkMode ? "#FFFFFF" : "#000000",
     border: "none",
   };
 
   const buttonStyle = {
-    backgroundColor: darkMode ? "#676767" : "#CECFCB",
+    backgroundColor: darkMode ? "#4A4A4A" : "#CECFCB",
     color: darkMode ? "#FFFFFF" : "#343A40",
     border: "none",
   };
 
   return (
     <Modal isOpen={visible} toggle={toggleModal} centered>
-      <ModalHeader toggle={toggleModal} style={modalStyle}>
+      <ModalHeader toggle={toggleModal} style={{
+        ...modalStyle,
+        borderBottom: darkMode ? "1px solid rgba(255, 255, 255, 0.2)" : "1px solid rgba(52, 58, 64, 0.2)"
+      }}>
         {sucesso ? "Sucesso" : "Erro"}
       </ModalHeader>
       <ModalBody style={modalStyle}>

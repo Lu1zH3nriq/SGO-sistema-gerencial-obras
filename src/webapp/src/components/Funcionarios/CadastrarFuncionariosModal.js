@@ -27,7 +27,7 @@ const CadastrarFuncionariosModal = ({
   funcionario,
   getFuncionarios,
   cadastroAoPesquisar,
-  returnFuncionario
+  returnFuncionario,
 }) => {
   const URL_API = process.env.REACT_APP_URL_API;
   const [loading, setLoading] = useState(false);
@@ -53,7 +53,6 @@ const CadastrarFuncionariosModal = ({
       axios
         .post(`${URL_API}/api/funcionarios/novoFuncionario`, data)
         .then((res) => {
-
           if (cadastroAoPesquisar) {
             returnFuncionario(res.data.funcionario);
             setConfirmacaoVisible({
@@ -226,7 +225,12 @@ const CadastrarFuncionariosModal = ({
                         }}
                       />
                       <div style={{ marginTop: "-15px" }}>
-                        <small style={{ color: "Grey", fontSize: "11px" }}>
+                        <small
+                          style={{
+                            color: darkMode ? "#FFFFFF" : "Grey",
+                            fontSize: "11px",
+                          }}
+                        >
                           * Somente números
                         </small>
                       </div>
@@ -301,7 +305,12 @@ const CadastrarFuncionariosModal = ({
                       />
                     </div>
                     <div style={{ marginTop: "-15px" }}>
-                      <small style={{ color: "Grey", fontSize: "11px" }}>
+                      <small
+                        style={{
+                          color: darkMode ? "#FFFFFF" : "Grey",
+                          fontSize: "11px",
+                        }}
+                      >
                         * Somente números
                       </small>
                     </div>
@@ -524,7 +533,11 @@ const CadastrarFuncionariosModal = ({
                   <Button
                     color="secondary"
                     onClick={toggleModal}
-                    style={buttonStyle}
+                    style={{
+                      backgroundColor: darkMode ? "#4A4A4A" : "#CECFCB",
+                      color: darkMode ? "#FFFFFF" : "#4A4A4A",
+                      border: "none",
+                    }}
                   >
                     Fechar
                   </Button>

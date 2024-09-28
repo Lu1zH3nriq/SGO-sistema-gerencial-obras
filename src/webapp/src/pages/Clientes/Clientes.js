@@ -62,15 +62,19 @@ const Clientes = () => {
 
   const tableHeaderStyle = {
     textAlign: "center",
+    backgroundColor: darkMode ? "#4A4A4A" : "#F8F9FA",
+    color: darkMode ? "#FFFFFF" : "#4A4A4A",
   };
 
   const tableCellStyle = {
     textAlign: "start",
-    backgroundColor: darkMode ? "#676767" : "#f0f0f0",
+    backgroundColor: darkMode ? "#535353" : "#FFFFFF",
     padding: "0.3rem 1rem 0.3rem 1rem",
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
+    color: darkMode ? "#FFFFFF" : "#4A4A4A",
+    fontWeight: "normal",
   };
 
   const getClientes = async () => {
@@ -157,11 +161,22 @@ const Clientes = () => {
       <Layout rotaAtual="Clientes">
         <Container
           style={{
-            marginTop: "8vh"
+            marginTop: "8vh",
           }}
         >
           {/* Linha com botão "Adicionar" e campo de pesquisa */}
-          <Row className="mb-4" style={{ marginTop: "2%" }}>
+          <Row
+            className="mb-4"
+            style={{
+              marginTop: "2%",
+              backgroundColor: darkMode ? "#414141" : "#FFFFFF",
+              padding: "1rem 0.5rem 1rem 0.5rem",
+              borderRadius: "0.5rem",
+              boxShadow: darkMode
+                ? "0px 0px 10px rgba(255, 255, 255, 0.1)"
+                : "0px 0px 10px rgba(0, 0, 0, 0.1)",
+            }}
+          >
             <Col className="d-flex align-items-center justify-content-between flex-wrap">
               <Button
                 color="secondary"
@@ -232,7 +247,16 @@ const Clientes = () => {
               size="sm"
               bordered
               dark={darkMode}
-              style={{ borderRadius: "0px", marginTop: "2%" }}
+              style={{
+                borderRadius: "0.5rem",
+                marginTop: "2%",
+                tableLayout: "auto",
+                backgroundColor: darkMode ? "#333333" : "#FFFFFF",
+                color: darkMode ? "#FFFFFF" : "#4A4A4A",
+                boxShadow: darkMode
+                  ? "0px 0px 10px 0px #7F7F7F"
+                  : "0px 0px 10px 0px #7A7A7A",
+              }}
             >
               <thead>
                 <tr>
@@ -242,9 +266,7 @@ const Clientes = () => {
                   <th style={tableHeaderStyle}>Endereço</th>
                   <th style={tableHeaderStyle}>Email</th>
                   <th style={tableHeaderStyle}>Telefone</th>
-                  <th style={{ ...tableHeaderStyle, textAlign: "center" }}>
-                    Ações
-                  </th>
+                  <th style={tableHeaderStyle}>Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -263,7 +285,7 @@ const Clientes = () => {
                       <td style={tableCellStyle}>
                         {formatarTelefone(cliente.telefone) || "--"}
                       </td>
-                      <td>
+                      <td style={tableCellStyle}>
                         <div
                           style={{
                             textAlign: "center",
@@ -296,10 +318,7 @@ const Clientes = () => {
                   <tr>
                     <td
                       colSpan="6"
-                      style={{
-                        textAlign: "center",
-                        color: darkMode ? "#FFFFFF" : "#343A40",
-                      }}
+                      style={{ ...tableCellStyle, textAlign: "center" }}
                     >
                       Nenhum cliente encontrado
                     </td>

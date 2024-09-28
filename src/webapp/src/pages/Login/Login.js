@@ -122,7 +122,7 @@ const Login = ({ onLogin }) => {
     <>
       <Box
         sx={{
-          height: "100vh",
+          maxHeight: "100vh",
           maxWidth: "100%",
           backgroundImage: ({
             functions: { linearGradient, rgba },
@@ -130,7 +130,7 @@ const Login = ({ onLogin }) => {
           }) =>
             bgImageLogin &&
             `${linearGradient(
-              rgba(gradients.dark.main, 0.6),
+              rgba(gradients.dark.main, 0.8),
               rgba(gradients.dark.state, 0.6)
             )}, url(${bgImageLogin})`,
           backgroundSize: "cover",
@@ -151,8 +151,9 @@ const Login = ({ onLogin }) => {
               sx={{
                 maxWidth: "70%",
                 margin: "0 auto",
-                minHeight: "60vh",
+                minHeight: "40vh",
                 justifyContent: "center",
+                boxShadow: 3,
               }}
             >
               <CardHeader
@@ -189,6 +190,7 @@ const Login = ({ onLogin }) => {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="on"
                   />
                   <TextField
                     fullWidth
@@ -201,6 +203,7 @@ const Login = ({ onLogin }) => {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="off"
                   />
                   <Switch
                     checked={showPassword}

@@ -47,6 +47,8 @@ const CadastrarEquipamentoModal = ({
       ...values,
       obraId: obraSelecionada ? obraSelecionada.id : null,
       funcionarioId: funcionarioSelecionado ? funcionarioSelecionado.id : null,
+      responsavel: funcionarioSelecionado ? funcionarioSelecionado.nome : null,
+      obraAlocado: obraSelecionada ? obraSelecionada.nome : null,
     };
 
     delete _equipamento.obra;
@@ -111,10 +113,6 @@ const CadastrarEquipamentoModal = ({
 
   const toggleModal = () => {
     setVisible(false);
-  };
-
-  const handleSelectObra = (obra) => {
-    setObraSelecionada(obra);
   };
 
   const modalStyle = {
@@ -348,7 +346,7 @@ const CadastrarEquipamentoModal = ({
                           onChange={(e) =>
                             setFieldValue("dataAlocacao", e.target.value)
                           }
-                          readOnly
+                          readOnly={userType === 2}
                           disabled={userType === 2}
                         />
                       </div>
@@ -410,7 +408,7 @@ const CadastrarEquipamentoModal = ({
       <PesquisarObraModal
         visible={pesquisarObraVisible}
         setVisible={setPesquisarObraVisible}
-        onSelectObra={handleSelectObra}
+        onSelectObra={(obra)=>{ setObraSelecionada(obra); }}
       />
       <PesquisarFuncionarioModal
         visible={pesquisarFuncionarioVisible}
