@@ -6,7 +6,7 @@ import {
   CardContent,
   IconButton,
   Collapse,
-  Grid
+  Grid,
 } from "@mui/material";
 import Layout from "../../components/layout/Layout.js";
 import { useUIContextController } from "../../context/index.js";
@@ -20,6 +20,7 @@ import {
   FaTrash,
   FaChevronLeft,
   FaChevronRight,
+  FaExpandArrowsAlt
 } from "react-icons/fa";
 import { Spinner } from "reactstrap";
 import CadastrarEquipamentoModal from "components/Equipamentos/CadastrarEquipamentoModal.js";
@@ -219,7 +220,18 @@ const Equipamentos = () => {
         }}
       >
         {/* Linha com botão "Adicionar" e campo de pesquisa */}
-        <Row className="mb-4" style={{ marginTop: "2%" }}>
+        <Row
+          className="mb-4"
+          style={{
+            marginTop: "2%",
+            backgroundColor: darkMode ? "#414141" : "#FFFFFF",
+            padding: "1rem 0.5rem 1rem 0.5rem",
+            borderRadius: "0.5rem",
+            boxShadow: darkMode
+              ? "0px 0px 10px rgba(255, 255, 255, 0.1)"
+              : "0px 0px 10px rgba(0, 0, 0, 0.1)",
+          }}
+        >
           <Col md={2} className="d-flex align-items-center">
             <Button
               variant="secondary"
@@ -290,7 +302,16 @@ const Equipamentos = () => {
           <Container fluid style={{ maxWidth: "80%", marginTop: "5%" }}>
             {currentItems.length > 0 ? (
               currentItems.map((equipamento, index) => (
-                <Box key={index} sx={{ width: "100%", mb: 2 }}>
+                <Box
+                  key={index}
+                  sx={{
+                    width: "100%",
+                    mb: 2,
+                    boxShadow: darkMode
+                      ? "0px 0px 10px rgba(255, 255, 255, 0.1)"
+                      : "0px 0px 10px rgba(0, 0, 0, 0.1)",
+                  }}
+                >
                   <Card style={cardStyle}>
                     <CardContent
                       sx={{
@@ -340,15 +361,24 @@ const Equipamentos = () => {
                               }}
                             >
                               {equipamento.status === "Disponível" ? (
-                                <span style={{ color: "green", fontWeight: "bold" }}>
+                                <span
+                                  style={{ color: "green", fontWeight: "bold" }}
+                                >
                                   {equipamento.status}
                                 </span>
                               ) : equipamento.status === "Em uso" ? (
-                                <span style={{ color: "red", fontWeight: "bold" }}>
+                                <span
+                                  style={{ color: "red", fontWeight: "bold" }}
+                                >
                                   {equipamento.status}
                                 </span>
                               ) : equipamento.status === "Manutenção" ? (
-                                <span style={{ color: "#FFA500", fontWeight: "bold" }}>
+                                <span
+                                  style={{
+                                    color: "#FFA500",
+                                    fontWeight: "bold",
+                                  }}
+                                >
                                   {equipamento.status}
                                 </span>
                               ) : null}
@@ -361,9 +391,18 @@ const Equipamentos = () => {
                           handleExpandClick(index);
                           equipamentoEmUso(equipamento);
                         }}
-                        style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                        style={{
+                          color: darkMode ? "#FFFFFF" : "#343A40",
+                          position: "absolute",
+                          top: 0,
+                          right: 0,
+                        }}
                       >
-                        {expanded === index ? <FaChevronUp /> : <FaChevronDown />}
+                        {expanded === index ? (
+                          <FaChevronUp />
+                        ) : (
+                          <FaChevronDown />
+                        )}
                       </IconButton>
                     </CardContent>
                     <Collapse
@@ -382,7 +421,8 @@ const Equipamentos = () => {
                                   color: darkMode ? "#FFFFFF" : "#343A40",
                                 }}
                               >
-                                Data Cadastro: {formatarData(equipamento.dataCadastro)}
+                                Data Cadastro:{" "}
+                                {formatarData(equipamento.dataCadastro)}
                               </Typography>
                               <Typography
                                 variant="body2"
@@ -429,7 +469,8 @@ const Equipamentos = () => {
                                       color: darkMode ? "#FFFFFF" : "#343A40",
                                     }}
                                   >
-                                    Obra: {obraSelecionada?.nome || "Não alocado"}
+                                    Obra:{" "}
+                                    {obraSelecionada?.nome || "Não alocado"}
                                   </Typography>
                                   <Typography
                                     variant="body2"
@@ -438,7 +479,9 @@ const Equipamentos = () => {
                                       color: darkMode ? "#FFFFFF" : "#343A40",
                                     }}
                                   >
-                                    Responsável: {funcionarioSelecionado?.nome || "Não alocado"}
+                                    Responsável:{" "}
+                                    {funcionarioSelecionado?.nome ||
+                                      "Não alocado"}
                                   </Typography>
                                 </Box>
                               ))}
@@ -447,11 +490,23 @@ const Equipamentos = () => {
                         <Box
                           sx={{
                             display: "flex",
-                            justifyContent: "center",
+                            justifyContent: "end",
                             alignItems: "center",
-                            marginTop: "2rem",
+                            marginTop: "2.5rem",
                           }}
                         >
+                          <FaExpandArrowsAlt
+                            style={{
+                              cursor: "pointer",
+                              marginRight: "10px",
+                              color: darkMode ? "#FFFFFF" : "#343A40",
+                            }}
+                            size={20}
+                            title="Gerenciar"
+                            onClick={() => {
+                              console.log("Detalhes dp equipamento : ", equipamento );
+                            }}
+                          />
                           <FaEdit
                             style={{
                               cursor: "pointer",

@@ -79,18 +79,19 @@ const Funcionarios = () => {
 
   const tableHeaderStyle = {
     textAlign: "center",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
+    backgroundColor: darkMode ? "#4A4A4A" : "#F8F9FA",
+    color: darkMode ? "#FFFFFF" : "#4A4A4A",
   };
 
   const tableCellStyle = {
     textAlign: "start",
-    backgroundColor: darkMode ? "#676767" : "#f0f0f0",
+    backgroundColor: darkMode ? "#535353" : "#FFFFFF",
     padding: "0.3rem 1rem 0.3rem 1rem",
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
+    color: darkMode ? "#FFFFFF" : "#4A4A4A",
+    fontWeight: "normal",
   };
 
   const cadastrarFunc = () => {
@@ -155,8 +156,8 @@ const Funcionarios = () => {
             padding: "1rem 0.5rem 1rem 0.5rem",
             borderRadius: "0.5rem",
             boxShadow: darkMode
-              ? "0px 0px 10px rgba(255, 255, 255, 0.1)"
-              : "0px 0px 10px rgba(0, 0, 0, 0.1)"
+              ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
+              : "0px 0px 10px rgba(0, 0, 0, 0.2)",
           }}
         >
           <Col className="d-flex align-items-center justify-content-between flex-wrap">
@@ -231,8 +232,13 @@ const Funcionarios = () => {
             dark={darkMode}
             style={{
               borderRadius: "0.5rem",
-              marginTop: "2vh",
-              boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+              marginTop: "2%",
+              tableLayout: "auto",
+              backgroundColor: darkMode ? "#333333" : "#FFFFFF",
+              color: darkMode ? "#FFFFFF" : "#4A4A4A",
+              boxShadow: darkMode
+                ? "0px 0px 10px 0px #7F7F7F"
+                : "0px 0px 10px 0px #7A7A7A",
             }}
           >
             <thead>
@@ -244,9 +250,7 @@ const Funcionarios = () => {
                 <th style={tableHeaderStyle}>Telefone</th>
                 <th style={tableHeaderStyle}>Tipo</th>
                 <th style={tableHeaderStyle}>Status</th>
-                <th style={{ ...tableHeaderStyle, textAlign: "center" }}>
-                  Ações
-                </th>
+                <th style={tableHeaderStyle}>Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -264,13 +268,8 @@ const Funcionarios = () => {
                     </td>
                     <td style={tableCellStyle}>{funcionario.tipo}</td>
                     <td style={tableCellStyle}>{funcionario.status}</td>
-                    <td>
-                      <div
-                        style={{
-                          ...tableCellStyle,
-                          textAlign: "center",
-                        }}
-                      >
+                    <td style={tableCellStyle}>
+                      <div>
                         <FaEdit
                           style={{
                             cursor: "pointer",
@@ -298,10 +297,7 @@ const Funcionarios = () => {
                 <tr>
                   <td
                     colSpan="7"
-                    style={{
-                      textAlign: "center",
-                      color: darkMode ? "#FFFFFF" : "#343A40",
-                    }}
+                    style={{ ...tableCellStyle, textAlign: "center" }}
                   >
                     Nenhum Funcionário encontrado
                   </td>

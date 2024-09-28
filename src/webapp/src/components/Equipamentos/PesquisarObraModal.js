@@ -15,6 +15,7 @@ import { Formik, Form, Field } from "formik";
 import { useUIContextController } from "../../context/index.js";
 import axios from "axios";
 import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
+import { FaCheckSquare } from "react-icons/fa";
 
 const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
   const URL_API = process.env.REACT_APP_URL_API;
@@ -31,7 +32,13 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
   const handleSearch = (values) => {
     setLoading(true);
     axios
-      .get(`${URL_API}/obras`)
+      .get(`${URL_API}/api/obras/buscaObraQuery`, {
+        params: {
+          nome: values.nome,
+          contrato: values.contrato,
+          alvara: values.alvara,
+        },
+      })
       .then((response) => {
         setResultados(response.data || []);
       })
@@ -58,12 +65,6 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
     border: "none",
   };
 
-  const buttonStyle = {
-    backgroundColor: darkMode ? "#676767" : "#CECFCB",
-    color: darkMode ? "#FFFFFF" : "#343A40",
-    border: "none",
-  };
-
   const inputStyle = {
     backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
     color: darkMode ? "#FFFFFF" : "#000000",
@@ -76,17 +77,32 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
     border: "none",
   };
 
+  const tableStyle = {
+    borderRadius: "0.5rem",
+    marginTop: "2%",
+    tableLayout: "auto",
+    backgroundColor: darkMode ? "#333333" : "#FFFFFF",
+    color: darkMode ? "#FFFFFF" : "#4A4A4A",
+    boxShadow: darkMode
+      ? "0px 0px 10px 0px #7F7F7F"
+      : "0px 0px 10px 0px #7A7A7A",
+  };
+
   const tableHeaderStyle = {
     textAlign: "center",
+    backgroundColor: darkMode ? "#4A4A4A" : "#F8F9FA",
+    color: darkMode ? "#FFFFFF" : "#4A4A4A",
   };
 
   const tableCellStyle = {
-    textAlign: "center",
-    backgroundColor: darkMode ? "#676767" : "#f0f0f0",
-    padding: "0.5rem",
+    textAlign: "start",
+    backgroundColor: darkMode ? "#535353" : "#FFFFFF",
+    padding: "0.3rem 1rem 0.3rem 1rem",
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
+    color: darkMode ? "#FFFFFF" : "#4A4A4A",
+    fontWeight: "normal",
   };
 
   return (
@@ -109,55 +125,74 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
           >
             {(setFieldValues, values) => (
               <Form style={modalStyle}>
-                <Row form>
-                  <Col md={4}>
-                    <div className="form-group">
-                      <label htmlFor="nome">Nome da Obra</label>
-                      <Field
-                        type="text"
-                        name="nome"
-                        className="form-control"
-                        style={inputStyle}
-                        onChange={(e) => setFieldValues('nome',e.target.value)}
-                      />
-                    </div>
-                  </Col>
-                  <Col md={4}>
-                    <div className="form-group">
-                      <label htmlFor="contrato">Número do Contrato</label>
-                      <Field
-                        type="text"
-                        name="contrato"
-                        className="form-control"
-                        style={inputStyle}
-                        onChange={(e) => setFieldValues('contrato',e.target.value)}
-                      />
-                    </div>
-                  </Col>
-                  <Col md={4}>
-                    <div className="form-group">
-                      <label htmlFor="alvara">Alvará</label>
-                      <Field
-                        type="text"
-                        name="alvara"
-                        className="form-control"
-                        style={inputStyle}
-                        onChange={(e) => setFieldValues('alvara',e.target.value)}
-                      />
-                    </div>
-                  </Col>
-                </Row>
-                <Row className="mt-3">
-                  <Col md={12} className="text-center">
-                    <Button type="submit" style={saveButtonStyle}>
-                      {loading ? (
-                        <Spinner size="sm" color="light" />
-                      ) : (
-                        "Pesquisar"
-                      )}
-                    </Button>
-                  </Col>
-                </Row>
+                <div
+                  style={{
+                    padding: "1rem",
+                    borderRadius: "0.25rem",
+                    border: darkMode
+                      ? "1px solid #FFFFFF"
+                      : "1px solid rgba(122, 122, 122, 0.5)",
+                    boxShadow: darkMode
+                      ? "0px 0px 10px 0px #7F7F7F"
+                      : "0px 0px 10px 0px #7A7A7A",
+                  }}
+                >
+                  <Row form>
+                    <Col md={4}>
+                      <div className="form-group">
+                        <label htmlFor="nome">Nome da Obra</label>
+                        <Field
+                          type="text"
+                          name="nome"
+                          className="form-control"
+                          style={inputStyle}
+                          onChange={(e) =>
+                            setFieldValues("nome", e.target.value)
+                          }
+                        />
+                      </div>
+                    </Col>
+                    <Col md={4}>
+                      <div className="form-group">
+                        <label htmlFor="contrato">Número do Contrato</label>
+                        <Field
+                          type="text"
+                          name="contrato"
+                          className="form-control"
+                          style={inputStyle}
+                          onChange={(e) =>
+                            setFieldValues("contrato", e.target.value)
+                          }
+                        />
+                      </div>
+                    </Col>
+                    <Col md={4}>
+                      <div className="form-group">
+                        <label htmlFor="alvara">Alvará</label>
+                        <Field
+                          type="text"
+                          name="alvara"
+                          className="form-control"
+                          style={inputStyle}
+                          onChange={(e) =>
+                            setFieldValues("alvara", e.target.value)
+                          }
+                        />
+                      </div>
+                    </Col>
+                  </Row>
+                  <Row className="mt-3">
+                    <Col md={12} className="text-center">
+                      <Button type="submit" style={saveButtonStyle}>
+                        {loading ? (
+                          <Spinner size="sm" color="light" />
+                        ) : (
+                          "Pesquisar"
+                        )}
+                      </Button>
+                    </Col>
+                  </Row>
+                </div>
               </Form>
             )}
           </Formik>
@@ -168,9 +203,8 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
             bordered
             dark={darkMode}
             style={{
-              borderRadius: "0px",
-              marginTop: "2%",
-              tableLayout: "auto",
+              ...tableStyle,
+              marginTop: "4vh",
             }}
           >
             <thead>
@@ -186,30 +220,27 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
             <tbody>
               {resultados.length > 0 ? (
                 resultados.map((obra, index) => (
-                  <tr key={index}>
+                  <tr key={index} style={{ cursor: "pointer" }}  onClick={()=>{ handleSelect(obra) }} >
                     <td style={tableCellStyle}>{obra.nome || "--"}</td>
                     <td style={tableCellStyle}>{obra.cliente || "--"}</td>
                     <td style={tableCellStyle}>{obra.contrato || "--"}</td>
-                    <td>
-                      <div
-                        style={{
-                          textAlign: "center",
-                        }}
-                      >
-                        <Button
-                          color="primary"
-                          size="sm"
-                          onClick={() => handleSelect(obra)}
-                        >
-                          Selecionar
-                        </Button>
+                    <td style={tableCellStyle}>
+                      <div onClick={() => handleSelect(obra)}>
+                        <FaCheckSquare
+                          size={20}
+                          color={darkMode ? "#FFFFFF" : "#7A7A7A"}
+                          title="Selecionar"
+                        />
                       </div>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="4" style={{ textAlign: "center" }}>
+                  <td
+                    colSpan="4"
+                    style={{ ...tableCellStyle, textAlign: "center" }}
+                  >
                     Nenhum resultado encontrado
                   </td>
                 </tr>
@@ -221,7 +252,11 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
           <Button
             color="secondary"
             onClick={() => setVisible(false)}
-            style={buttonStyle}
+            style={{
+              backgroundColor: darkMode ? "#424242" : "#7A7A7A",
+              color: darkMode ? "#FFFFFF" : "#FFFFFF",
+              border: "none",
+            }}
           >
             Fechar
           </Button>

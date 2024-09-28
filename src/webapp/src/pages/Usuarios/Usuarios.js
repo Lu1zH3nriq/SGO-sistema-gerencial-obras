@@ -89,6 +89,8 @@ const Usuarios = () => {
 
   const tableHeaderStyle = {
     textAlign: "center",
+    backgroundColor: darkMode ? "#4A4A4A" : "#F8F9FA",
+    color: darkMode ? "#FFFFFF" : "#4A4A4A",
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -158,7 +160,18 @@ const Usuarios = () => {
         }}
       >
         {/* Linha com botão "Adicionar" e campo de pesquisa */}
-        <Row className="mb-4" style={{ marginTop: "2%", maxWidth: "100%" }}>
+        <Row
+          className="mb-4"
+          style={{
+            marginTop: "2%",
+            backgroundColor: darkMode ? "#414141" : "#FFFFFF",
+            padding: "1rem 0.5rem 1rem 0.5rem",
+            borderRadius: "0.5rem",
+            boxShadow: darkMode
+              ? "0px 0px 10px rgba(255, 255, 255, 0.1)"
+              : "0px 0px 10px rgba(0, 0, 0, 0.1)",
+          }}
+        >
           <Col className="d-flex align-items-center justify-content-between">
             <Button
               color="secondary"
@@ -246,9 +259,7 @@ const Usuarios = () => {
                 <th style={tableHeaderStyle}>Status</th>
                 <th style={tableHeaderStyle}>Usuário</th>
                 <th style={tableHeaderStyle}>Tipo</th>
-                <th style={{ ...tableHeaderStyle, textAlign: "center" }}>
-                  Ações
-                </th>
+                <th style={tableHeaderStyle}>Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -269,12 +280,8 @@ const Usuarios = () => {
                       {nivelUsuario[usuario.nivelUsuario] || "--"}
                     </td>
                     <td style={tableCellStyle}>{usuario.tipo || "--"}</td>
-                    <td>
-                      <div
-                        style={{
-                          textAlign: "center",
-                        }}
-                      >
+                    <td style={tableCellStyle}>
+                      <div>
                         <FaEdit
                           style={{
                             cursor: "pointer",
@@ -302,10 +309,7 @@ const Usuarios = () => {
                 <tr>
                   <td
                     colSpan="9"
-                    style={{
-                      textAlign: "center",
-                      color: darkMode ? "#FFFFFF" : "#343A40",
-                    }}
+                    style={{ ...tableCellStyle, textAlign: "center" }}
                   >
                     Nenhum usuário encontrado
                   </td>

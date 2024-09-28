@@ -6,7 +6,7 @@ import {
   CardContent,
   IconButton,
   Collapse,
-  Grid
+  Grid,
 } from "@mui/material";
 import Layout from "../../components/layout/Layout.js";
 import { useUIContextController } from "../../context/index.js";
@@ -20,6 +20,7 @@ import {
   FaTrash,
   FaChevronLeft,
   FaChevronRight,
+  FaExpandArrowsAlt
 } from "react-icons/fa";
 import { Spinner } from "reactstrap";
 import CadastrarEquipamentoModal from "components/Equipamentos/CadastrarEquipamentoModal.js";
@@ -28,13 +29,13 @@ import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
 import axios from "axios";
 import { formatarData } from "components/utils/utilsMask.js";
 
-const EquipamentosComum = () => {
+const Equipamentos = () => {
   const URL_API = process.env.REACT_APP_URL_API;
   const [equipamentos, setEquipamentos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingUso, setLoadingUso] = useState(false);
   const [state] = useUIContextController();
-  const { darkMode, userId } = state;
+  const { darkMode } = state;
   const [expanded, setExpanded] = useState(null);
   const [viewCadastrarEquipamentoModal, setViewCadastrarEquipamentoModal] =
     useState({
@@ -56,26 +57,7 @@ const EquipamentosComum = () => {
   const [obraSelecionada, setObraSelecionada] = useState(null);
   const [funcionarioSelecionado, setFuncionarioSelecionado] = useState(null);
 
-  const getMeusEquipamentos = async () => {
-    setLoading(true);
-    console.log("userId", userId);
-    try {
-      const response = await axios.get(
-        `${URL_API}/api/equipamentos/equipamentosPorUser?userId=${userId}`
-      );
-      setEquipamentos(response.data);
-    } catch (error) {
-      setConfirmacaoModal({
-        visible: true,
-        mensagem: "Erro ao buscar equipamentos",
-        sucesso: false,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getTodosEquipamentos = async () => {
+  const getEquipamentos = async () => {
     setLoading(true);
     try {
       const response = await axios.get(
@@ -94,16 +76,8 @@ const EquipamentosComum = () => {
     }
   };
 
-  const buscaEquipamentos = (tipo) => {
-    if (tipo === "meus-equipamentos") {
-      getMeusEquipamentos();
-    } else {
-      getTodosEquipamentos();
-    }
-  };
-
   useEffect(() => {
-    getTodosEquipamentos();
+    getEquipamentos();
   }, []);
 
   // Estado para paginação
@@ -175,8 +149,22 @@ const EquipamentosComum = () => {
     fontSize: "1rem",
   };
 
+  const cadastrarEquipamento = () => {
+    setViewCadastrarEquipamentoModal({
+      visible: true,
+      equipamento: null,
+    });
+  };
+
   const editarEquipamento = (equipamento) => {
     setViewCadastrarEquipamentoModal({
+      visible: true,
+      equipamento: equipamento,
+    });
+  };
+
+  const deleteEquipamento = (equipamento) => {
+    setViewDeleteEquipamentoModal({
       visible: true,
       equipamento: equipamento,
     });
@@ -231,31 +219,33 @@ const EquipamentosComum = () => {
           marginTop: "8vh",
         }}
       >
+        {/* Linha com botão "Adicionar" e campo de pesquisa */}
         <Row
           className="mb-4"
-          style={{ marginTop: "2%", justifyContent: "space-between" }}
+          style={{
+            marginTop: "2%",
+            backgroundColor: darkMode ? "#414141" : "#FFFFFF",
+            padding: "1rem 0.5rem 1rem 0.5rem",
+            borderRadius: "0.5rem",
+            boxShadow: darkMode
+              ? "0px 0px 10px rgba(255, 255, 255, 0.1)"
+              : "0px 0px 10px rgba(0, 0, 0, 0.1)",
+          }}
         >
-          <Col md={3} className="d-flex align-items-center ml-auto">
-            <Typography
-              variant="subtitle1"
-              className="me-2"
-              color={"secondary"}
-              style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+          <Col md={2} className="d-flex align-items-center">
+            <Button
+              variant="secondary"
+              className="d-flex align-items-center"
+              style={buttonStyle}
+              onClick={cadastrarEquipamento}
             >
-              Filtrar
-            </Typography>
-            <FormControl
-              as="select"
-              className="me-2"
-              style={{ ...inputStyle }}
-              onChange={(e) => buscaEquipamentos(e.target.value)}
-            >
-              <option value="todos">Todos</option>
-              <option value="meus-equipamentos">Meus Equipamentos</option>
-            </FormControl>
+              <FaPlus className="me-2" /> Adicionar
+            </Button>
           </Col>
-
-          <Col md={4} className="d-flex align-items-center ml-auto">
+          <Col
+            md={{ size: 4, offset: 2 }}
+            className="d-flex align-items-center ml-auto"
+          >
             <Typography
               variant="subtitle1"
               className="me-2"
@@ -275,7 +265,6 @@ const EquipamentosComum = () => {
               <FaSearch />
             </Button>
           </Col>
-
           <Col md={4} className="d-flex align-items-center">
             <Typography
               variant="subtitle1"
@@ -310,10 +299,19 @@ const EquipamentosComum = () => {
             <Spinner color="secondary" />
           </Box>
         ) : (
-          <Container fluid style={{ maxWidth: "85%", marginTop: "5%" }}>
+          <Container fluid style={{ maxWidth: "80%", marginTop: "5%" }}>
             {currentItems.length > 0 ? (
               currentItems.map((equipamento, index) => (
-                <Box key={index} sx={{ width: "100%", mb: 2 }}>
+                <Box
+                  key={index}
+                  sx={{
+                    width: "100%",
+                    mb: 2,
+                    boxShadow: darkMode
+                      ? "0px 0px 10px rgba(255, 255, 255, 0.1)"
+                      : "0px 0px 10px rgba(0, 0, 0, 0.1)",
+                  }}
+                >
                   <Card style={cardStyle}>
                     <CardContent
                       sx={{
@@ -340,7 +338,7 @@ const EquipamentosComum = () => {
                                 color: darkMode ? "#FFFFFF" : "#343A40",
                               }}
                             >
-                              {equipamento.identificador}
+                              Identificador: {equipamento.identificador}
                             </Typography>
                           </Box>
                         </Grid>
@@ -363,15 +361,24 @@ const EquipamentosComum = () => {
                               }}
                             >
                               {equipamento.status === "Disponível" ? (
-                                <span style={{ color: "green", fontWeight: "bold" }}>
+                                <span
+                                  style={{ color: "green", fontWeight: "bold" }}
+                                >
                                   {equipamento.status}
                                 </span>
                               ) : equipamento.status === "Em uso" ? (
-                                <span style={{ color: "red", fontWeight: "bold" }}>
+                                <span
+                                  style={{ color: "red", fontWeight: "bold" }}
+                                >
                                   {equipamento.status}
                                 </span>
                               ) : equipamento.status === "Manutenção" ? (
-                                <span style={{ color: "#FFA500", fontWeight: "bold" }}>
+                                <span
+                                  style={{
+                                    color: "#FFA500",
+                                    fontWeight: "bold",
+                                  }}
+                                >
                                   {equipamento.status}
                                 </span>
                               ) : null}
@@ -379,32 +386,24 @@ const EquipamentosComum = () => {
                           </Box>
                         </Grid>
                       </Grid>
-                      <div>
+                      <IconButton
+                        onClick={() => {
+                          handleExpandClick(index);
+                          equipamentoEmUso(equipamento);
+                        }}
+                        style={{
+                          color: darkMode ? "#FFFFFF" : "#343A40",
+                          position: "absolute",
+                          top: 0,
+                          right: 0,
+                        }}
+                      >
                         {expanded === index ? (
-                          <>
-                            <FaChevronUp
-                              onClick={() => {
-                                handleExpandClick(index);
-                              }}
-                              style={{
-                                cursor: "pointer",
-                              }}
-                              title="Fechar"
-                            />
-                          </>
+                          <FaChevronUp />
                         ) : (
-                          <FaChevronDown
-                            onClick={() => {
-                              handleExpandClick(index);
-                              equipamentoEmUso(equipamento);
-                            }}
-                            style={{
-                              cursor: "pointer",
-                            }}
-                            title="Abrir"
-                          />
+                          <FaChevronDown />
                         )}
-                      </div>
+                      </IconButton>
                     </CardContent>
                     <Collapse
                       in={expanded === index}
@@ -422,7 +421,8 @@ const EquipamentosComum = () => {
                                   color: darkMode ? "#FFFFFF" : "#343A40",
                                 }}
                               >
-                                Data Cadastro: {formatarData(equipamento.dataCadastro)}
+                                Data Cadastro:{" "}
+                                {formatarData(equipamento.dataCadastro)}
                               </Typography>
                               <Typography
                                 variant="body2"
@@ -469,7 +469,8 @@ const EquipamentosComum = () => {
                                       color: darkMode ? "#FFFFFF" : "#343A40",
                                     }}
                                   >
-                                    Obra: {obraSelecionada?.nome || "Não alocado"}
+                                    Obra:{" "}
+                                    {obraSelecionada?.nome || "Não alocado"}
                                   </Typography>
                                   <Typography
                                     variant="body2"
@@ -478,7 +479,9 @@ const EquipamentosComum = () => {
                                       color: darkMode ? "#FFFFFF" : "#343A40",
                                     }}
                                   >
-                                    Responsável: {funcionarioSelecionado?.nome || "Não alocado"}
+                                    Responsável:{" "}
+                                    {funcionarioSelecionado?.nome ||
+                                      "Não alocado"}
                                   </Typography>
                                 </Box>
                               ))}
@@ -487,11 +490,23 @@ const EquipamentosComum = () => {
                         <Box
                           sx={{
                             display: "flex",
-                            justifyContent: "center",
+                            justifyContent: "end",
                             alignItems: "center",
-                            marginTop: "2rem",
+                            marginTop: "2.5rem",
                           }}
                         >
+                          <FaExpandArrowsAlt
+                            style={{
+                              cursor: "pointer",
+                              marginRight: "10px",
+                              color: darkMode ? "#FFFFFF" : "#343A40",
+                            }}
+                            size={20}
+                            title="Gerenciar"
+                            onClick={() => {
+                              console.log("Detalhes dp equipamento : ", equipamento );
+                            }}
+                          />
                           <FaEdit
                             style={{
                               cursor: "pointer",
@@ -503,6 +518,17 @@ const EquipamentosComum = () => {
                             }}
                             size={20}
                             title="Editar"
+                          />
+                          <FaTrash
+                            style={{
+                              cursor: "pointer",
+                              color: darkMode ? "#FFFFFF" : "#343A40",
+                            }}
+                            size={20}
+                            title="Excluir"
+                            onClick={() => {
+                              deleteEquipamento(equipamento);
+                            }}
                           />
                         </Box>
                       </CardContent>
@@ -575,7 +601,7 @@ const EquipamentosComum = () => {
         visible={viewCadastrarEquipamentoModal.visible}
         setVisible={setViewCadastrarEquipamentoModal}
         equipamento={viewCadastrarEquipamentoModal.equipamento}
-        getEquipamentos={getTodosEquipamentos}
+        getEquipamentos={getEquipamentos}
       />
 
       {/* Modal para excluir equipamento */}
@@ -585,7 +611,7 @@ const EquipamentosComum = () => {
           setViewDeleteEquipamentoModal({ visible: false, equipamento: null })
         }
         equipamento={viewDeleteEquipamentoModal.equipamento}
-        getEquipamentos={getTodosEquipamentos}
+        getEquipamentos={getEquipamentos}
       />
 
       {/* Modal de confirmação */}
@@ -601,4 +627,4 @@ const EquipamentosComum = () => {
   );
 };
 
-export default EquipamentosComum;
+export default Equipamentos;

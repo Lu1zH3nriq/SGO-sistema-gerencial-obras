@@ -113,10 +113,6 @@ const CadastrarEquipamentoModal = ({
     setVisible(false);
   };
 
-  const handleSelectObra = (obra) => {
-    setObraSelecionada(obra);
-  };
-
   const modalStyle = {
     display: "flex",
     alignItems: "center",
@@ -348,7 +344,7 @@ const CadastrarEquipamentoModal = ({
                           onChange={(e) =>
                             setFieldValue("dataAlocacao", e.target.value)
                           }
-                          readOnly
+                          readOnly={userType === 2}
                           disabled={userType === 2}
                         />
                       </div>
@@ -410,7 +406,7 @@ const CadastrarEquipamentoModal = ({
       <PesquisarObraModal
         visible={pesquisarObraVisible}
         setVisible={setPesquisarObraVisible}
-        onSelectObra={handleSelectObra}
+        onSelectObra={(obra)=>{ setObraSelecionada(obra); }}
       />
       <PesquisarFuncionarioModal
         visible={pesquisarFuncionarioVisible}

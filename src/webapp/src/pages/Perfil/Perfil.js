@@ -96,7 +96,6 @@ const Perfil = () => {
     setInterval(() => {
       setLoadingUser(false);
     }, 2000);
-
   }, []);
 
   const cardStyle = {
@@ -133,6 +132,11 @@ const Perfil = () => {
     backgroundColor: "#FF4747",
     color: "#FFFFFF",
     border: "none",
+  };
+
+  const checkboxStyle = {
+    backgroundColor: darkMode ? "#4A4A4A" : "#7A7A7A",
+    borderColor: darkMode ? "#FFFFFF" : "#7A7A7A",
   };
 
   const updateUser = () => {
@@ -313,6 +317,9 @@ const Perfil = () => {
                     justifyContent: "center",
                     alignItems: "center",
                     height: "100%",
+                    boxShadow: darkMode
+                      ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
+                      : "0px 0px 10px rgba(0, 0, 0, 0.2)",
                   }}
                 >
                   <Box
@@ -374,7 +381,18 @@ const Perfil = () => {
             </Col>
             <Col md={4}>
               <Card style={cardStyle}>
-                <CardContent>
+                <CardContent
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                    boxShadow: darkMode
+                      ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
+                      : "0px 0px 10px rgba(0, 0, 0, 0.2)",
+                  }}
+                >
                   <Typography
                     variant="h6"
                     style={{
@@ -425,7 +443,15 @@ const Perfil = () => {
             </Col>
             <Col md={4}>
               <Card style={cardStyle}>
-                <CardContent>
+                <CardContent
+                  style={{
+                    alignItems: "center",
+                    height: "100%",
+                    boxShadow: darkMode
+                      ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
+                      : "0px 0px 10px rgba(0, 0, 0, 0.2)",
+                  }}
+                >
                   <Typography
                     variant="h6"
                     style={{
@@ -516,7 +542,15 @@ const Perfil = () => {
           <Row style={{ marginTop: "20px" }}>
             <Col md={4}>
               <Card style={cardStyle}>
-                <CardContent>
+                <CardContent
+                  style={{
+                    alignItems: "center",
+                    height: "100%",
+                    boxShadow: darkMode
+                      ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
+                      : "0px 0px 10px rgba(0, 0, 0, 0.2)",
+                  }}
+                >
                   <Form.Group>
                     <Form.Label style={textStyle}>E-mail</Form.Label>
                     <FormControl
@@ -542,7 +576,16 @@ const Perfil = () => {
             </Col>
             <Col md={4}>
               <Card style={cardStyle}>
-                <CardContent>
+                <CardContent
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                    boxShadow: darkMode
+                      ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
+                      : "0px 0px 10px rgba(0, 0, 0, 0.2)",
+                  }}
+                >
                   <Typography
                     variant="h6"
                     style={{
@@ -551,7 +594,7 @@ const Perfil = () => {
                       ...textStyle,
                     }}
                   >
-                    Status
+                    Status do Perfil
                   </Typography>
                   <FormControlLabel
                     control={
@@ -567,7 +610,15 @@ const Perfil = () => {
             </Col>
             <Col md={4}>
               <Card style={cardStyle}>
-                <CardContent>
+                <CardContent
+                  style={{
+                    alignItems: "center",
+                    height: "100%",
+                    boxShadow: darkMode
+                      ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
+                      : "0px 0px 10px rgba(0, 0, 0, 0.2)",
+                  }}
+                >
                   <Typography
                     variant="h6"
                     style={{
@@ -580,9 +631,14 @@ const Perfil = () => {
                   </Typography>
                   <FormControlLabel
                     control={
-                      <Checkbox
-                        disabled
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        name="tipoUsuario"
+                        id="tipoUsuario"
                         checked={nivelUsuario === 1 ? true : false}
+                        disabled
+                        style={nivelUsuario === 1 ? checkboxStyle : {}}
                       />
                     }
                     label="Administrador"
@@ -594,9 +650,14 @@ const Perfil = () => {
                   />
                   <FormControlLabel
                     control={
-                      <Checkbox
-                        disabled
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        name="tipoUsuario"
+                        id="tipoUsuario"
                         checked={nivelUsuario === 2 ? true : false}
+                        disabled
+                        style={nivelUsuario === 2 ? checkboxStyle : {}}
                       />
                     }
                     label="Comum"

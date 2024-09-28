@@ -25,7 +25,7 @@ import { FaCheckSquare } from "react-icons/fa";
 
 import CadastrarFuncionariosModal from "../Funcionarios/CadastrarFuncionariosModal.js";
 
-const PesquisarClienteModal = ({ visible, setVisible, setFuncionario }) => {
+const PesquisarResponsavelModal = ({ visible, setVisible, setFuncionario }) => {
   const URL_API = process.env.REACT_APP_URL_API;
   const [resultados, setResultados] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -134,19 +134,19 @@ const PesquisarClienteModal = ({ visible, setVisible, setFuncionario }) => {
 
   const tableHeaderStyle = {
     textAlign: "center",
-    backgroundColor: darkMode ? "#4A4A4A" : "#F8F9FA", // Cor de fundo do cabeçalho
-    color: darkMode ? "#FFFFFF" : "#4A4A4A", // Cor do texto do cabeçalho
+    backgroundColor: darkMode ? "#4A4A4A" : "#F8F9FA", 
+    color: darkMode ? "#FFFFFF" : "#4A4A4A", 
   };
 
   const tableCellStyle = {
     textAlign: "start",
-    backgroundColor: darkMode ? "#535353" : "#FFFFFF", // Cor de fundo das células
+    backgroundColor: darkMode ? "#535353" : "#FFFFFF", 
     padding: "0.3rem 1rem 0.3rem 1rem",
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
-    color: darkMode ? "#FFFFFF" : "#4A4A4A", // Cor do texto das células
-    fontWeight: "normal", // Texto sem negrito
+    color: darkMode ? "#FFFFFF" : "#4A4A4A", 
+    fontWeight: "normal", 
   };
 
   const checkboxStyle = {
@@ -478,4 +478,4 @@ const PesquisarClienteModal = ({ visible, setVisible, setFuncionario }) => {
   );
 };
 
-export default PesquisarClienteModal;
+export default PesquisarResponsavelModal;
