@@ -31,7 +31,7 @@ import { formatarTelefone } from "components/utils/utilsMask.js";
 import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
 
 const Perfil = () => {
-  const [loadingUser, setLoadingUser] = useState(true);
+  const [loadingUser, setLoadingUser] = useState(false);
   const [state] = useUIContextController();
   const { userId, darkMode } = state;
   const [user, setUser] = useState({});
@@ -63,7 +63,6 @@ const Perfil = () => {
   const URL_API = process.env.REACT_APP_URL_API;
 
   const getPerfil = async () => {
-    setLoadingUser(true);
     axios
       .get(`${URL_API}/api/users/usuario?email=${userId}`)
       .then((response) => {
@@ -78,7 +77,6 @@ const Perfil = () => {
             "https://t4.ftcdn.net/jpg/00/64/67/27/360_F_64672736_U5kpdGs9keUll8CRQ3p3YaEv2M6qkVY5.jpg"
           );
         }
-        setLoadingUser(false);
       })
       .catch((error) => {
         setConfirmacaoModal({
@@ -92,7 +90,12 @@ const Perfil = () => {
   };
 
   useEffect(() => {
+    setLoadingUser(true);
     getPerfil();
+
+    setInterval(() => {
+      setLoadingUser(false);
+    }, 2000);
   }, []);
 
   const cardStyle = {
@@ -129,6 +132,11 @@ const Perfil = () => {
     backgroundColor: "#FF4747",
     color: "#FFFFFF",
     border: "none",
+  };
+
+  const checkboxStyle = {
+    backgroundColor: darkMode ? "#4A4A4A" : "#7A7A7A",
+    borderColor: darkMode ? "#FFFFFF" : "#7A7A7A",
   };
 
   const updateUser = () => {
@@ -297,7 +305,7 @@ const Perfil = () => {
 
   return (
     <Layout rotaAtual="Obras">
-      {!loading ? (
+      {!loadingUser ? (
         <Container style={{ marginTop: "8vh" }}>
           <Row>
             <Col md={4}>
@@ -309,6 +317,9 @@ const Perfil = () => {
                     justifyContent: "center",
                     alignItems: "center",
                     height: "100%",
+                    boxShadow: darkMode
+                      ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
+                      : "0px 0px 10px rgba(0, 0, 0, 0.2)",
                   }}
                 >
                   <Box
@@ -370,7 +381,18 @@ const Perfil = () => {
             </Col>
             <Col md={4}>
               <Card style={cardStyle}>
-                <CardContent>
+                <CardContent
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                    boxShadow: darkMode
+                      ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
+                      : "0px 0px 10px rgba(0, 0, 0, 0.2)",
+                  }}
+                >
                   <Typography
                     variant="h6"
                     style={{
@@ -421,7 +443,15 @@ const Perfil = () => {
             </Col>
             <Col md={4}>
               <Card style={cardStyle}>
-                <CardContent>
+                <CardContent
+                  style={{
+                    alignItems: "center",
+                    height: "100%",
+                    boxShadow: darkMode
+                      ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
+                      : "0px 0px 10px rgba(0, 0, 0, 0.2)",
+                  }}
+                >
                   <Typography
                     variant="h6"
                     style={{
@@ -512,7 +542,15 @@ const Perfil = () => {
           <Row style={{ marginTop: "20px" }}>
             <Col md={4}>
               <Card style={cardStyle}>
-                <CardContent>
+                <CardContent
+                  style={{
+                    alignItems: "center",
+                    height: "100%",
+                    boxShadow: darkMode
+                      ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
+                      : "0px 0px 10px rgba(0, 0, 0, 0.2)",
+                  }}
+                >
                   <Form.Group>
                     <Form.Label style={textStyle}>E-mail</Form.Label>
                     <FormControl
@@ -538,7 +576,16 @@ const Perfil = () => {
             </Col>
             <Col md={4}>
               <Card style={cardStyle}>
-                <CardContent>
+                <CardContent
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                    boxShadow: darkMode
+                      ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
+                      : "0px 0px 10px rgba(0, 0, 0, 0.2)",
+                  }}
+                >
                   <Typography
                     variant="h6"
                     style={{
@@ -547,7 +594,7 @@ const Perfil = () => {
                       ...textStyle,
                     }}
                   >
-                    Status
+                    Status do Perfil
                   </Typography>
                   <FormControlLabel
                     control={
@@ -563,7 +610,15 @@ const Perfil = () => {
             </Col>
             <Col md={4}>
               <Card style={cardStyle}>
-                <CardContent>
+                <CardContent
+                  style={{
+                    alignItems: "center",
+                    height: "100%",
+                    boxShadow: darkMode
+                      ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
+                      : "0px 0px 10px rgba(0, 0, 0, 0.2)",
+                  }}
+                >
                   <Typography
                     variant="h6"
                     style={{
@@ -576,9 +631,14 @@ const Perfil = () => {
                   </Typography>
                   <FormControlLabel
                     control={
-                      <Checkbox
-                        disabled
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        name="tipoUsuario"
+                        id="tipoUsuario"
                         checked={nivelUsuario === 1 ? true : false}
+                        disabled
+                        style={nivelUsuario === 1 ? checkboxStyle : {}}
                       />
                     }
                     label="Administrador"
@@ -590,9 +650,14 @@ const Perfil = () => {
                   />
                   <FormControlLabel
                     control={
-                      <Checkbox
-                        disabled
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        name="tipoUsuario"
+                        id="tipoUsuario"
                         checked={nivelUsuario === 2 ? true : false}
+                        disabled
+                        style={nivelUsuario === 2 ? checkboxStyle : {}}
                       />
                     }
                     label="Comum"
@@ -633,11 +698,12 @@ const Perfil = () => {
           sx={{
             display: "flex",
             justifyContent: "center",
-            alignItems: "center",
+            alignItems: "start",
+            marginTop: "10vh",
             height: "100vh",
           }}
         >
-          <Spinner color="secondary" />
+          <Spinner color={darkMode ? "light" : "secondary"} />
         </Box>
       )}
 

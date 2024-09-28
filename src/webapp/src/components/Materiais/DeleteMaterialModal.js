@@ -66,12 +66,6 @@ const DeleteMaterialModal = ({
     border: "none",
   };
 
-  const buttonStyle = {
-    backgroundColor: darkMode ? "#676767" : "#CECFCB",
-    color: darkMode ? "#FFFFFF" : "#343A40",
-    border: "none",
-  };
-
   const deleteButtonStyle = {
     backgroundColor: "#FF4747",
     color: "#FFFFFF",
@@ -81,10 +75,25 @@ const DeleteMaterialModal = ({
   return (
     <>
       <Modal isOpen={visible} toggle={toggleModal} centered>
-        <ModalHeader toggle={toggleModal} style={modalStyle}>
+        <ModalHeader
+          toggle={toggleModal}
+          style={{
+            ...modalStyle,
+            borderBottom: darkMode
+              ? "1px solid rgba(255, 255, 255, 0.2)"
+              : "1px solid rgba(52, 58, 64, 0.2)",
+          }}
+        >
           Confirmar Exclusão
         </ModalHeader>
-        <ModalBody>
+        <ModalBody
+          style={{
+            justifyContent: "center",
+            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
+            color: darkMode ? "#FFFFFF" : "#000000",
+            border: "none",
+          }}
+        >
           <p>Tem certeza que deseja excluir o material: </p>
           <p>
             nome: <span>{material?.nome}</span>
@@ -94,7 +103,15 @@ const DeleteMaterialModal = ({
           </p>
         </ModalBody>
         <ModalFooter style={modalStyle}>
-          <Button color="secondary" onClick={toggleModal} style={buttonStyle}>
+          <Button
+            color="secondary"
+            onClick={toggleModal}
+            style={{
+              backgroundColor: darkMode ? "#4A4A4A" : "#CECFCB",
+              color: darkMode ? "#FFFFFF" : "#343A40",
+              border: "none",
+            }}
+          >
             Cancelar
           </Button>
           <Button
