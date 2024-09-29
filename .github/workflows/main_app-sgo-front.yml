@@ -18,9 +18,10 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: Set environment variable for API URL
+      - name: Set environment variables for production
         run: |
-          echo "REACT_APP_URL_API=https://app-sgo-api-2.azurewebsites.net" >> $GITHUB_ENV
+          cd src/webapp
+          echo "REACT_APP_URL_API=https://app-sgo-api-2.azurewebsites.net" > .env
 
       - name: npm install and build
         run: |
@@ -67,4 +68,4 @@ jobs:
         with:
           app-name: 'app-sgo-front'
           slot-name: 'Production'
-          package: .  # Use '.' aqui, pois a pasta build é o artefato que foi baixado e descompactado.
+          package: src/webapp/build  # Aponta para a pasta build com os arquivos estáticos
