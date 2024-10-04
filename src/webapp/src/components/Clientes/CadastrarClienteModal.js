@@ -157,7 +157,15 @@ const CadastrarClienteModal = ({
   return (
     <>
       <Modal size="lg" isOpen={visible} toggle={toggleModal} centered>
-        <ModalHeader toggle={toggleModal} style={modalStyle}>
+        <ModalHeader
+          toggle={toggleModal}
+          style={{
+            ...modalStyle,
+            borderBottom: darkMode
+              ? "1px solid rgba(255, 255, 255, 0.2)"
+              : "1px solid rgba(52, 58, 64, 0.2)",
+          }}
+        >
           {!cliente ? "Cadastrar Cliente" : "Editar Cliente"}
         </ModalHeader>
         <ModalBody style={formStyle}>

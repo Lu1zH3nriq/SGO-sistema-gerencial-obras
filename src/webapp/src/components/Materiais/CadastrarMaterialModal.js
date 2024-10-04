@@ -44,10 +44,7 @@ const CadastrarMaterialModal = ({
 
     if (material) {
       axios
-        .put(
-          `${URL_API}/api/materiais/alterarMaterial?id=${material.id}`,
-          data
-        )
+        .put(`${URL_API}/api/materiais/alterarMaterial?id=${material.id}`, data)
         .then(() => {
           setConfirmacaoVisible({
             visible: true,
@@ -141,16 +138,24 @@ const CadastrarMaterialModal = ({
     dataUltimaCompra: material?.dataUltimaCompra
       ? new Date(material?.dataUltimaCompra).toISOString().split("T")[0]
       : new Date().toISOString().split("T")[0],
-      dataValidade: material?.dataValidade
+    dataValidade: material?.dataValidade
       ? new Date(material?.dataValidade).toISOString().split("T")[0]
       : "--",
-      numeroNotaFiscal: material?.numeroNotaFiscal || "",
+    numeroNotaFiscal: material?.numeroNotaFiscal || "",
   };
 
   return (
     <>
       <Modal size="lg" isOpen={visible} toggle={toggleModal} centered>
-        <ModalHeader toggle={toggleModal} style={modalStyle}>
+        <ModalHeader
+          toggle={toggleModal}
+          style={{
+            ...modalStyle,
+            borderBottom: darkMode
+              ? "1px solid rgba(255, 255, 255, 0.2)"
+              : "1px solid rgba(52, 58, 64, 0.2)",
+          }}
+        >
           {!material ? "Cadastrar Material" : "Editar Material"}
         </ModalHeader>
         <ModalBody style={formStyle}>
@@ -190,7 +195,9 @@ const CadastrarMaterialModal = ({
                 <Row form>
                   <Col md={6}>
                     <div className="form-group">
-                      <label htmlFor="principalFornecedor">Principal Fornecedor</label>
+                      <label htmlFor="principalFornecedor">
+                        Principal Fornecedor
+                      </label>
                       <Field
                         type="text"
                         name="principalFornecedor"
@@ -220,7 +227,9 @@ const CadastrarMaterialModal = ({
                 <Row form>
                   <Col md={6}>
                     <div className="form-group">
-                      <label htmlFor="dataUltimaCompra">Data Última Compra</label>
+                      <label htmlFor="dataUltimaCompra">
+                        Data Última Compra
+                      </label>
                       <Field
                         type="date"
                         name="dataUltimaCompra"
@@ -272,11 +281,7 @@ const CadastrarMaterialModal = ({
                   >
                     Fechar
                   </Button>
-                  <Button
-                    color="primary"
-                    type="submit"
-                    style={saveButtonStyle}
-                  >
+                  <Button color="primary" type="submit" style={saveButtonStyle}>
                     {loading ? <Spinner size="sm" color="light" /> : "Salvar"}
                   </Button>
                 </ModalFooter>

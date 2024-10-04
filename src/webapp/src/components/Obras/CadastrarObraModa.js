@@ -45,8 +45,12 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
     identificador: obra?.identificador || "",
     endereco: obra?.endereco || "",
     clienteId: obra?.clienteId || null,
-    dataInicio: obra?.dataInicio ? new Date(obra?.dataInicio).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
-    dataFinal: obra?.dataFinal ? new Date(obra?.dataInicio).toISOString().split("T")[0] : "",
+    dataInicio: obra?.dataInicio
+      ? new Date(obra?.dataInicio).toISOString().split("T")[0]
+      : new Date().toISOString().split("T")[0],
+    dataFinal: obra?.dataFinal
+      ? new Date(obra?.dataInicio).toISOString().split("T")[0]
+      : "",
     contrato: obra?.contrato || "",
     alvara: obra?.alvara || "",
     orcamento: obra?.orcamento || "",
@@ -64,8 +68,12 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
         identificador: obra.identificador,
         endereco: obra.endereco,
         clienteId: obra.clienteId,
-        dataInicio: obra?.dataInicio ? new Date(obra?.dataInicio).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
-        dataFinal: obra.dataFinal,
+        dataInicio: obra?.dataInicio
+          ? new Date(obra?.dataInicio).toISOString().split("T")[0]
+          : new Date().toISOString().split("T")[0],
+        dataFinal: obra?.dataFinal
+          ? new Date(obra?.dataFinal).toISOString().split("T")[0]
+          : "",
         contrato: obra.contrato,
         alvara: obra.alvara,
         orcamento: obra.orcamento,
@@ -114,7 +122,10 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
     if (obra) {
       data.id = obra.id;
       try {
-        const res = await axios.put(`${URL_API}/api/obras/alterarObra?id=${obra.id}`, data);
+        const res = await axios.put(
+          `${URL_API}/api/obras/alterarObra?id=${obra.id}`,
+          data
+        );
         console.log("Res: ", res);
         setVisibleConfirmacao({
           visible: true,
@@ -133,8 +144,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
         setLoading(false);
         toggleModal();
       }
-    }
-    else {
+    } else {
       const formData = new FormData();
       if (file) {
         formData.append("contrato", file);
@@ -236,8 +246,22 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
 
   return (
     <>
-      <Modal size="lg" isOpen={visible} toggle={toggleModal} centered style={{ zIndex: 3000 }}>
-        <ModalHeader toggle={toggleModal} style={modalStyle}>
+      <Modal
+        size="xl"
+        isOpen={visible}
+        toggle={toggleModal}
+        centered
+        style={{ zIndex: 3000 }}
+      >
+        <ModalHeader
+          toggle={toggleModal}
+          style={{
+            ...modalStyle,
+            borderBottom: darkMode
+              ? "1px solid rgba(255, 255, 255, 0.2)"
+              : "1px solid rgba(52, 58, 64, 0.2)",
+          }}
+        >
           {!obra ? "Cadastrar Obra" : "Editar Obra"}
         </ModalHeader>
         <ModalBody style={formStyle}>
@@ -255,10 +279,11 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                       display: "flex",
                       justifyContent: "start",
                       marginBottom: "10px",
-                      borderBottom: `1px solid ${darkMode
+                      borderBottom: `1px solid ${
+                        darkMode
                           ? "rgba(255, 255, 255, 0.8)"
                           : "rgba(103, 103, 103, 0.5)"
-                        }`,
+                      }`,
                     }}
                   >
                     <h5
@@ -342,10 +367,11 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                     display: "flex",
                     justifyContent: "start",
                     margin: "1.5rem 0",
-                    borderBottom: `1px solid ${darkMode
+                    borderBottom: `1px solid ${
+                      darkMode
                         ? "rgba(255, 255, 255, 0.8)"
                         : "rgba(103, 103, 103, 0.5)"
-                      }`,
+                    }`,
                   }}
                 >
                   <h5
@@ -451,7 +477,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                           handleChange(e);
                           setFormValues({
                             ...formValues,
-                            dataPrevistaTermino: e.target.value,
+                            dataFinal: e.target.value,
                           });
                         }}
                       />

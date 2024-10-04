@@ -122,7 +122,7 @@ const Perfil = () => {
   const modalStyle = {
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "start",
     backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
     color: darkMode ? "#FFFFFF" : "#000000",
     border: "none",
@@ -497,6 +497,7 @@ const Perfil = () => {
                         onChange={(e) => {
                           setNovaSenha(e.target.value);
                         }}
+                        value={novaSenha}
                       />
                       <IconButton
                         style={{
@@ -527,6 +528,7 @@ const Perfil = () => {
                       onClick={() => {
                         sendNewSenha();
                       }}
+                      disabled={novaSenha === ""}
                     >
                       {loadingSenha ? (
                         <Spinner color="light" size={"sm"} />
@@ -683,7 +685,7 @@ const Perfil = () => {
               variant="primary"
               style={{
                 ...buttonStyle,
-                marginBottom: "10px",
+                marginTop: "1rem",
               }}
               onClick={() => {
                 updateUser();
@@ -708,8 +710,31 @@ const Perfil = () => {
       )}
 
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle style={modalStyle}>Upload de Foto</DialogTitle>
-        <DialogContent style={modalStyle}>
+        <DialogTitle
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "start",
+            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
+            color: darkMode ? "#FFFFFF" : "#000000",
+            borderBottom: darkMode
+              ? "1px solid rgba(255, 255, 255, 0.2)"
+              : "1px solid rgba(52, 58, 64, 0.2)",
+          }}
+        >
+          Upload de Foto
+        </DialogTitle>
+        <DialogContent
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
+            color: darkMode ? "#FFFFFF" : "#000000",
+            border: "none",
+            padding: "1rem 0.5rem 1rem 0.5rem",
+          }}
+        >
           <div style={{ display: "flex", flexDirection: "column" }}>
             <input type="file" accept="image/*" onChange={handleFileChange} />
             {fileError && (
@@ -721,17 +746,37 @@ const Perfil = () => {
             )}
           </div>
         </DialogContent>
-        <DialogActions style={modalStyle}>
+        <DialogActions
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
+            color: darkMode ? "#FFFFFF" : "#000000",
+            border: "none",
+          }}
+        >
           <MuiButton
             onClick={() => {
               setOpen(false);
               setFileError("");
             }}
-            style={cancelButtonStyle}
+            style={{
+              backgroundColor: darkMode ? "#424242" : "#CECFCB",
+              color: darkMode ? "#FFFFFF" : "#343A40",
+              border: "none",
+            }}
           >
             Cancelar
           </MuiButton>
-          <MuiButton onClick={handleUpload} style={buttonStyle}>
+          <MuiButton
+            onClick={handleUpload}
+            style={{
+              backgroundColor: "#1ED760",
+              color: "#FFFFFF",
+              border: "none",
+            }}
+          >
             {loadingFoto ? <Spinner color="light" size={"sm"} /> : "Enviar"}
           </MuiButton>
         </DialogActions>
@@ -746,7 +791,20 @@ const Perfil = () => {
           })
         }
       >
-        <DialogTitle style={modalStyle}>Confirmação!</DialogTitle>
+        <DialogTitle
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "start",
+            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
+            color: darkMode ? "#FFFFFF" : "#000000",
+            borderBottom: darkMode
+              ? "1px solid rgba(255, 255, 255, 0.2)"
+              : "1px solid rgba(52, 58, 64, 0.2)",
+          }}
+        >
+          Confirmação!
+        </DialogTitle>
         <DialogContent style={modalStyle}>
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div style={{ justifyContent: "center", textAlign: "center" }}>
@@ -756,7 +814,16 @@ const Perfil = () => {
             </div>
           </div>
         </DialogContent>
-        <DialogActions style={modalStyle}>
+        <DialogActions
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
+            color: darkMode ? "#FFFFFF" : "#000000",
+            border: "none",
+          }}
+        >
           <MuiButton
             onClick={() => {
               setconfirmation({
@@ -776,7 +843,20 @@ const Perfil = () => {
       </Dialog>
 
       <Dialog open={deleteFoto} onClose={() => setDeleteFoto(false)}>
-        <DialogTitle style={modalStyle}>Atenção!</DialogTitle>
+        <DialogTitle
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "start",
+            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
+            color: darkMode ? "#FFFFFF" : "#000000",
+            borderBottom: darkMode
+              ? "1px solid rgba(255, 255, 255, 0.2)"
+              : "1px solid rgba(52, 58, 64, 0.2)",
+          }}
+        >
+          Atenção!
+        </DialogTitle>
         <DialogContent style={modalStyle}>
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div style={{ justifyContent: "center", textAlign: "center" }}>
@@ -786,7 +866,12 @@ const Perfil = () => {
             </div>
           </div>
         </DialogContent>
-        <DialogActions style={modalStyle}>
+        <DialogActions
+          style={{
+            ...modalStyle,
+            justifyContent: "center",
+          }}
+        >
           <MuiButton
             onClick={() => {
               setDeleteFoto(false);

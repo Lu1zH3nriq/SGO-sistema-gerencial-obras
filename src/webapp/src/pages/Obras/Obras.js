@@ -109,6 +109,11 @@ const Obras = () => {
     setModalDatasOpen(false);
     setObrasAFiltrar(obras);
   };
+  const handleModalCloseCancel = () => {
+    handleFiltroChange({ target: { value: "Nenhum" } });
+    setModalDatasOpen(false);
+    setObrasAFiltrar(obras);
+  };
 
   const [obrasAFiltrar, setObrasAFiltrar] = useState(obras);
 
@@ -681,7 +686,8 @@ const Obras = () => {
       {/* Modal para selecionar datas */}
       <DateSelectionModal
         show={modalDatasOpen}
-        onHide={handleModalClose}
+        closeModal={handleModalClose}
+        closeModalCancel={handleModalCloseCancel}
         darkMode={darkMode}
         setCustomDates={(dataInicio, dataFinal, selectDateFilter) => {
           filtrarPorDatas(dataInicio, dataFinal, selectDateFilter);

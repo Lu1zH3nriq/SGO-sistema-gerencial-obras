@@ -108,12 +108,20 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
   return (
     <Container>
       <Modal
-        size="lg"
+        size="xl"
         isOpen={visible}
         toggle={() => setVisible(false)}
         centered
       >
-        <ModalHeader toggle={() => setVisible(false)} style={modalStyle}>
+        <ModalHeader
+          toggle={() => setVisible(false)}
+          style={{
+            ...modalStyle,
+            borderBottom: darkMode
+              ? "1px solid rgba(255, 255, 255, 0.2)"
+              : "1px solid rgba(52, 58, 64, 0.2)",
+          }}
+        >
           Pesquisar Obra
         </ModalHeader>
         <ModalBody
@@ -220,7 +228,13 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
             <tbody>
               {resultados.length > 0 ? (
                 resultados.map((obra, index) => (
-                  <tr key={index} style={{ cursor: "pointer" }}  onClick={()=>{ handleSelect(obra) }} >
+                  <tr
+                    key={index}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      handleSelect(obra);
+                    }}
+                  >
                     <td style={tableCellStyle}>{obra.nome || "--"}</td>
                     <td style={tableCellStyle}>{obra.cliente || "--"}</td>
                     <td style={tableCellStyle}>{obra.contrato || "--"}</td>
