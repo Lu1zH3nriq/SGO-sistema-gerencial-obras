@@ -156,7 +156,7 @@ const Usuarios = () => {
     <Layout rotaAtual="Usuários">
       <Container
         style={{
-          marginTop: "8vh",
+          marginTop: "2vh",
         }}
       >
         {/* Linha com botão "Adicionar" e campo de pesquisa */}
@@ -244,9 +244,14 @@ const Usuarios = () => {
             bordered
             dark={darkMode}
             style={{
-              borderRadius: "0px",
+              borderRadius: "0.5rem",
               marginTop: "2%",
               tableLayout: "auto",
+              backgroundColor: darkMode ? "#333333" : "#FFFFFF",
+              color: darkMode ? "#FFFFFF" : "#4A4A4A",
+              boxShadow: darkMode
+                ? "0px 0px 10px 0px #7F7F7F"
+                : "0px 0px 10px 0px #7A7A7A",
             }}
           >
             <thead>

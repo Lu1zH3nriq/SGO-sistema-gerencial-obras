@@ -306,7 +306,7 @@ const Perfil = () => {
   return (
     <Layout rotaAtual="Obras">
       {!loadingUser ? (
-        <Container style={{ marginTop: "8vh" }}>
+        <Container style={{ marginTop: "3vh" }}>
           <Row>
             <Col md={4}>
               <Card style={cardStyle}>
@@ -699,7 +699,7 @@ const Perfil = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "start",
-            marginTop: "10vh",
+            marginTop: "4vh",
             height: "100vh",
           }}
         >

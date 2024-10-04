@@ -2,7 +2,7 @@ import React from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./assets/theme/index.js";
 import themeDark from "./assets/theme-dark/index.js";
-
+import './App.css';
 import { useUIContextController} from "context";
 import Authenticator from "./components/auth/Authenticator.js";
 

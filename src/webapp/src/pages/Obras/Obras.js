@@ -235,14 +235,13 @@ const Obras = () => {
     <Layout rotaAtual="Obras">
       <Container
         style={{
-          marginTop: "8vh",
+          marginTop: "2vh",
         }}
       >
         {/* Linha com botão "Adicionar" e campo de pesquisa */}
         <Row
           className="mb-4"
           style={{
-            marginTop: "2%",
             backgroundColor: darkMode ? "#414141" : "#FFFFFF",
             padding: "1rem 0.5rem 1rem 0.5rem",
             borderRadius: "0.5rem",

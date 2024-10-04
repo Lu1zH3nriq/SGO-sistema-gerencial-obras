@@ -38,7 +38,7 @@ import DeleteObraModal from "components/Obras/DeleteObraModal.js";
 import axios from "axios";
 import { formatarData } from "components/utils/utilsMask.js";
 
-const Obras = () => {
+const ObraComum = () => {
   const URL_API = process.env.REACT_APP_URL_API;
   const [obras, setObras] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -235,14 +235,13 @@ const Obras = () => {
     <Layout rotaAtual="Obras">
       <Container
         style={{
-          marginTop: "8vh",
+          marginTop: "2vh",
         }}
       >
         {/* Linha com botão "Adicionar" e campo de pesquisa */}
         <Row
           className="mb-4"
           style={{
-            marginTop: "2%",
             backgroundColor: darkMode ? "#414141" : "#FFFFFF",
             padding: "1rem 0.5rem 1rem 0.5rem",
             borderRadius: "0.5rem",
@@ -702,4 +701,4 @@ const Obras = () => {
   );
 };
 
-export default Obras;
+export default ObraComum;

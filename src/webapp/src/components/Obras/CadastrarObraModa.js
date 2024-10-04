@@ -133,7 +133,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
         setLoading(false);
         toggleModal();
       }
-    } 
+    }
     else {
       const formData = new FormData();
       if (file) {
@@ -236,7 +236,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
 
   return (
     <>
-      <Modal size="lg" isOpen={visible} toggle={toggleModal} centered>
+      <Modal size="lg" isOpen={visible} toggle={toggleModal} centered style={{ zIndex: 3000 }}>
         <ModalHeader toggle={toggleModal} style={modalStyle}>
           {!obra ? "Cadastrar Obra" : "Editar Obra"}
         </ModalHeader>
@@ -255,11 +255,10 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                       display: "flex",
                       justifyContent: "start",
                       marginBottom: "10px",
-                      borderBottom: `1px solid ${
-                        darkMode
+                      borderBottom: `1px solid ${darkMode
                           ? "rgba(255, 255, 255, 0.8)"
                           : "rgba(103, 103, 103, 0.5)"
-                      }`,
+                        }`,
                     }}
                   >
                     <h5
@@ -343,11 +342,10 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                     display: "flex",
                     justifyContent: "start",
                     margin: "1.5rem 0",
-                    borderBottom: `1px solid ${
-                      darkMode
+                    borderBottom: `1px solid ${darkMode
                         ? "rgba(255, 255, 255, 0.8)"
                         : "rgba(103, 103, 103, 0.5)"
-                    }`,
+                      }`,
                   }}
                 >
                   <h5

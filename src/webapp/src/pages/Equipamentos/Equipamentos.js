@@ -216,7 +216,7 @@ const Equipamentos = () => {
     <Layout rotaAtual="Equipamentos">
       <Container
         style={{
-          marginTop: "8vh",
+          marginTop: "2vh",
         }}
       >
         {/* Linha com botão "Adicionar" e campo de pesquisa */}

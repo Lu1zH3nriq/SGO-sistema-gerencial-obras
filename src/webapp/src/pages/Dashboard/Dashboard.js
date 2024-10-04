@@ -26,9 +26,7 @@ const Dashboard = () => {
 
   return (
     <Layout>
-        <Container style={{
-          marginTop: "8vh",
-        }}>
+        <Container>
           {/* Linha com quatro colunas */}
           <Row className="mt-4">
             {[1, 2, 3, 4].map((info, index) => (
