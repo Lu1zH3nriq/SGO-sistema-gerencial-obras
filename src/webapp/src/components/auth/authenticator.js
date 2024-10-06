@@ -124,7 +124,10 @@ const Authenticator = () => {
             }
           />
           <Route path="/resumo" element={<Dashboard />} />
-          <Route path="/obras" element={ userType === 1 ? <Obras/> : <ObrasComum/> } />
+          <Route
+            path="/obras"
+            element={userType === 1 ? <Obras /> : <ObrasComum />}
+          />
           <Route
             path="/funcionarios"
             element={
@@ -141,7 +144,10 @@ const Authenticator = () => {
               userType === 1 ? <Clientes /> : <Navigate to={"/unauthorized"} />
             }
           />
-          <Route path="/equipamentos" element={ userType === 1 ? (<Equipamentos/>) : (<EquipamentosComum/>) } />
+          <Route
+            path="/equipamentos"
+            element={userType === 1 ? <Equipamentos /> : <EquipamentosComum />}
+          />
           <Route path="/perfil" element={<Perfil />} />
           <Route
             path="/materiais"
@@ -151,6 +157,12 @@ const Authenticator = () => {
           />
           <Route
             path="/usuarios"
+            element={
+              userType === 1 ? <Usuarios /> : <Navigate to={"/unauthorized"} />
+            }
+          />
+          <Route
+            path="/obra/:id"
             element={
               userType === 1 ? <Usuarios /> : <Navigate to={"/unauthorized"} />
             }

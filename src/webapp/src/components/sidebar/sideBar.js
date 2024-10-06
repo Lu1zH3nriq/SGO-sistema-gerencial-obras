@@ -53,12 +53,22 @@ const SideBar = ({ trocaRotas }) => {
       setIsFirstMount(false);
     } else {
       const currentRoute = location.pathname.split("/")[1];
-      const index = menuOptions.findIndex(
-        (option) => option.route.toLowerCase() === currentRoute.toLowerCase()
-      );
-      if (index !== -1) {
-        setSelectedButton(index);
-        trocaRotas(menuOptions[index].route);
+      
+      // Mantém a seleção em "Obras" se a URL começar com "/obra"
+      if (location.pathname.startsWith("/obra")) {
+        const obrasIndex = menuOptions.findIndex(
+          (option) => option.route.toLowerCase() === "obras"
+        );
+        setSelectedButton(obrasIndex);
+        trocaRotas(menuOptions[obrasIndex].route);
+      } else {
+        const index = menuOptions.findIndex(
+          (option) => option.route.toLowerCase() === currentRoute.toLowerCase()
+        );
+        if (index !== -1) {
+          setSelectedButton(index);
+          trocaRotas(menuOptions[index].route);
+        }
       }
     }
   }, [location.pathname, trocaRotas, isFirstMount]);

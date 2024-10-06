@@ -37,8 +37,10 @@ import DateSelectionModal from "components/Obras/CustomDates.js";
 import DeleteObraModal from "components/Obras/DeleteObraModal.js";
 import axios from "axios";
 import { formatarData } from "components/utils/utilsMask.js";
+import { useNavigate } from 'react-router-dom';
 
 const Obras = () => {
+  const navigate = useNavigate();
   const URL_API = process.env.REACT_APP_URL_API;
   const [obras, setObras] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -194,25 +196,25 @@ const Obras = () => {
         });
     } else if (selectDateFilter === "Data de Término") {
       axios
-      .get(`${URL_API}/api/obras/buscaObraPorDataFinal`, {
-        params: {
-          dataInicial: dataInicial,
-          dataFinal: dataFinal,
-        },
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        console.log("OBRAS FILTRADAS POR DATAS: ", response.data);
-        setObrasAFiltrar(response.data);
-      })
-      .catch((error) => {
-        console.error("ERRO AO FILTRAR OBRAS POR DATAS: ", error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+        .get(`${URL_API}/api/obras/buscaObraPorDataFinal`, {
+          params: {
+            dataInicial: dataInicial,
+            dataFinal: dataFinal,
+          },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          console.log("OBRAS FILTRADAS POR DATAS: ", response.data);
+          setObrasAFiltrar(response.data);
+        })
+        .catch((error) => {
+          console.error("ERRO AO FILTRAR OBRAS POR DATAS: ", error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
   };
   const cadastrarObra = () => {
@@ -511,6 +513,7 @@ const Obras = () => {
                       unmountOnExit
                     >
                       <CardContent>
+                        {/* Renderização dos campos */}
                         <Typography
                           variant="body2"
                           color="textSecondary"
@@ -525,7 +528,6 @@ const Obras = () => {
                         >
                           Data Início: {formatarData(obra.dataInicio)}
                         </Typography>
-
                         <Typography
                           variant="body2"
                           color="textSecondary"
@@ -536,7 +538,6 @@ const Obras = () => {
                             ? formatarData(obra.dataFinal)
                             : "Não informado"}
                         </Typography>
-
                         <Typography
                           variant="body2"
                           color="textSecondary"
@@ -575,9 +576,7 @@ const Obras = () => {
                             }}
                             size={20}
                             title="Gerenciar"
-                            onClick={() => {
-                              console.log("Detalhes da obra : ", obra);
-                            }}
+                            onClick={() => navigate(`/obra/${obra.id}`)}
                           />
                           <FaEdit
                             style={{
@@ -585,9 +584,7 @@ const Obras = () => {
                               marginRight: "10px",
                               color: darkMode ? "#FFFFFF" : "#343A40",
                             }}
-                            onClick={() => {
-                              editarObra(obra);
-                            }}
+                            onClick={() => editarObra(obra)}
                             size={20}
                             title="Editar"
                           />
@@ -598,9 +595,7 @@ const Obras = () => {
                             }}
                             size={20}
                             title="Excluir"
-                            onClick={() => {
-                              deleteObra(obra);
-                            }}
+                            onClick={() => deleteObra(obra)}
                           />
                         </Box>
                       </CardContent>
