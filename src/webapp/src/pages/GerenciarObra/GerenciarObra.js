@@ -12,17 +12,33 @@ import {
 } from "reactstrap";
 import { FaChevronLeft } from "react-icons/fa";
 import Layout from "../../components/layout/Layout.js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
-const GerenciarObra = ({ obraSelecionada }) => {
+const GerenciarObra = () => {
+  const { id } = useParams();
   const [state] = useUIContextController();
   const { darkMode } = state;
   const navigate = useNavigate();
-  const [obra, setObra] = useState(obraSelecionada || {}); // Inicializa como objeto vazio
+  const URL_API = process.env.REACT_APP_URL_API;
+  const [loading, setLoading] = useState(false);
+  const [obra, setObra] = useState({});
 
   useEffect(() => {
-    setObra(obraSelecionada || {}); // Atualiza com obraSelecionada ou um objeto vazio
-  }, [obraSelecionada]);
+    setLoading(true);
+
+    axios
+      .get(`${URL_API}/api/obras/obra?id=${id}`)
+      .then((response) => {
+        setObra(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <Layout rotaAtual="Obras">
@@ -134,12 +150,111 @@ const GerenciarObra = ({ obraSelecionada }) => {
                   >
                     Informações gerais
                   </CardTitle>
-                  <CardText
-                    style={{
-                      color: darkMode ? "#FFFFFF" : "#343A40",
-                      padding: "1rem 0rem 0.5rem 0rem",
-                    }}
-                  ></CardText>
+                  <Row style={{ marginBottom: "0.5rem" }}>
+                    <Col xs={6}>
+                      <CardText>
+                        <strong>Nome da Obra:</strong> {obra.nome}
+                      </CardText>
+                    </Col>
+                    <Col xs={6}>
+                      <CardText>
+                        <strong>Identificador:</strong> {obra.identificador}
+                      </CardText>
+                    </Col>
+                  </Row>
+
+                  <Row style={{ marginBottom: "0.5rem" }}>
+                    <Col xs={6}>
+                      <CardText>
+                        <strong>Endereço:</strong> {obra.endereco}
+                      </CardText>
+                    </Col>
+                    <Col xs={6}>
+                      <CardText>
+                        <strong>Data de Início:</strong>{" "}
+                        {new Date(obra.dataInicio).toLocaleDateString()}
+                      </CardText>
+                    </Col>
+                  </Row>
+
+                  <Row style={{ marginBottom: "0.5rem" }}>
+                    <Col xs={6}>
+                      <CardText>
+                        <strong>Data Final:</strong>{" "}
+                        {obra.dataFinal
+                          ? new Date(obra.dataFinal).toLocaleDateString()
+                          : "N/A"}
+                      </CardText>
+                    </Col>
+                    <Col xs={6}>
+                      <CardText>
+                        <strong>Contrato:</strong> {obra.contrato}
+                      </CardText>
+                    </Col>
+                  </Row>
+
+                  <Row style={{ marginBottom: "0.5rem" }}>
+                    <Col xs={6}>
+                      <CardText>
+                        <strong>Alvará:</strong> {obra.alvara}
+                      </CardText>
+                    </Col>
+                    <Col xs={6}>
+                      <CardText>
+                        <strong>Orçamento:</strong> R${" "}
+                        {obra.orcamento.toLocaleString()}
+                      </CardText>
+                    </Col>
+                  </Row>
+
+                  <Row style={{ marginBottom: "0.5rem" }}>
+                    <Col xs={6}>
+                      <CardText>
+                        <strong>Responsável:</strong> {obra.responsavel}
+                      </CardText>
+                    </Col>
+                    <Col xs={6}>
+                      <CardText>
+                        <strong>Status:</strong> {obra.status}
+                      </CardText>
+                    </Col>
+                  </Row>
+
+                  <Row style={{ marginBottom: "0.5rem" }}>
+                    <Col xs={6}>
+                      <CardText>
+                        <strong>Cliente:</strong> {obra.cliente}
+                      </CardText>
+                    </Col>
+                    <Col xs={6}>
+                      <CardText>
+                        <strong>Data de Criação:</strong>{" "}
+                        {new Date(obra.createdAt).toLocaleDateString()}
+                      </CardText>
+                    </Col>
+                  </Row>
+
+                  <Row style={{ marginBottom: "0.5rem" }}>
+                    <Col xs={6}>
+                      <CardText>
+                        <strong>Última Atualização:</strong>{" "}
+                        {new Date(obra.updatedAt).toLocaleDateString()}
+                      </CardText>
+                    </Col>
+                    <Col xs={6}>
+                      <CardText>
+                        <strong>Contrato:</strong>
+                        <a
+                          href={obra.urlContrato}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {" "}
+                          Visualizar Contrato
+                        </a>
+                      </CardText>
+                    </Col>
+                  </Row>
                 </CardBody>
               </Card>
             </Col>
