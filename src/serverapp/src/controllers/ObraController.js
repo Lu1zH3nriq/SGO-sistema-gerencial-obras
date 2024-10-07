@@ -164,16 +164,25 @@ const ObraController = {
       const where = {};
 
       if (nome) {
-        where.nome = nome;
+        where.nome = {
+          [Op.like]: `%${nome}%`,
+        };
       }
       if (contrato) {
-        where.numeroContrato = contrato;
+        where.contrato = {
+          [Op.like]: `%${contrato}%`,
+        };
       }
       if (alvara) {
-        where.alvara = alvara;
+        where.alvara = {
+          [Op.like]: `%${alvara}%`,
+        };
       }
-
-      const obras = await Obra.findAll({ where });
+      
+      const obras =
+        Object.keys(where).length === 0
+          ? await Obra.findAll()
+          : await Obra.findAll({ where });
 
       if (obras.length > 0) {
         res.status(200).json(obras);

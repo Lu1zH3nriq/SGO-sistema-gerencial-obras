@@ -42,8 +42,7 @@ const Header = ({ rotaAtual }) => {
         }}
       >
         <CssBaseline />
-        <NavbarBrand 
-          href="/" 
+        <NavbarBrand
           style={{ 
             marginLeft: '1rem', 
             fontSize: '1.2rem', 

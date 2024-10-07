@@ -58,6 +58,13 @@ const CadastrarEquipamentoModal = ({
       _equipamento.dataAlocacao = null;
     }
 
+    if(_equipamento.status === "Disponível") {
+      _equipamento.obraId = null;
+      _equipamento.obraAlocado = null;
+      _equipamento.funcionarioId = null;
+      _equipamento.responsavel = null;
+    }
+
     if (equipamento) {
       axios
         .put(
@@ -109,6 +116,10 @@ const CadastrarEquipamentoModal = ({
           setVisible(false);
         });
     }
+
+    setLoading(false);
+    setFuncionarioSelecionado(null);
+    setObraSelecionada(null);
   };
 
   const toggleModal = () => {
