@@ -71,6 +71,7 @@ const Perfil = () => {
         setTelefoneEdit(response.data.telefone);
 
         if (response.data.foto !== null) {
+          console.log(response.data.foto);
           setUserFoto(response.data.urlFoto);
         } else {
           setUserFoto(

@@ -143,7 +143,7 @@ const ObraController = {
 
       if (urlContrato !== null) {
         const fileName = urlContrato.split("/").pop();
-        await deleteDocContrato(req.query.id, fileName);
+        await ObraController.deleteDocContrato(req.query.id, fileName);
       }
       const deleted = await Obra.destroy({
         where: { id: req.query.id },
@@ -178,7 +178,7 @@ const ObraController = {
           [Op.like]: `%${alvara}%`,
         };
       }
-      
+
       const obras =
         Object.keys(where).length === 0
           ? await Obra.findAll()
@@ -237,7 +237,7 @@ const ObraController = {
       const file = _file;
 
       const containerName = "contratos";
-      const blobName = `${id}-${file.originalname}-${new Date()}`;
+      const blobName = `${id}-${file.originalname}-${new Date().toISOString()}`;
       const containerClient =
         blobServiceClient.getContainerClient(containerName);
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
@@ -261,6 +261,12 @@ const ObraController = {
       const containerClient =
         blobServiceClient.getContainerClient(containerName);
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+      // Verificar se o blob existe antes de tentar excluí-lo
+      const exists = await blockBlobClient.exists();
+      if (!exists) {
+        throw new Error(`O blob ${blobName} não existe.`);
+      }
 
       await blockBlobClient.delete();
 
@@ -294,6 +300,7 @@ const ObraController = {
       res.status(400).json({ message: error.message });
     }
   },
+
   async getObrasPorDataFinal(req, res) {
     try {
       const { dataInicial, dataFinal } = req.query;
