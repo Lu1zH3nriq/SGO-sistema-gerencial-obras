@@ -20,6 +20,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { formatarOrcamento, formatarData } from "../../components/utils/utilsMask.js";
 
 const GerenciarObra = () => {
   const { id } = useParams();
@@ -31,21 +32,63 @@ const GerenciarObra = () => {
   const [obra, setObra] = useState({});
   const [modal, setModal] = useState(false);
 
-  useEffect(() => {
-    setLoading(true);
 
+  const [funcionarios, setFuncionarios] = useState([]);
+  const [cliente, setCliente] = useState({});
+  const [materiais, setMateriais] = useState([]);
+  const [equipamentos, setEquipamentos] = useState([]);
+
+
+  async function getObra() {
     axios
       .get(`${URL_API}/api/obras/obra?id=${id}`)
       .then((response) => {
-        console.log("OBRA", response.data);
         setObra(response.data);
+        getClienteDaObra(response.data.clienteId);
       })
       .catch((error) => {
         console.error(error);
+      });
+  }
+  async function getFuncionariosDaObra(obraId) {
+    axios
+      .get(`${URL_API}/api/funcionarios/buscaFuncionarioPorObra?obraId=${obraId}`)
+      .then((response) => {
+        setFuncionarios(response.data);
       })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+  async function getClienteDaObra(clienteId) {
+    axios
+      .get(`${URL_API}/api/clientes/cliente?id=${clienteId}`)
+      .then((response) => {
+        setCliente(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+  async function getMateriaisDaObra() { }
+  async function getEquipamentosDaObra() { }
+
+
+  useEffect(() => {
+    setLoading(true);
+    getObra()
+      .then(() => {
+        getFuncionariosDaObra(id);
+
+      })
+      .catch((error) => {
+        console.error(error);
+      }
+      )
       .finally(() => {
         setLoading(false);
-      });
+      }
+      );
   }, []);
 
   const toggleModal = () => {
@@ -174,105 +217,167 @@ const GerenciarObra = () => {
                         Informações gerais
                       </CardTitle>
                       <Row style={{ marginBottom: "0.5rem" }}>
-                        <Col xs={6}>
-                          <CardText>
-                            <strong>Nome da Obra:</strong> {obra.nome}
+                        <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
+                            <strong>Nome da Obra:</strong>
+                          </CardText>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginTop: 0 }}>
+                            {obra.nome}
                           </CardText>
                         </Col>
-                        <Col xs={6}>
-                          <CardText>
-                            <strong>Identificador:</strong> {obra.identificador}
+                        <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
+                            <strong>Identificador:</strong>
                           </CardText>
-                        </Col>
-                      </Row>
-
-                      <Row style={{ marginBottom: "0.5rem" }}>
-                        <Col xs={6}>
-                          <CardText>
-                            <strong>Endereço:</strong> {obra.endereco}
-                          </CardText>
-                        </Col>
-                        <Col xs={6}>
-                          <CardText>
-                            <strong>Data de Início:</strong>{" "}
-                            {new Date(obra.dataInicio).toLocaleDateString()}
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginTop: 0 }}>
+                            {obra.identificador}
                           </CardText>
                         </Col>
                       </Row>
 
                       <Row style={{ marginBottom: "0.5rem" }}>
-                        <Col xs={6}>
-                          <CardText>
-                            <strong>Data Final:</strong>{" "}
-                            {obra.dataFinal
-                              ? new Date(obra.dataFinal).toLocaleDateString()
-                              : "N/A"}
+                        <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
+                            <strong>Endereço:</strong>
+                          </CardText>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginTop: 0 }}>
+                            {obra.endereco}
                           </CardText>
                         </Col>
-                        <Col xs={6}>
-                          <CardText>
-                            <strong>Contrato:</strong> {obra.contrato}
+                        <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
+                            <strong>Data de Início:</strong>
                           </CardText>
-                        </Col>
-                      </Row>
-
-                      <Row style={{ marginBottom: "0.5rem" }}>
-                        <Col xs={6}>
-                          <CardText>
-                            <strong>Alvará:</strong> {obra.alvara}
-                          </CardText>
-                        </Col>
-                        <Col xs={6}>
-                          <CardText>
-                            <strong>Orçamento:</strong> R$ {obra.orcamento}
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginTop: 0 }}>
+                            {formatarData(obra.dataInicio)}
                           </CardText>
                         </Col>
                       </Row>
 
                       <Row style={{ marginBottom: "0.5rem" }}>
-                        <Col xs={6}>
-                          <CardText>
-                            <strong>Responsável:</strong> {obra.responsavel}
+                        <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
+                            <strong>Data Final:</strong>
+                          </CardText>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginTop: 0 }}>
+                            {obra.dataFinal ? formatarData(obra.dataFinal) : "Não informado"}
                           </CardText>
                         </Col>
-                        <Col xs={6}>
-                          <CardText>
-                            <strong>Status:</strong> {obra.status}
+                        <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
+                            <strong>Contrato:</strong>
                           </CardText>
-                        </Col>
-                      </Row>
-
-                      <Row style={{ marginBottom: "0.5rem" }}>
-                        <Col xs={6}>
-                          <CardText>
-                            <strong>Cliente:</strong> {obra.cliente}
-                          </CardText>
-                        </Col>
-                        <Col xs={6}>
-                          <CardText>
-                            <strong>Data de Criação:</strong>{" "}
-                            {new Date(obra.createdAt).toLocaleDateString()}
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginTop: 0 }}>
+                            {obra.contrato}
                           </CardText>
                         </Col>
                       </Row>
 
                       <Row style={{ marginBottom: "0.5rem" }}>
-                        <Col xs={6}>
-                          <CardText>
-                            <strong>Última Atualização:</strong>{" "}
+                        <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
+                            <strong>Alvará:</strong>
+                          </CardText>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginTop: 0 }}>
+                            {obra.alvara}
+                          </CardText>
+                        </Col>
+                        <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
+                            <strong>Orçamento:</strong>
+                          </CardText>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginTop: 0 }}>
+                            {formatarOrcamento(obra.orcamento)}
+                          </CardText>
+                        </Col>
+                      </Row>
+
+                      <Row style={{ marginBottom: "0.5rem" }}>
+                        <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
+                            <strong>Responsável:</strong>
+                          </CardText>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginTop: 0 }}>
+                            {obra.responsavel}
+                          </CardText>
+                        </Col>
+                        <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
+                            <strong>Status:</strong>
+                          </CardText>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginTop: 0 }}>
+                            {obra.status}
+                          </CardText>
+                        </Col>
+                      </Row>
+
+                      <Row style={{ marginBottom: "0.5rem" }}>
+                        <Col xs={4} style={{ display: "flex", flexDirection: "column" }}>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
+                            <strong>Última alteração:</strong>
+                          </CardText>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginTop: 0 }}>
                             {new Date(obra.updatedAt).toLocaleDateString()}
                           </CardText>
                         </Col>
-                        <Col xs={6}>
-                          <CardText>
+                        <Col xs={4} style={{ display: "flex", flexDirection: "column" }}>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
+                            <strong>Data de cadastro:</strong>
+                          </CardText>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginTop: 0 }}>
+                            {formatarData(obra.createdAt)}
+                          </CardText>
+                        </Col>
+                        <Col xs={4} style={{ display: "flex", flexDirection: "column" }}>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
                             <strong>Contrato:</strong>
-                            <a href="#" onClick={toggleModal}>
-                              {" "}
+                          </CardText>
+                          <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginTop: 0 }}>
+                            <button onClick={toggleModal} style={{ color: darkMode ? "#FFFFFF" : "#343A40", background: "none", border: "none", padding: 0, cursor: "pointer" }}>
                               Visualizar Contrato
-                            </a>
+                            </button>
                           </CardText>
                         </Col>
                       </Row>
+
+
+                      <div style={{paddingTop: '1rem', borderTop: darkMode ? "1px solid rgba(255, 255, 255, 0.2)" : "1px solid rgba(52, 58, 64, 0.2)" }}>
+                        <Row style={{ marginBottom: "0.5rem" }}>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
+                              <strong>Cliente:</strong>
+                            </CardText>
+                            <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginTop: 0 }}>
+                              {obra.cliente}
+                            </CardText>
+                          </Col>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
+                              <strong>Telefone:</strong>
+                            </CardText>
+                            <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginTop: 0 }}>
+                              {cliente.telefone}
+                            </CardText>
+                          </Col>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
+                              <strong>Email:</strong>
+                            </CardText>
+                            <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginTop: 0 }}>
+                              {cliente.email}
+                            </CardText>
+                          </Col>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
+                              <strong>Endereço:</strong>
+                            </CardText>
+                            <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginTop: 0 }}>
+                              {cliente.endereco}
+                            </CardText>
+                          </Col>
+
+                        </Row>
+                      </div>
                     </CardBody>
                   </Card>
                 </Col>
@@ -426,12 +531,12 @@ const GerenciarObra = () => {
         </div>
 
         {/* Modal */}
-        <Modal isOpen={modal} toggle={toggleModal} size="lg">
+        <Modal isOpen={modal} toggle={toggleModal} size="xl">
           <ModalHeader toggle={toggleModal}>Visualizar Contrato</ModalHeader>
           <ModalBody>
             {obra.urlContrato && (
               <iframe
-                src={`https://docs.google.com/gview?url=${obra.urlContrato}&embedded=true`}
+                src={`${obra.urlContrato}`}
                 style={{ width: "100%", height: "500px", border: "none" }}
                 title="Contrato"
               />

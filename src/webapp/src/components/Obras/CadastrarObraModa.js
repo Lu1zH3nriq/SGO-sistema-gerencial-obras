@@ -12,6 +12,7 @@ import {
 import { Formik, Form, Field } from "formik";
 import { useUIContextController } from "../../context/index.js";
 import axios from "axios";
+import InputMask from 'react-input-mask';
 
 import PesquisarClienteModal from "./PesquisarClienteModal.js";
 import PesquisarResponsavelModal from "./PesquisarResponsavelModal.js";
@@ -20,6 +21,8 @@ import {
   formatarCPF,
   formatarCNPJ,
   formatarTelefone,
+  formatarOrcamento,
+  removerFormatacaoOrcamento
 } from "../utils/utilsMask.js";
 
 const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
@@ -49,11 +52,11 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
       ? new Date(obra?.dataInicio).toISOString().split("T")[0]
       : new Date().toISOString().split("T")[0],
     dataFinal: obra?.dataFinal
-      ? new Date(obra?.dataInicio).toISOString().split("T")[0]
+      ? new Date(obra?.dataFinal).toISOString().split("T")[0]
       : "",
     contrato: obra?.contrato || "",
     alvara: obra?.alvara || "",
-    orcamento: obra?.orcamento || "",
+    orcamento: obra?.orcamento ? formatarOrcamento(obra.orcamento) : "",
     responsavel: obra?.responsavel || "",
     responsavelId: obra?.responsavelId || null,
     status: obra?.status || "Não iniciada",
@@ -76,7 +79,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
           : "",
         contrato: obra.contrato,
         alvara: obra.alvara,
-        orcamento: obra.orcamento,
+        orcamento: formatarOrcamento(obra.orcamento),
         responsavel: obra.responsavel,
         responsavelId: obra.responsavelId,
         status: obra.status,
@@ -117,6 +120,7 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
       responsavel: funcionarioResponsavel.nome,
       cliente: clienteDaObra.nome,
       status: values.status || "Não iniciada",
+      orcamento: removerFormatacaoOrcamento(values.orcamento),
     };
 
     if (obra) {
@@ -237,12 +241,6 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
     border: "none",
   };
 
-  const uploadButtonStyle = {
-    backgroundColor: darkMode ? "#676767" : "#CECFCB",
-    color: darkMode ? "#FFFFFF" : "#343A40",
-    border: "none",
-    marginBottom: "10px",
-  };
 
   return (
     <>
@@ -279,11 +277,10 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                       display: "flex",
                       justifyContent: "start",
                       marginBottom: "10px",
-                      borderBottom: `1px solid ${
-                        darkMode
-                          ? "rgba(255, 255, 255, 0.8)"
-                          : "rgba(103, 103, 103, 0.5)"
-                      }`,
+                      borderBottom: `1px solid ${darkMode
+                        ? "rgba(255, 255, 255, 0.8)"
+                        : "rgba(103, 103, 103, 0.5)"
+                        }`,
                     }}
                   >
                     <h5
@@ -367,11 +364,10 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                     display: "flex",
                     justifyContent: "start",
                     margin: "1.5rem 0",
-                    borderBottom: `1px solid ${
-                      darkMode
-                        ? "rgba(255, 255, 255, 0.8)"
-                        : "rgba(103, 103, 103, 0.5)"
-                    }`,
+                    borderBottom: `1px solid ${darkMode
+                      ? "rgba(255, 255, 255, 0.8)"
+                      : "rgba(103, 103, 103, 0.5)"
+                      }`,
                   }}
                 >
                   <h5
@@ -528,20 +524,26 @@ const CadastrarObraModal = ({ visible, setVisible, obra, getObras }) => {
                   <Col md={6}>
                     <div className="form-group">
                       <label htmlFor="orcamento">Orçamento inicial:</label>
-                      <Field
-                        type="text"
-                        name="orcamento"
-                        className="form-control"
-                        style={inputStyle}
-                        value={values.orcamento}
-                        onChange={(e) => {
-                          handleChange(e);
-                          setFormValues({
-                            ...formValues,
-                            orcamento: e.target.value,
-                          });
-                        }}
-                      />
+                      <Field name="orcamento">
+                        {({ field }) => (
+                          <InputMask
+                            {...field}
+                            mask=""
+                            maskChar=""
+                            className="form-control"
+                            style={inputStyle}
+                            value={formValues.orcamento}
+                            placeholder="R$ 0,00"
+                            onChange={(e) => {
+                              const valorFormatado = formatarOrcamento(e.target.value);
+                              setFormValues({
+                                ...formValues,
+                                orcamento: valorFormatado,
+                              });
+                            }}
+                          />
+                        )}
+                      </Field>
                     </div>
                   </Col>
                   <Col md={6}>

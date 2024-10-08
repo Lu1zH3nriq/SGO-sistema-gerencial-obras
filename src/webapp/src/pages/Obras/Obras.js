@@ -36,7 +36,7 @@ import CadastrarObraModal from "components/Obras/CadastrarObraModa.js";
 import DateSelectionModal from "components/Obras/CustomDates.js";
 import DeleteObraModal from "components/Obras/DeleteObraModal.js";
 import axios from "axios";
-import { formatarData } from "components/utils/utilsMask.js";
+import { formatarData, formatarOrcamento } from "components/utils/utilsMask.js";
 import { useNavigate } from 'react-router-dom';
 
 const Obras = () => {
@@ -557,7 +557,7 @@ const Obras = () => {
                           color="textSecondary"
                           style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
                         >
-                          Orçamento inicial: {obra.orcamento}
+                          Orçamento inicial: {formatarOrcamento(obra.orcamento)}
                         </Typography>
 
                         <Box

@@ -116,8 +116,6 @@ const CadastrarEquipamentoModal = ({
           setVisible(false);
         });
     }
-
-    setLoading(false);
     setFuncionarioSelecionado(null);
     setObraSelecionada(null);
   };
@@ -235,7 +233,7 @@ const CadastrarEquipamentoModal = ({
         <ModalBody style={formStyle}>
           <Formik
             initialValues={initialValues}
-            validationSchema={validationSchema} // Adicionando validação ao Formik
+            validationSchema={validationSchema} 
             onSubmit={handleSubmit}
           >
             {({ setFieldValue, values, errors, touched }) => (

@@ -236,8 +236,9 @@ const ObraController = {
       const id = _id;
       const file = _file;
 
+      const date = new Date().toISOString().split("T")[0].toString();
       const containerName = "contratos";
-      const blobName = `${id}-${file.originalname}-${new Date().toISOString()}`;
+      const blobName = `${id}-${date}-${file.originalname}`;
       const containerClient =
         blobServiceClient.getContainerClient(containerName);
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
@@ -253,23 +254,30 @@ const ObraController = {
     }
   },
 
-  async deleteDocContrato(_id, fileName) {
+  async deleteDocContrato(_id, fileUrl) {
     try {
       const id = _id;
       const containerName = "contratos";
-      const blobName = `${id}-${fileName}`;
-      const containerClient =
-        blobServiceClient.getContainerClient(containerName);
+  
+      // Extrair o nome do blob da URL completa
+      const blobName = fileUrl.split('/').pop().split('?')[0];
+  
+      console.log("blobName", blobName);
+  
+      if (!blobName) {
+        throw new Error('Nome do blob não pôde ser extraído da URL.');
+      }
+  
+      const containerClient = blobServiceClient.getContainerClient(containerName);
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-
-      // Verificar se o blob existe antes de tentar excluí-lo
+  
       const exists = await blockBlobClient.exists();
       if (!exists) {
         throw new Error(`O blob ${blobName} não existe.`);
       }
-
+  
       await blockBlobClient.delete();
-
+  
       return `Contrato ${blobName} excluído com sucesso.`;
     } catch (error) {
       throw new Error(`Erro ao excluir o contrato: ${error.message}`);

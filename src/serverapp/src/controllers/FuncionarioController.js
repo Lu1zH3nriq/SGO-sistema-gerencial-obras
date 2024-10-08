@@ -154,6 +154,22 @@ const FuncionarioController = {
       res.status(400).json({ error: error.message });
     }
   },
+
+  async buscaFuncionariosPorObra(req, res) {
+    try {
+      const obraId = req.query.obraId;
+      const funcionarios = await Funcionario.findAll({
+        where: { obraId },
+      });
+      if (funcionarios.length > 0) {
+        res.status(200).json(funcionarios);
+      } else {
+        res.status(404).json({ message: "Nenhum funcionario encontrado" });
+      }
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
 };
 
 module.exports = FuncionarioController;
