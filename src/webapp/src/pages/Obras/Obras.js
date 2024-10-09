@@ -29,8 +29,8 @@ import {
   FaTrash,
   FaChevronLeft,
   FaChevronRight,
-  FaExpandArrowsAlt,
 } from "react-icons/fa";
+import { BsClipboard2Data } from 'react-icons/bs';
 import { Spinner } from "reactstrap";
 import CadastrarObraModal from "components/Obras/CadastrarObraModa.js";
 import DateSelectionModal from "components/Obras/CustomDates.js";
@@ -568,7 +568,7 @@ const Obras = () => {
                             marginTop: "2.5rem",
                           }}
                         >
-                          <FaExpandArrowsAlt
+                          <BsClipboard2Data
                             style={{
                               cursor: "pointer",
                               marginRight: "10px",

@@ -208,6 +208,7 @@ const GerenciarObra = () => {
             <Skeleton height={40} width="100%" />
           ) : (
             <>
+              {/* Dados gerais da obra*/}
               <Row className="mb-2" noGutters>
                 <Col xs={12} sm={6} md={6} className="mb-4">
                   <Card
@@ -384,7 +385,7 @@ const GerenciarObra = () => {
                               {cliente.email}
                             </CardText>
                           </Col>
-                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                          <Col xs={12} style={{ display: "flex", flexDirection: "column" }}>
                             <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
                               <strong>Endereço:</strong>
                             </CardText>
@@ -436,6 +437,7 @@ const GerenciarObra = () => {
                 </Col>
               </Row>
 
+              {/* Equipamentos e Materiais*/}
               <Row className="mb-4" noGutters>
                 <Col xs={12} sm={6} md={6} className="mb-1">
                   <Card
@@ -466,7 +468,24 @@ const GerenciarObra = () => {
                           color: darkMode ? "#FFFFFF" : "#343A40",
                           padding: "1rem 0rem 0.5rem 0rem",
                         }}
-                      ></CardText>
+                      >
+                        {equipamentos.length === 0 ? (
+                          <div style={{ textAlign: "center", color: darkMode ? "#FFFFFF" : "#343A40" }}>
+                            Nenhum equipamento alocado
+                          </div>
+                        ) : (
+                          <div>
+                            {equipamentos.map((equipamento, index) => (
+                              <div key={index} style={{ marginBottom: "1rem", borderBottom: "1px solid #CCCCCC", padding: "0.5rem 0" }}>
+                                <div><strong>Nome:</strong> {equipamento.nome}</div>
+                                <div><strong>Data Alocação:</strong> {equipamento.dataAlocacao}</div>
+                                <div><strong>Responsável:</strong> {equipamento.responsavel}</div>
+                                <div style={{ cursor: "pointer", color: "red" }}>🗑️</div> {/* Ícone da lixeira */}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </CardText>
                     </CardBody>
                   </Card>
                 </Col>
@@ -501,20 +520,48 @@ const GerenciarObra = () => {
                           padding: "1rem 0rem 0.5rem 0rem",
                         }}
                       >
-                        Conteúdo do Card 3
+                        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                          <thead>
+                            <tr>
+                              <th style={{ borderBottom: "1px solid #CCCCCC", padding: "0.5rem", textAlign: "left" }}>Nome Material</th>
+                              <th style={{ borderBottom: "1px solid #CCCCCC", padding: "0.5rem", textAlign: "left" }}>Quantidade</th>
+                              <th style={{ borderBottom: "1px solid #CCCCCC", padding: "0.5rem", textAlign: "left" }}>Valor</th>
+                              <th style={{ borderBottom: "1px solid #CCCCCC", padding: "0.5rem", textAlign: "left" }}>Data</th>
+                              <th style={{ borderBottom: "1px solid #CCCCCC", padding: "0.5rem", textAlign: "left" }}>Ações</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {materiais.length === 0 ? (
+                              <tr>
+                                <td colSpan="5" style={{ textAlign: "center" }}>Nenhum material alocado</td>
+                              </tr>
+                            ) : (
+                              materiais.map((material, index) => (
+                                <tr key={index}>
+                                  <td style={{ padding: "0.5rem", borderBottom: "1px solid #CCCCCC" }}>{material.nome}</td>
+                                  <td style={{ padding: "0.5rem", borderBottom: "1px solid #CCCCCC" }}>{material.quantidade}</td>
+                                  <td style={{ padding: "0.5rem", borderBottom: "1px solid #CCCCCC" }}>{material.valor}</td>
+                                  <td style={{ padding: "0.5rem", borderBottom: "1px solid #CCCCCC" }}>{material.data}</td>
+                                  <td style={{ padding: "0.5rem", borderBottom: "1px solid #CCCCCC", cursor: "pointer", color: "red" }}>🗑️</td> {/* Ícone da lixeira */}
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
                       </CardText>
                     </CardBody>
                   </Card>
                 </Col>
               </Row>
 
+
+              {/* Funcionários */}
               <Row className="mb-4">
                 <Col xs={12} sm={12} md={12} className="mb-1">
                   <Card
                     style={{
                       backgroundColor: darkMode ? "#676767" : "#FFFFFF",
                       margin: "0.5rem",
-                      height: "100%",
                       borderRadius: "0.5rem",
                       boxShadow: darkMode
                         ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
@@ -525,72 +572,81 @@ const GerenciarObra = () => {
                       <CardTitle
                         style={{
                           color: darkMode ? "#FFFFFF" : "#343A40",
-                          textAlign: "start",
+                          textAlign: "left",
                           borderBottom: darkMode
                             ? "1px solid rgba(255, 255, 255, 0.2)"
                             : "1px solid rgba(52, 58, 64, 0.2)",
+                          paddingBottom: "0.5rem",
+                          marginBottom: "1rem",
                         }}
                       >
                         Funcionários
                       </CardTitle>
-                      <Row>
-                        {funcionarios.map((funcionario, index) => (
-                          <Col xs={12} sm={6} md={3} lg={3} xl={3} key={index} className="mb-3">
-                            <Card
-                              style={{
-                                backgroundColor: darkMode ? "#414141" : "#FFFFFF",
-                                padding: "1rem",
-                                borderRadius: "0.5rem",
-                                color: darkMode ? "#FFFFFF" : "#343A40",
-                                height: "100%",
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div style={{ paddingBottom: '0.5rem' }}>
-                                <div style={{ textAlign: "left" }}>
-                                  <strong>Nome:</strong>
+
+                      {funcionarios.length === 0 ? (
+                        <div style={{ textAlign: "center", padding: "2rem", color: darkMode ? "#FFFFFF" : "#343A40" }}>
+                          Nenhum funcionário alocado
+                        </div>
+                      ) : (
+                        <Row>
+                          {funcionarios.map((funcionario, index) => (
+                            <Col xs={12} sm={6} md={3} lg={3} xl={3} key={index} className="mb-3">
+                              <Card
+                                style={{
+                                  backgroundColor: darkMode ? "#414141" : "#FFFFFF",
+                                  padding: "1rem",
+                                  borderRadius: "0.5rem",
+                                  color: darkMode ? "#FFFFFF" : "#343A40",
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  justifyContent: "space-between",
+                                  height: "100%",
+                                  border: darkMode ? "1px solid rgba(255, 255, 255, 0.2)" : "1px solid #CCCCCC",
+                                }}
+                              >
+                                <div style={{ marginBottom: '1rem' }}>
+                                  <div style={{ textAlign: "left" }}>
+                                    <strong>Nome:</strong> {funcionario.nome}
+                                  </div>
+                                  <div style={{ textAlign: "left" }}>
+                                    <strong>Cargo:</strong> {funcionario.cargo}
+                                  </div>
+                                  <div style={{ textAlign: "left" }}>
+                                    <strong>Data Contratação:</strong> {new Date(funcionario.dataContratacao).toLocaleDateString()}
+                                  </div>
                                 </div>
-                                <div style={{ textAlign: "left" }}>
-                                  {funcionario.nome}
+
+                                {funcionario.id === obra.responsavelId && (
+                                  <div>
+                                    <div style={{ textAlign: "left" }}>
+                                      <strong style={{ fontSize: 14 }}>Responsável pela Obra</strong>
+                                    </div>
+                                  </div>
+                                )}
+
+                                <div style={{ textAlign: "right" }}>
+                                  <button
+                                    onClick={() => { }}
+                                    style={{
+                                      background: "none",
+                                      border: "none",
+                                      color: darkMode ? "#FFFFFF" : "#343A40",
+                                      cursor: "pointer",
+                                      fontSize: "1.2rem",
+                                    }}
+                                  >
+                                    -
+                                  </button>
                                 </div>
-                              </div>
-                              <div style={{ paddingBottom: '0.5rem' }}>
-                                <div style={{ textAlign: "left" }}>
-                                  <strong>Cargo:</strong>
-                                </div>
-                                <div style={{ textAlign: "left" }}>
-                                  {funcionario.cargo}
-                                </div>
-                              </div>
-                              <div style={{ paddingBottom: '0.5rem' }} >
-                                <div style={{ textAlign: "left" }}>
-                                  <strong>Data Contratação:</strong>
-                                </div>
-                                <div style={{ textAlign: "left" }}>
-                                  {new Date(funcionario.dataContratacao).toLocaleDateString()}
-                                </div>
-                              </div>
-                              <div style={{ textAlign: "right", paddingInlineEnd: '1rem' }}>
-                                <button
-                                  onClick={() => {}}
-                                  style={{
-                                    background: "none",
-                                    border: "none",
-                                    color: darkMode ? "#FFFFFF" : "#343A40",
-                                    cursor: "pointer",
-                                  }}
-                                >
-                                  -
-                                </button>
-                              </div>
-                            </Card>
-                          </Col>
-                        ))}
-                      </Row>
+                              </Card>
+                            </Col>
+                          ))}
+                        </Row>
+                      )}
                     </CardBody>
                   </Card>
+
+
                 </Col>
               </Row>
             </>
