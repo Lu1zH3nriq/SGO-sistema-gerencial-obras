@@ -7,7 +7,7 @@ const Layout = ({ children }) => {
     const [rotaAtual, setRotaAtual] = useState('Dashboard');
 
     return (
-        <div style={{ display: 'flex', height: '100vh', width: '100vw' }}>
+        <div style={{ display: 'flex', height: '90%', width: '100%' }}>
             <SideBar 
                 trocaRotas={(rota) => setRotaAtual(rota)}
             />

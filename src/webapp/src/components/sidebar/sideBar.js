@@ -113,12 +113,12 @@ const SideBar = ({ trocaRotas }) => {
             borderColor: darkMode ? "#EFF2F7" : "#343A40",
           }}
         />
-        <div style={{ fontSize: "0.7rem", letterSpacing: "0.2rem" }}>
+        <div style={{ fontSize: "0.7rem", letterSpacing: "0.2rem", padding: '0rem 0.5rem' }}>
           PROJETOS E ASSESSORIA TÉCNICA
         </div>
       </div>
 
-      <Nav vertical style={{marginTop: '2rem'}}>
+      <Nav vertical style={{marginTop: '0.5rem'}}>
         {menuOptions.map((option, index) => (
           <NavItem key={option.route} style={{ padding: "0.2vh" }}>
             <NavLink
@@ -126,7 +126,7 @@ const SideBar = ({ trocaRotas }) => {
               style={{
                 display: "flex",
                 alignItems: "center",
-                padding: "1rem",
+                padding: "0.6rem 1rem",
                 backgroundColor:
                   selectedButton === index
                     ? darkMode

@@ -160,8 +160,10 @@ const Dashboard = () => {
                         padding: "0.5rem",
                         borderRadius: "0.5rem",
                         width: "35%",
+                        maxHeight: '70%',
                         textAlign: "center",
                         alignContent: "center",
+                        marginRight: '0.5rem'
                       }}
                     >
                       <h6
@@ -179,7 +181,7 @@ const Dashboard = () => {
                       style={{
                         flex: 1,
                         alignContent: "center",
-                        textAlign: "center",
+                        textAlign: "right",
                       }}
                     >
                       <p style={textStyle}>Obras cadastradas</p>

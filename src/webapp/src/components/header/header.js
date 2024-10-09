@@ -34,7 +34,7 @@ const Header = ({ rotaAtual }) => {
       <Navbar
         expand="md"
         style={{
-          height: '5.5vh',
+          height: '7vh',
           width: '100%',
           backgroundColor: darkMode ? '#414141' : '#D9D9D6',
           display: 'flex',
