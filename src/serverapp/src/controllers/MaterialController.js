@@ -61,7 +61,20 @@ const MaterialController = {
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
-  }
+  }, 
+
+  async buscaMateriaisPorObra (req, res) {
+    try {
+      const materiais = await Material.findAll({
+        where: {
+          obraId: req.query.obraId
+        }
+      });
+      res.status(200).json(materiais);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
 };
 
 module.exports = MaterialController;

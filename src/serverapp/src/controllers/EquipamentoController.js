@@ -77,6 +77,18 @@ const EquipamentoController = {
       res.status(400).json({ error: error.message });
     }
   },
+
+  async getEquipamentosObra (req, res) {
+    const obraId = req.query.obraId;
+    try {
+      const equipamentos = await Equipamento.findAll({
+        where: { obraId: obraId }
+      });
+      res.status(200).json(equipamentos);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
 };
 
 module.exports = EquipamentoController;

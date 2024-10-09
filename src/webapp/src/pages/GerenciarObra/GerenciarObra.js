@@ -70,8 +70,24 @@ const GerenciarObra = () => {
         console.error(error);
       });
   }
-  async function getMateriaisDaObra() { }
-  async function getEquipamentosDaObra() { }
+  async function getMateriaisDaObra() {
+    axios.get(`${URL_API}/api/materiais/buscaMateriaisPorObra?obraId=${id}`)
+      .then((response) => {
+        setMateriais(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+  }
+  async function getEquipamentosDaObra() {
+    axios.get(`${URL_API}/api/equipamentos/equipamentosPorObra?obraId=${id}`)
+      .then((response) => {
+        setEquipamentos(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+  }
 
 
   useEffect(() => {
@@ -79,7 +95,8 @@ const GerenciarObra = () => {
     getObra()
       .then(() => {
         getFuncionariosDaObra(id);
-
+        getMateriaisDaObra();
+        getEquipamentosDaObra();
       })
       .catch((error) => {
         console.error(error);
@@ -341,7 +358,7 @@ const GerenciarObra = () => {
                       </Row>
 
 
-                      <div style={{paddingTop: '1rem', borderTop: darkMode ? "1px solid rgba(255, 255, 255, 0.2)" : "1px solid rgba(52, 58, 64, 0.2)" }}>
+                      <div style={{ paddingTop: '1rem', borderTop: darkMode ? "1px solid rgba(255, 255, 255, 0.2)" : "1px solid rgba(52, 58, 64, 0.2)" }}>
                         <Row style={{ marginBottom: "0.5rem" }}>
                           <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
                             <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
@@ -516,12 +533,62 @@ const GerenciarObra = () => {
                       >
                         Funcionários
                       </CardTitle>
-                      <CardText
-                        style={{
-                          color: darkMode ? "#FFFFFF" : "#343A40",
-                          padding: "1rem 0rem 0.5rem 0rem",
-                        }}
-                      ></CardText>
+                      <Row>
+                        {funcionarios.map((funcionario, index) => (
+                          <Col xs={12} sm={6} md={3} lg={3} xl={3} key={index} className="mb-3">
+                            <Card
+                              style={{
+                                backgroundColor: darkMode ? "#414141" : "#FFFFFF",
+                                padding: "1rem",
+                                borderRadius: "0.5rem",
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                height: "100%",
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "space-between",
+                              }}
+                            >
+                              <div style={{ paddingBottom: '0.5rem' }}>
+                                <div style={{ textAlign: "left" }}>
+                                  <strong>Nome:</strong>
+                                </div>
+                                <div style={{ textAlign: "left" }}>
+                                  {funcionario.nome}
+                                </div>
+                              </div>
+                              <div style={{ paddingBottom: '0.5rem' }}>
+                                <div style={{ textAlign: "left" }}>
+                                  <strong>Cargo:</strong>
+                                </div>
+                                <div style={{ textAlign: "left" }}>
+                                  {funcionario.cargo}
+                                </div>
+                              </div>
+                              <div style={{ paddingBottom: '0.5rem' }} >
+                                <div style={{ textAlign: "left" }}>
+                                  <strong>Data Contratação:</strong>
+                                </div>
+                                <div style={{ textAlign: "left" }}>
+                                  {new Date(funcionario.dataContratacao).toLocaleDateString()}
+                                </div>
+                              </div>
+                              <div style={{ textAlign: "right", paddingInlineEnd: '1rem' }}>
+                                <button
+                                  onClick={() => {}}
+                                  style={{
+                                    background: "none",
+                                    border: "none",
+                                    color: darkMode ? "#FFFFFF" : "#343A40",
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  -
+                                </button>
+                              </div>
+                            </Card>
+                          </Col>
+                        ))}
+                      </Row>
                     </CardBody>
                   </Card>
                 </Col>
