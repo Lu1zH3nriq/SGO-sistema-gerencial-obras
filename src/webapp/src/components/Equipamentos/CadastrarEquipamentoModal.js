@@ -47,12 +47,11 @@ const CadastrarEquipamentoModal = ({
       ...values,
       obraId: obraSelecionada ? obraSelecionada.id : null,
       funcionarioId: funcionarioSelecionado ? funcionarioSelecionado.id : null,
-      responsavel: funcionarioSelecionado ? funcionarioSelecionado.nome : null,
+      responsavel: funcionarioSelecionado ? funcionarioSelecionado.nome : '',
       obraAlocado: obraSelecionada ? obraSelecionada.nome : null,
     };
 
     delete _equipamento.obra;
-    delete _equipamento.responsavel;
 
     if (_equipamento.dataAlocacao === "--") {
       _equipamento.dataAlocacao = null;
@@ -170,7 +169,7 @@ const CadastrarEquipamentoModal = ({
       : "--",
     derivado: equipamento?.derivado || "Compra de Equipamento",
     obra: obraSelecionada?.nome || null,
-    responsavel: funcionarioSelecionado?.nome || null,
+    responsavel: funcionarioSelecionado?.nome || '',
   };
 
   // Adicionando validação com Yup

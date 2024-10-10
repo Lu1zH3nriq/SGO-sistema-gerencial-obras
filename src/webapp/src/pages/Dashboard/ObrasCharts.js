@@ -90,7 +90,7 @@ const ObrasChart = ({ data, darkMode }) => {
   const textColor = darkMode ? "#FFFFFF" : "#343A40";
 
   return (
-    <ResponsiveContainer width="100%" height={400}>
+    <ResponsiveContainer width="100%" height="100%">
       <LineChart
         data={dataChart}
         margin={{ top: 5, right: 30, left: 20, bottom: 5 }}

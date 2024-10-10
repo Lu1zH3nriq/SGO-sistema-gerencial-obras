@@ -330,7 +330,7 @@ const GerenciarObra = () => {
                       </Row>
 
                       <Row style={{ marginBottom: "0.5rem" }}>
-                        <Col xs={4} style={{ display: "flex", flexDirection: "column" }}>
+                        <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
                           <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
                             <strong>Última alteração:</strong>
                           </CardText>
@@ -338,7 +338,7 @@ const GerenciarObra = () => {
                             {new Date(obra.updatedAt).toLocaleDateString()}
                           </CardText>
                         </Col>
-                        <Col xs={4} style={{ display: "flex", flexDirection: "column" }}>
+                        <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
                           <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
                             <strong>Data de cadastro:</strong>
                           </CardText>
@@ -346,7 +346,7 @@ const GerenciarObra = () => {
                             {formatarData(obra.createdAt)}
                           </CardText>
                         </Col>
-                        <Col xs={4} style={{ display: "flex", flexDirection: "column" }}>
+                        <Col xs={12} style={{ display: "flex", flexDirection: "column" }}>
                           <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
                             <strong>Contrato:</strong>
                           </CardText>
@@ -377,7 +377,7 @@ const GerenciarObra = () => {
                               {cliente.telefone}
                             </CardText>
                           </Col>
-                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                          <Col xs={12} style={{ display: "flex", flexDirection: "column" }}>
                             <CardText style={{ color: darkMode ? "#FFFFFF" : "#343A40", marginBottom: 0 }}>
                               <strong>Email:</strong>
                             </CardText>
@@ -439,12 +439,12 @@ const GerenciarObra = () => {
 
               {/* Equipamentos e Materiais*/}
               <Row className="mb-4" noGutters>
-                <Col xs={12} sm={6} md={6} className="mb-1">
+                <Col xs={12} sm={6} md={6} className="mb-1" style={{ overflowY: "auto", maxHeight: "60vh" }}>
                   <Card
                     style={{
                       backgroundColor: darkMode ? "#676767" : "#FFFFFF",
                       margin: "0.5rem",
-                      height: "100%",
+                      height: "auto",
                       borderRadius: "0.5rem",
                       boxShadow: darkMode
                         ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
@@ -463,34 +463,50 @@ const GerenciarObra = () => {
                       >
                         Equipamentos
                       </CardTitle>
-                      <CardText
+                      <div
                         style={{
                           color: darkMode ? "#FFFFFF" : "#343A40",
                           padding: "1rem 0rem 0.5rem 0rem",
+                          overflowY: "auto",
+                          maxHeight: "40vh", // Limita a altura máxima e adiciona scroll se necessário
                         }}
                       >
                         {equipamentos.length === 0 ? (
-                          <div style={{ textAlign: "center", color: darkMode ? "#FFFFFF" : "#343A40" }}>
+                          <div style={{ textAlign: "center" }}>
                             Nenhum equipamento alocado
                           </div>
                         ) : (
                           <div>
                             {equipamentos.map((equipamento, index) => (
-                              <div key={index} style={{ marginBottom: "1rem", borderBottom: "1px solid #CCCCCC", padding: "0.5rem 0" }}>
-                                <div><strong>Nome:</strong> {equipamento.nome}</div>
-                                <div><strong>Data Alocação:</strong> {equipamento.dataAlocacao}</div>
-                                <div><strong>Responsável:</strong> {equipamento.responsavel}</div>
-                                <div style={{ cursor: "pointer", color: "red" }}>🗑️</div> {/* Ícone da lixeira */}
+                              <div
+                                key={index}
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  marginBottom: "1rem",
+                                  borderBottom: "1px solid #CCCCCC",
+                                  padding: "0.5rem 0",
+                                }}
+                              >
+                                <div>
+                                  <div><strong>Nome:</strong> {equipamento.nome}</div>
+                                  <div><strong>Data Alocação:</strong> {equipamento.dataAlocacao}</div>
+                                  <div><strong>Responsável:</strong> {equipamento.responsavel}</div>
+                                </div>
+                                <div style={{ cursor: "pointer", color: "red" }}>🗑️</div>
                               </div>
                             ))}
                           </div>
                         )}
-                      </CardText>
+                      </div>
                     </CardBody>
                   </Card>
                 </Col>
 
-                <Col xs={12} sm={6} md={6} className="mb-1">
+
+
+                <Col xs={12} sm={6} md={6} className="mb-1" style={{ maxHeight: "45vh", overflowY: "auto" }}>
                   <Card
                     style={{
                       backgroundColor: darkMode ? "#676767" : "#FFFFFF",
@@ -514,7 +530,7 @@ const GerenciarObra = () => {
                       >
                         Materiais
                       </CardTitle>
-                      <CardText
+                      <div
                         style={{
                           color: darkMode ? "#FFFFFF" : "#343A40",
                           padding: "1rem 0rem 0.5rem 0rem",
@@ -542,17 +558,18 @@ const GerenciarObra = () => {
                                   <td style={{ padding: "0.5rem", borderBottom: "1px solid #CCCCCC" }}>{material.quantidade}</td>
                                   <td style={{ padding: "0.5rem", borderBottom: "1px solid #CCCCCC" }}>{material.valor}</td>
                                   <td style={{ padding: "0.5rem", borderBottom: "1px solid #CCCCCC" }}>{material.data}</td>
-                                  <td style={{ padding: "0.5rem", borderBottom: "1px solid #CCCCCC", cursor: "pointer", color: "red" }}>🗑️</td> {/* Ícone da lixeira */}
+                                  <td style={{ padding: "0.5rem", borderBottom: "1px solid #CCCCCC", cursor: "pointer", color: "red" }}>🗑️</td>
                                 </tr>
                               ))
                             )}
                           </tbody>
                         </table>
-                      </CardText>
+                      </div>
                     </CardBody>
                   </Card>
                 </Col>
               </Row>
+
 
 
               {/* Funcionários */}

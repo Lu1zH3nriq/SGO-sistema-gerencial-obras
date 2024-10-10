@@ -480,7 +480,7 @@ const Equipamentos = () => {
                                     }}
                                   >
                                     Responsável:{" "}
-                                    {funcionarioSelecionado?.nome ||
+                                    { equipamento.responsavel ||
                                       "Não alocado"}
                                   </Typography>
                                 </Box>

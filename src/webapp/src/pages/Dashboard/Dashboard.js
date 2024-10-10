@@ -198,8 +198,10 @@ const Dashboard = () => {
                         padding: "0.5rem",
                         borderRadius: "0.5rem",
                         width: "35%",
+                        maxHeight: '70%',
                         textAlign: "center",
                         alignContent: "center",
+                        marginRight: '0.5rem'
                       }}
                     >
                       <h6
@@ -217,7 +219,7 @@ const Dashboard = () => {
                       style={{
                         flex: 1,
                         alignContent: "center",
-                        textAlign: "center",
+                        textAlign: "right",
                       }}
                     >
                       <p style={textStyle}>Obras em andamento</p>
@@ -234,8 +236,10 @@ const Dashboard = () => {
                         padding: "0.5rem",
                         borderRadius: "0.5rem",
                         width: "35%",
+                        maxHeight: '70%',
                         textAlign: "center",
                         alignContent: "center",
+                        marginRight: '0.5rem'
                       }}
                     >
                       <h6
@@ -253,7 +257,7 @@ const Dashboard = () => {
                       style={{
                         flex: 1,
                         alignContent: "center",
-                        textAlign: "center",
+                        textAlign: "right",
                       }}
                     >
                       <p style={textStyle}>Obras concluídas</p>
@@ -270,8 +274,10 @@ const Dashboard = () => {
                         padding: "0.5rem",
                         borderRadius: "0.5rem",
                         width: "35%",
+                        maxHeight: '70%',
                         textAlign: "center",
                         alignContent: "center",
+                        marginRight: '0.5rem'
                       }}
                     >
                       <h6
@@ -289,7 +295,7 @@ const Dashboard = () => {
                       style={{
                         flex: 1,
                         alignContent: "center",
-                        textAlign: "center",
+                        textAlign: "right",
                       }}
                     >
                       <p style={textStyle}>Obras atrasadas</p>
@@ -301,7 +307,7 @@ const Dashboard = () => {
           )}
         </Row>
 
-        {/* Linha com obras e alerts */}
+        {/* Linha com obras e alertas */}
         <Row className="mt-4">
           <>
             <Col xs={12} md={9} className="mb-4" style={{ height: "40vh" }}>
@@ -316,7 +322,7 @@ const Dashboard = () => {
                     : "0px 0px 10px rgba(0, 0, 0, 0.3)",
                 }}
               >
-                <CardBody>
+                <CardBody style={{ height: "100%" }}>
                   <CardTitle
                     style={{
                       color: darkMode ? "#FFFFFF" : "#343A40",
@@ -328,15 +334,9 @@ const Dashboard = () => {
                   >
                     Obras
                   </CardTitle>
-                  <CardText
-                    style={{
-                      color: darkMode ? "#FFFFFF" : "#343A40",
-                      padding: "1rem 0rem 0.5rem 0rem",
-                    }}
-                  >
-                    {/* Adicionando o gráfico aqui */}
+                  <div style={{ height: "calc(100% - 2rem)" }}>
                     <ObrasChart data={dataObras} darkMode={darkMode} />
-                  </CardText>
+                  </div>
                 </CardBody>
               </Card>
             </Col>
