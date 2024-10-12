@@ -13,6 +13,7 @@ const materiaisRoutes = require('./routes/materiaisRoutes');
 const equipamentosRoutes = require('./routes/equipamentosRoutes');
 const obrasRoutes = require('./routes/obrasRoutes');
 const loginRoutes = require('./routes/loginRoutes');
+const obraMateriaisRoutes = require('./routes/obraMateriaisRoutes');
 
 app.use(cors());
 app.use(express.json());
@@ -25,6 +26,7 @@ app.use('/api/materiais', materiaisRoutes);
 app.use('/api/equipamentos', equipamentosRoutes);
 app.use('/api/obras', obrasRoutes);
 app.use('/api', loginRoutes);
+app.use('/api/obraMateriais', obraMateriaisRoutes);
 
 app.get('/', (req, res) => {
   res.send('API está rodando!, teste de deploy');

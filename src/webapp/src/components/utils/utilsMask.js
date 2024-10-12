@@ -23,8 +23,8 @@ export function removerFormatacaoTelefone(numero) {
 
 export function formatarCPF(cpf) {
   if (!cpf) return '';
-  const cpfLimpo = cpf.replace(/\D/g, ""); 
-  
+  const cpfLimpo = cpf.replace(/\D/g, "");
+
 
   const parte1 = cpfLimpo.slice(0, 3);
   const parte2 = cpfLimpo.slice(3, 6);
@@ -58,8 +58,8 @@ export function formatarDataISO(data) {
 
 export function formatarCNPJ(cnpj) {
   if (!cnpj) return '';
-  const cnpjLimpo = cnpj.replace(/\D/g, ""); 
-  
+  const cnpjLimpo = cnpj.replace(/\D/g, "");
+
 
   const parte1 = cnpjLimpo.slice(0, 2);
   const parte2 = cnpjLimpo.slice(2, 5);
@@ -79,3 +79,22 @@ export function formatarCNPJ(cnpj) {
 export function removerFormatacaoCNPJ(cnpj) {
   return cnpj.replace(/\D/g, "");
 }
+
+export function formatarOrcamento(valor) {
+  if (typeof valor !== 'number' && typeof valor !== 'string') return '';
+
+  const numero = typeof valor === 'string' ? parseFloat(valor.replace(/\D/g, '')) : valor;
+
+  const numeroFormatado = new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 2,
+  }).format(numero / 100);
+
+  return numeroFormatado;
+}
+
+export function removerFormatacaoOrcamento(valorFormatado) {
+  if (typeof valorFormatado !== 'string') return '';
+  return valorFormatado.replace(/\D/g, '');
+};

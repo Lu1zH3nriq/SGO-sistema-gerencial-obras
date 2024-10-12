@@ -11,6 +11,7 @@ import Equipamentos from "../../pages/Equipamentos/Equipamentos.js";
 import Perfil from "../../pages/Perfil/Perfil.js";
 import Materiais from "pages/Materiais/Materiais.js";
 import Usuarios from "pages/Usuarios/Usuarios.js";
+import GerenciarObra from "pages/GerenciarObra/GerenciarObra.js";
 
 import EquipamentosComum from "pages/EquipamentosComum/EquipamentosComum.js";
 import ObrasComum from "../../pages/ObrasComum/ObraComum.js";
@@ -124,7 +125,10 @@ const Authenticator = () => {
             }
           />
           <Route path="/resumo" element={<Dashboard />} />
-          <Route path="/obras" element={ userType === 1 ? <Obras/> : <ObrasComum/> } />
+          <Route
+            path="/obras"
+            element={userType === 1 ? <Obras /> : <ObrasComum />}
+          />
           <Route
             path="/funcionarios"
             element={
@@ -141,7 +145,10 @@ const Authenticator = () => {
               userType === 1 ? <Clientes /> : <Navigate to={"/unauthorized"} />
             }
           />
-          <Route path="/equipamentos" element={ userType === 1 ? (<Equipamentos/>) : (<EquipamentosComum/>) } />
+          <Route
+            path="/equipamentos"
+            element={userType === 1 ? <Equipamentos /> : <EquipamentosComum />}
+          />
           <Route path="/perfil" element={<Perfil />} />
           <Route
             path="/materiais"
@@ -153,6 +160,12 @@ const Authenticator = () => {
             path="/usuarios"
             element={
               userType === 1 ? <Usuarios /> : <Navigate to={"/unauthorized"} />
+            }
+          />
+          <Route
+            path="/obra/:id"
+            element={
+              userType === 1 ? <GerenciarObra /> : <Navigate to={"/unauthorized"} />
             }
           />
           <Route path="/resetSenha" element={<ResetPass />} />

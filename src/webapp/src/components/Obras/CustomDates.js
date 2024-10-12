@@ -10,7 +10,7 @@ import {
 } from "react-bootstrap";
 import { Col } from "react-bootstrap";
 
-const DateSelectionModal = ({ show, onHide, darkMode, setCustomDates }) => {
+const DateSelectionModal = ({ show, closeModal, closeModalCancel, darkMode, setCustomDates }) => {
   const [dataInicial, setDataInicial] = useState(
     new Date().toISOString().split("T")[0]
   );
@@ -18,13 +18,14 @@ const DateSelectionModal = ({ show, onHide, darkMode, setCustomDates }) => {
     new Date().toISOString().split("T")[0]
   );
   const [error, setError] = useState("");
-  const [tipeSelectFilterDate, setTipeSelectFilterDate] = useState("Data de Início");
+  const [tipeSelectFilterDate, setTipeSelectFilterDate] =
+    useState("Data de Início");
 
   const handleModalClose = () => {
     setDataInicial("");
     setDataFinal("");
     setError("");
-    onHide();
+    closeModalCancel();
   };
 
   const handleSendCustomDates = () => {
@@ -32,11 +33,12 @@ const DateSelectionModal = ({ show, onHide, darkMode, setCustomDates }) => {
       setError("Por favor, preencha as datas.");
     } else {
       setError("");
+      setDataInicial("");
+      setDataFinal("");
       setCustomDates(dataInicial, dataFinal, tipeSelectFilterDate);
-      handleModalClose();
+      closeModal();
     }
   };
-
 
   const checkboxStyle = {
     backgroundColor: darkMode ? "#4A4A4A" : "#7A7A7A",
@@ -44,7 +46,9 @@ const DateSelectionModal = ({ show, onHide, darkMode, setCustomDates }) => {
   };
 
   return (
-    <Modal show={show} onHide={onHide} centered>
+    <Modal show={show} 
+      onHide={handleModalClose} 
+      centered>
       <ModalHeader
         closeButton
         style={{
@@ -69,11 +73,14 @@ const DateSelectionModal = ({ show, onHide, darkMode, setCustomDates }) => {
           border: "none",
         }}
       >
-        <Col md={12} style={{
-          display: "flex",
-          justifyContent: "center",
-          margin: "1rem 0rem 2rem 0rem",
-        }} >
+        <Col
+          md={12}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            margin: "1rem 0rem 2rem 0rem",
+          }}
+        >
           <div className="form-check form-check-inline">
             <input
               className="form-check-input"
@@ -84,7 +91,9 @@ const DateSelectionModal = ({ show, onHide, darkMode, setCustomDates }) => {
               onChange={() => {
                 setTipeSelectFilterDate("Data de Início");
               }}
-              style={ tipeSelectFilterDate === "Data de Início"? checkboxStyle : {}}
+              style={
+                tipeSelectFilterDate === "Data de Início" ? checkboxStyle : {}
+              }
             />
             <label
               className="form-check-label"
@@ -104,7 +113,9 @@ const DateSelectionModal = ({ show, onHide, darkMode, setCustomDates }) => {
               onChange={() => {
                 setTipeSelectFilterDate("Data de Término");
               }}
-              style={ tipeSelectFilterDate === "Data de Término" ? checkboxStyle : {}}
+              style={
+                tipeSelectFilterDate === "Data de Término" ? checkboxStyle : {}
+              }
             />
             <label
               className="form-check-label"
@@ -115,7 +126,7 @@ const DateSelectionModal = ({ show, onHide, darkMode, setCustomDates }) => {
             </label>
           </div>
         </Col>
-        <div style={{ paddingBottom: '1rem' }}>
+        <div style={{ paddingBottom: "1rem" }}>
           <Typography
             variant="subtitle1"
             style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}

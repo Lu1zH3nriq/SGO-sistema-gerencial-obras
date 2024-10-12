@@ -158,12 +158,20 @@ const PesquisarClienteModal = ({ visible, setVisible, setCliente }) => {
   return (
     <Container>
       <Modal
-        size="lg"
+        size="xl"
         isOpen={visible}
         toggle={() => setVisible(false)}
         centered
       >
-        <ModalHeader toggle={() => setVisible(false)} style={modalStyle}>
+        <ModalHeader
+          toggle={() => setVisible(false)}
+          style={{
+            ...modalStyle,
+            borderBottom: darkMode
+              ? "1px solid rgba(255, 255, 255, 0.2)"
+              : "1px solid rgba(52, 58, 64, 0.2)",
+          }}
+        >
           Pesquisar Cliente
         </ModalHeader>
         <ModalBody

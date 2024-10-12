@@ -47,15 +47,21 @@ const CadastrarEquipamentoModal = ({
       ...values,
       obraId: obraSelecionada ? obraSelecionada.id : null,
       funcionarioId: funcionarioSelecionado ? funcionarioSelecionado.id : null,
-      responsavel: funcionarioSelecionado ? funcionarioSelecionado.nome : null,
+      responsavel: funcionarioSelecionado ? funcionarioSelecionado.nome : '',
       obraAlocado: obraSelecionada ? obraSelecionada.nome : null,
     };
 
     delete _equipamento.obra;
-    delete _equipamento.responsavel;
 
     if (_equipamento.dataAlocacao === "--") {
       _equipamento.dataAlocacao = null;
+    }
+
+    if(_equipamento.status === "Disponível") {
+      _equipamento.obraId = null;
+      _equipamento.obraAlocado = null;
+      _equipamento.funcionarioId = null;
+      _equipamento.responsavel = null;
     }
 
     if (equipamento) {
@@ -109,6 +115,8 @@ const CadastrarEquipamentoModal = ({
           setVisible(false);
         });
     }
+    setFuncionarioSelecionado(null);
+    setObraSelecionada(null);
   };
 
   const toggleModal = () => {
@@ -161,7 +169,7 @@ const CadastrarEquipamentoModal = ({
       : "--",
     derivado: equipamento?.derivado || "Compra de Equipamento",
     obra: obraSelecionada?.nome || null,
-    responsavel: funcionarioSelecionado?.nome || null,
+    responsavel: funcionarioSelecionado?.nome || '',
   };
 
   // Adicionando validação com Yup
@@ -173,7 +181,8 @@ const CadastrarEquipamentoModal = ({
 
   useEffect(() => {
     const getObra = async (obraId) => {
-      axios.get(`${URL_API}/api/obras/obra?id=${obraId}`)
+      axios
+        .get(`${URL_API}/api/obras/obra?id=${obraId}`)
         .then((response) => {
           setObraSelecionada(response.data || null);
         })
@@ -183,7 +192,8 @@ const CadastrarEquipamentoModal = ({
         });
     };
     const getFuncionario = async (funcionarioId) => {
-      axios.get(`${URL_API}/api/funcionarios/funcionario?id=${funcionarioId}`)
+      axios
+        .get(`${URL_API}/api/funcionarios/funcionario?id=${funcionarioId}`)
         .then((response) => {
           setFuncionarioSelecionado(response.data || null);
         })
@@ -207,14 +217,22 @@ const CadastrarEquipamentoModal = ({
 
   return (
     <Container>
-      <Modal size="lg" isOpen={visible} toggle={toggleModal} centered>
-        <ModalHeader toggle={toggleModal} style={modalStyle}>
+      <Modal size="xl" isOpen={visible} toggle={toggleModal} centered>
+        <ModalHeader
+          toggle={toggleModal}
+          style={{
+            ...modalStyle,
+            borderBottom: darkMode
+              ? "1px solid rgba(255, 255, 255, 0.2)"
+              : "1px solid rgba(52, 58, 64, 0.2)",
+          }}
+        >
           {!equipamento ? "Cadastrar Equipamento" : "Editar Equipamento"}
         </ModalHeader>
         <ModalBody style={formStyle}>
           <Formik
             initialValues={initialValues}
-            validationSchema={validationSchema} // Adicionando validação ao Formik
+            validationSchema={validationSchema} 
             onSubmit={handleSubmit}
           >
             {({ setFieldValue, values, errors, touched }) => (
@@ -226,7 +244,9 @@ const CadastrarEquipamentoModal = ({
                       <Field
                         type="text"
                         name="nome"
-                        className={`form-control ${errors.nome && touched.nome ? 'is-invalid' : ''}`}
+                        className={`form-control ${
+                          errors.nome && touched.nome ? "is-invalid" : ""
+                        }`}
                         style={inputStyle}
                         onChange={(e) => {
                           setFieldValue("nome", e.target.value);
@@ -244,7 +264,11 @@ const CadastrarEquipamentoModal = ({
                       <Field
                         type="text"
                         name="identificador"
-                        className={`form-control ${errors.identificador && touched.identificador ? 'is-invalid' : ''}`}
+                        className={`form-control ${
+                          errors.identificador && touched.identificador
+                            ? "is-invalid"
+                            : ""
+                        }`}
                         style={inputStyle}
                         onChange={(e) => {
                           setFieldValue("identificador", e.target.value);
@@ -252,7 +276,9 @@ const CadastrarEquipamentoModal = ({
                         disabled={userType === 2}
                       />
                       {errors.identificador && touched.identificador ? (
-                        <div className="invalid-feedback">{errors.identificador}</div>
+                        <div className="invalid-feedback">
+                          {errors.identificador}
+                        </div>
                       ) : null}
                     </div>
                   </Col>
@@ -279,7 +305,9 @@ const CadastrarEquipamentoModal = ({
                       <Field
                         as="select"
                         name="status"
-                        className={`form-control ${errors.status && touched.status ? 'is-invalid' : ''}`}
+                        className={`form-control ${
+                          errors.status && touched.status ? "is-invalid" : ""
+                        }`}
                         style={inputStyle}
                         onChange={(e) => {
                           setFieldValue("status", e.target.value);
@@ -408,7 +436,9 @@ const CadastrarEquipamentoModal = ({
       <PesquisarObraModal
         visible={pesquisarObraVisible}
         setVisible={setPesquisarObraVisible}
-        onSelectObra={(obra)=>{ setObraSelecionada(obra); }}
+        onSelectObra={(obra) => {
+          setObraSelecionada(obra);
+        }}
       />
       <PesquisarFuncionarioModal
         visible={pesquisarFuncionarioVisible}

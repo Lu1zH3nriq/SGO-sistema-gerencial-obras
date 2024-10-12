@@ -19,6 +19,7 @@ const CadastrarMaterialModal = ({
   setVisible,
   material,
   getMaterials,
+  materialCadastrado
 }) => {
   const URL_API = process.env.REACT_APP_URL_API;
   const [loading, setLoading] = useState(false);
@@ -34,9 +35,7 @@ const CadastrarMaterialModal = ({
   const handleSubmit = (values) => {
     setLoading(true);
 
-    const data = {
-      ...values,
-    };
+    const data = { ...values };
 
     if (data.dataValidade === "--") {
       data.dataValidade = null;
@@ -44,17 +43,13 @@ const CadastrarMaterialModal = ({
 
     if (material) {
       axios
-        .put(
-          `${URL_API}/api/materiais/alterarMaterial?id=${material.id}`,
-          data
-        )
+        .put(`${URL_API}/api/materiais/alterarMaterial?id=${material.id}`, data)
         .then(() => {
           setConfirmacaoVisible({
             visible: true,
             message: "Material editado com sucesso!",
             sucesso: true,
           });
-
           getMaterials();
         })
         .catch((error) => {
@@ -72,13 +67,14 @@ const CadastrarMaterialModal = ({
     } else {
       axios
         .post(`${URL_API}/api/materiais/novoMaterial`, data)
-        .then(() => {
+        .then((res) => {
           setConfirmacaoVisible({
             visible: true,
             message: "Material cadastrado com sucesso!",
             sucesso: true,
           });
-
+          console.log("MATERIAL CADASTRADO: ", res.data)
+          materialCadastrado(res.data);
           getMaterials();
         })
         .catch((error) => {
@@ -141,23 +137,31 @@ const CadastrarMaterialModal = ({
     dataUltimaCompra: material?.dataUltimaCompra
       ? new Date(material?.dataUltimaCompra).toISOString().split("T")[0]
       : new Date().toISOString().split("T")[0],
-      dataValidade: material?.dataValidade
+    dataValidade: material?.dataValidade
       ? new Date(material?.dataValidade).toISOString().split("T")[0]
       : "--",
-      numeroNotaFiscal: material?.numeroNotaFiscal || "",
+    numeroNotaFiscal: material?.numeroNotaFiscal || "",
   };
 
   return (
     <>
       <Modal size="lg" isOpen={visible} toggle={toggleModal} centered>
-        <ModalHeader toggle={toggleModal} style={modalStyle}>
+        <ModalHeader
+          toggle={toggleModal}
+          style={{
+            ...modalStyle,
+            borderBottom: darkMode
+              ? "1px solid rgba(255, 255, 255, 0.2)"
+              : "1px solid rgba(52, 58, 64, 0.2)",
+          }}
+        >
           {!material ? "Cadastrar Material" : "Editar Material"}
         </ModalHeader>
         <ModalBody style={formStyle}>
           <Formik initialValues={initialValues} onSubmit={handleSubmit}>
             {({ setFieldValue, values }) => (
               <Form style={formStyle}>
-                <Row form>
+                <Row>
                   <Col md={6}>
                     <div className="form-group">
                       <label htmlFor="nome">Nome</label>
@@ -166,9 +170,7 @@ const CadastrarMaterialModal = ({
                         name="nome"
                         className="form-control"
                         style={inputStyle}
-                        onChange={(e) => {
-                          setFieldValue("nome", e.target.value);
-                        }}
+                        onChange={(e) => setFieldValue("nome", e.target.value)}
                       />
                     </div>
                   </Col>
@@ -180,25 +182,25 @@ const CadastrarMaterialModal = ({
                         name="codigo"
                         className="form-control"
                         style={inputStyle}
-                        onChange={(e) => {
-                          setFieldValue("codigo", e.target.value);
-                        }}
+                        onChange={(e) => setFieldValue("codigo", e.target.value)}
                       />
                     </div>
                   </Col>
                 </Row>
-                <Row form>
+                <Row>
                   <Col md={6}>
                     <div className="form-group">
-                      <label htmlFor="principalFornecedor">Principal Fornecedor</label>
+                      <label htmlFor="principalFornecedor">
+                        Principal Fornecedor
+                      </label>
                       <Field
                         type="text"
                         name="principalFornecedor"
                         className="form-control"
                         style={inputStyle}
-                        onChange={(e) => {
-                          setFieldValue("principalFornecedor", e.target.value);
-                        }}
+                        onChange={(e) =>
+                          setFieldValue("principalFornecedor", e.target.value)
+                        }
                       />
                     </div>
                   </Col>
@@ -210,14 +212,14 @@ const CadastrarMaterialModal = ({
                         name="unidadeMedida"
                         className="form-control"
                         style={inputStyle}
-                        onChange={(e) => {
-                          setFieldValue("unidadeMedida", e.target.value);
-                        }}
+                        onChange={(e) =>
+                          setFieldValue("unidadeMedida", e.target.value)
+                        }
                       />
                     </div>
                   </Col>
                 </Row>
-                <Row form>
+                <Row>
                   <Col md={6}>
                     <div className="form-group">
                       <label htmlFor="dataUltimaCompra">Data Última Compra</label>
@@ -226,9 +228,9 @@ const CadastrarMaterialModal = ({
                         name="dataUltimaCompra"
                         className="form-control"
                         style={inputStyle}
-                        onChange={(e) => {
-                          setFieldValue("dataUltimaCompra", e.target.value);
-                        }}
+                        onChange={(e) =>
+                          setFieldValue("dataUltimaCompra", e.target.value)
+                        }
                       />
                     </div>
                   </Col>
@@ -240,14 +242,14 @@ const CadastrarMaterialModal = ({
                         name="dataValidade"
                         className="form-control"
                         style={inputStyle}
-                        onChange={(e) => {
-                          setFieldValue("dataValidade", e.target.value);
-                        }}
+                        onChange={(e) =>
+                          setFieldValue("dataValidade", e.target.value)
+                        }
                       />
                     </div>
                   </Col>
                 </Row>
-                <Row form>
+                <Row>
                   <Col md={6}>
                     <div className="form-group">
                       <label htmlFor="numeroNotaFiscal">Nota Fiscal</label>
@@ -256,14 +258,13 @@ const CadastrarMaterialModal = ({
                         name="numeroNotaFiscal"
                         className="form-control"
                         style={inputStyle}
-                        onChange={(e) => {
-                          setFieldValue("numeroNotaFiscal", e.target.value);
-                        }}
+                        onChange={(e) =>
+                          setFieldValue("numeroNotaFiscal", e.target.value)
+                        }
                       />
                     </div>
                   </Col>
                 </Row>
-                {/* Adicione mais campos do formulário aqui */}
                 <ModalFooter style={modalStyle}>
                   <Button
                     color="secondary"
@@ -272,11 +273,7 @@ const CadastrarMaterialModal = ({
                   >
                     Fechar
                   </Button>
-                  <Button
-                    color="primary"
-                    type="submit"
-                    style={saveButtonStyle}
-                  >
+                  <Button color="primary" type="submit" style={saveButtonStyle}>
                     {loading ? <Spinner size="sm" color="light" /> : "Salvar"}
                   </Button>
                 </ModalFooter>

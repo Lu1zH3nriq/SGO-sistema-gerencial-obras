@@ -29,7 +29,7 @@ import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
 import axios from "axios";
 import { formatarData } from "components/utils/utilsMask.js";
 
-const Equipamentos = () => {
+const EquipamentosComum = () => {
   const URL_API = process.env.REACT_APP_URL_API;
   const [equipamentos, setEquipamentos] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -216,7 +216,7 @@ const Equipamentos = () => {
     <Layout rotaAtual="Equipamentos">
       <Container
         style={{
-          marginTop: "8vh",
+          marginTop: "2vh",
         }}
       >
         {/* Linha com botão "Adicionar" e campo de pesquisa */}
@@ -627,4 +627,4 @@ const Equipamentos = () => {
   );
 };
 
-export default Equipamentos;
+export default EquipamentosComum;

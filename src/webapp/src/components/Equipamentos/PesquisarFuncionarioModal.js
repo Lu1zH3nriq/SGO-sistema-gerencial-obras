@@ -25,7 +25,11 @@ import { FaCheckSquare } from "react-icons/fa";
 
 import CadastrarFuncionariosModal from "../Funcionarios/CadastrarFuncionariosModal.js";
 
-const PesquisarFuncionarioModal = ({ visible, setVisible, onSelectFuncionario }) => {
+const PesquisarFuncionarioModal = ({
+  visible,
+  setVisible,
+  onSelectFuncionario,
+}) => {
   const URL_API = process.env.REACT_APP_URL_API;
   const [resultados, setResultados] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -134,19 +138,19 @@ const PesquisarFuncionarioModal = ({ visible, setVisible, onSelectFuncionario })
 
   const tableHeaderStyle = {
     textAlign: "center",
-    backgroundColor: darkMode ? "#4A4A4A" : "#F8F9FA", 
-    color: darkMode ? "#FFFFFF" : "#4A4A4A", 
+    backgroundColor: darkMode ? "#4A4A4A" : "#F8F9FA",
+    color: darkMode ? "#FFFFFF" : "#4A4A4A",
   };
 
   const tableCellStyle = {
     textAlign: "start",
-    backgroundColor: darkMode ? "#535353" : "#FFFFFF", 
+    backgroundColor: darkMode ? "#535353" : "#FFFFFF",
     padding: "0.3rem 1rem 0.3rem 1rem",
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
-    color: darkMode ? "#FFFFFF" : "#4A4A4A", 
-    fontWeight: "normal", 
+    color: darkMode ? "#FFFFFF" : "#4A4A4A",
+    fontWeight: "normal",
   };
 
   const checkboxStyle = {
@@ -157,12 +161,20 @@ const PesquisarFuncionarioModal = ({ visible, setVisible, onSelectFuncionario })
   return (
     <Container>
       <Modal
-        size="lg"
+        size="xl"
         isOpen={visible}
         toggle={() => setVisible(false)}
         centered
       >
-        <ModalHeader toggle={() => setVisible(false)} style={modalStyle}>
+        <ModalHeader
+          toggle={() => setVisible(false)}
+          style={{
+            ...modalStyle,
+            borderBottom: darkMode
+              ? "1px solid rgba(255, 255, 255, 0.2)"
+              : "1px solid rgba(52, 58, 64, 0.2)",
+          }}
+        >
           Pesquisar Funcionario
         </ModalHeader>
         <ModalBody
@@ -409,10 +421,8 @@ const PesquisarFuncionarioModal = ({ visible, setVisible, onSelectFuncionario })
                     <td style={tableCellStyle}>
                       {formatarCPF(funcionario.cpf) || "--"}
                     </td>
-                    <td style={tableCellStyle} >
-                      <div
-                        onClick={() => handleSelect(funcionario)}
-                      >
+                    <td style={tableCellStyle}>
+                      <div onClick={() => handleSelect(funcionario)}>
                         <FaCheckSquare
                           size={20}
                           color={darkMode ? "#FFFFFF" : "#7A7A7A"}
