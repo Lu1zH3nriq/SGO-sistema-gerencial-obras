@@ -14,7 +14,7 @@ import {
   ModalBody,
   ModalFooter,
 } from "reactstrap";
-import { FaChevronLeft } from "react-icons/fa";
+import { FaChevronLeft, FaTrash } from "react-icons/fa";
 import Layout from "../../components/layout/Layout.js";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -25,6 +25,7 @@ import {
   formatarData,
 } from "../../components/utils/utilsMask.js";
 import AdicionarMaterial from "./AdicionarMaterial.js";
+import AdicionarEquipamentos from "./AdicionarEquipamentos.js";
 
 const GerenciarObra = () => {
   const { id } = useParams();
@@ -44,6 +45,7 @@ const GerenciarObra = () => {
   const [adicionarMaterialModal, setAdicionarMaterialModal] = useState({
     state: false,
   });
+  const [AdicionarEquipamentoModal, setAdicionarEquipamentoModal] = useState(false)
 
   async function getObra() {
     axios
@@ -80,7 +82,7 @@ const GerenciarObra = () => {
   }
   async function getMateriaisDaObra() {
     axios
-      .get(`${URL_API}/api/materiais/buscaMateriaisPorObra?obraId=${id}`)
+      .get(`${URL_API}/api/obraMateriais/materiaisPorObra?ObraId=${id}`)
       .then((response) => {
         setMateriais(response.data);
       })
@@ -176,6 +178,10 @@ const GerenciarObra = () => {
                   color="link"
                   className="text-decoration-none"
                   style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                  onClick={()=>{
+                    setAdicionarEquipamentoModal(true);
+                  }}
+                  title="Alocar Equipamento"
                 >
                   Equipamentos
                 </Button>
@@ -183,6 +189,7 @@ const GerenciarObra = () => {
                   color="link"
                   className="text-decoration-none"
                   style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                  title="Alocar Funcionário"
                 >
                   Funcionários
                 </Button>
@@ -196,6 +203,7 @@ const GerenciarObra = () => {
                       state: true,
                     });
                   }}
+                  title="Alocar Material"
                 >
                   Materiais
                 </Button>
@@ -683,21 +691,15 @@ const GerenciarObra = () => {
                 </Col>
               </Row>
 
-              {/* Equipamentos e Materiais */}
               <Row className="mb-4 g-0">
                 {/* Equipamentos */}
-                <Col
-                  xs={12}
-                  sm={6}
-                  md={6}
-                  className="mb-1"
-                  style={{ overflowY: "auto", maxHeight: "60vh" }}
-                >
+                <Col xs={12} sm={6} md={6} className="mb-1">
                   <Card
                     style={{
                       backgroundColor: darkMode ? "#676767" : "#FFFFFF",
                       margin: "0.5rem",
-                      height: "90%",
+                      height: "400px", 
+                      overflowY: "auto", 
                       borderRadius: "0.5rem",
                       boxShadow: darkMode
                         ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
@@ -720,8 +722,6 @@ const GerenciarObra = () => {
                         style={{
                           color: darkMode ? "#FFFFFF" : "#343A40",
                           padding: "1rem 0rem 0.5rem 0rem",
-                          overflowY: "auto",
-                          maxHeight: "40vh",
                         }}
                       >
                         {equipamentos.length === 0 ? (
@@ -772,9 +772,9 @@ const GerenciarObra = () => {
                                   </div>
                                 </div>
                                 <div
-                                  style={{ cursor: "pointer", color: "red" }}
+                                  style={{ cursor: "pointer", color: darkMode ? "#FFFFFF" : "red" }}
                                 >
-                                  🗑️
+                                  <FaTrash size={15} title="Remover equipamento"/>
                                 </div>
                               </div>
                             </div>
@@ -786,18 +786,13 @@ const GerenciarObra = () => {
                 </Col>
 
                 {/* Materiais */}
-                <Col
-                  xs={12}
-                  sm={6}
-                  md={6}
-                  className="mb-1"
-                  style={{ maxHeight: "60vh", overflowY: "auto" }}
-                >
+                <Col xs={12} sm={6} md={6} className="mb-1">
                   <Card
                     style={{
                       backgroundColor: darkMode ? "#676767" : "#FFFFFF",
                       margin: "0.5rem",
-                      height: "90%",
+                      height: "400px", 
+                      overflowY: "auto", 
                       borderRadius: "0.5rem",
                       boxShadow: darkMode
                         ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
@@ -823,7 +818,11 @@ const GerenciarObra = () => {
                         }}
                       >
                         <table
-                          style={{ width: "100%", borderCollapse: "collapse" }}
+                          style={{
+                            width: "100%",
+                            borderCollapse: "collapse",
+                            textAlign: "center",
+                          }}
                         >
                           <thead>
                             <tr>
@@ -831,7 +830,6 @@ const GerenciarObra = () => {
                                 style={{
                                   borderBottom: "1px solid #CCCCCC",
                                   padding: "0.5rem",
-                                  textAlign: "left",
                                 }}
                               >
                                 Material
@@ -840,7 +838,6 @@ const GerenciarObra = () => {
                                 style={{
                                   borderBottom: "1px solid #CCCCCC",
                                   padding: "0.5rem",
-                                  textAlign: "left",
                                 }}
                               >
                                 Quantidade
@@ -849,7 +846,6 @@ const GerenciarObra = () => {
                                 style={{
                                   borderBottom: "1px solid #CCCCCC",
                                   padding: "0.5rem",
-                                  textAlign: "left",
                                 }}
                               >
                                 Valor
@@ -858,7 +854,6 @@ const GerenciarObra = () => {
                                 style={{
                                   borderBottom: "1px solid #CCCCCC",
                                   padding: "0.5rem",
-                                  textAlign: "left",
                                 }}
                               >
                                 Data
@@ -867,7 +862,6 @@ const GerenciarObra = () => {
                                 style={{
                                   borderBottom: "1px solid #CCCCCC",
                                   padding: "0.5rem",
-                                  textAlign: "left",
                                 }}
                               >
                                 Ações
@@ -898,7 +892,7 @@ const GerenciarObra = () => {
                                       borderBottom: "1px solid #CCCCCC",
                                     }}
                                   >
-                                    {material.quantidade}
+                                    {material.ObraMateriais.quantidade}
                                   </td>
                                   <td
                                     style={{
@@ -906,7 +900,7 @@ const GerenciarObra = () => {
                                       borderBottom: "1px solid #CCCCCC",
                                     }}
                                   >
-                                    {material.valor}
+                                  {material.ObraMateriais.valor},00
                                   </td>
                                   <td
                                     style={{
@@ -914,17 +908,21 @@ const GerenciarObra = () => {
                                       borderBottom: "1px solid #CCCCCC",
                                     }}
                                   >
-                                    {material.data}
+                                    {material.ObraMateriais?.dataAlocacao
+                                      ? new Date(
+                                          material.ObraMateriais.dataAlocacao
+                                        ).toLocaleDateString()
+                                      : "--"}
                                   </td>
                                   <td
                                     style={{
                                       padding: "0.5rem",
                                       borderBottom: "1px solid #CCCCCC",
                                       cursor: "pointer",
-                                      color: "red",
+                                      color: darkMode ? "#FFFFFF" : "red",
                                     }}
                                   >
-                                    🗑️
+                                    <FaTrash size={15} title="Remover material"/>
                                   </td>
                                 </tr>
                               ))
@@ -1029,19 +1027,8 @@ const GerenciarObra = () => {
                                   </div>
                                 )}
 
-                                <div style={{ textAlign: "right" }}>
-                                  <button
-                                    onClick={() => {}}
-                                    style={{
-                                      background: "none",
-                                      border: "none",
-                                      color: darkMode ? "#FFFFFF" : "#343A40",
-                                      cursor: "pointer",
-                                      fontSize: "1.2rem",
-                                    }}
-                                  >
-                                    -
-                                  </button>
+                                <div style={{ textAlign: "right", cursor: "pointer" }}>
+                                  <FaTrash color={darkMode ?  "white" : "red"}  size={15} title="Remover funcionário" />
                                 </div>
                               </Card>
                             </Col>
@@ -1093,6 +1080,13 @@ const GerenciarObra = () => {
           }
           obra={obra}
         />
+
+        <AdicionarEquipamentos 
+          visible={AdicionarEquipamentoModal}
+          setVisible={()=>{setAdicionarEquipamentoModal(false)}}
+          obra={obra}
+        />
+
       </Container>
     </Layout>
   );

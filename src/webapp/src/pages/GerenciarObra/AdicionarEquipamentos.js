@@ -22,7 +22,7 @@ import { FaCheckSquare } from "react-icons/fa";
 import CadastrarMaterialModal from "components/Materiais/CadastrarMaterialModal.js";
 import CurrencyInput from "react-currency-input-field";
 
-const AdicionarMaterial = ({ visible, setVisible, obra }) => {
+const AdicionarEquipamentos = ({ visible, setVisible, obra }) => {
   const URL_API = process.env.REACT_APP_URL_API;
   const [resultados, setResultados] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -121,16 +121,6 @@ const AdicionarMaterial = ({ visible, setVisible, obra }) => {
       });
   };
 
-  const modalStyle = {
-    backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
-    color: darkMode ? "#FFFFFF" : "#000000",
-  };
-
-  const saveButtonStyle = {
-    backgroundColor: darkMode ? "#424242" : "#7A7A7A",
-    color: "#FFFFFF",
-    border: "none",
-  };
 
   return (
     <Container>
@@ -156,11 +146,19 @@ const AdicionarMaterial = ({ visible, setVisible, obra }) => {
             setQuantidadeMaterial(0);
             setLoadingAddMaterial(false);
           }}
-          style={{ ...modalStyle }}
+          style={{
+            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
+            color: darkMode ? "#FFFFFF" : "#000000",
+          }}
         >
           Pesquisar Material
         </ModalHeader>
-        <ModalBody style={modalStyle}>
+        <ModalBody
+          style={{
+            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
+            color: darkMode ? "#FFFFFF" : "#000000",
+          }}
+        >
           <Formik initialValues={searchValues} onSubmit={handleSearch}>
             {() => (
               <Form>
@@ -205,7 +203,11 @@ const AdicionarMaterial = ({ visible, setVisible, obra }) => {
                   style={{ marginBottom: "1rem" }}
                 >
                   <Col className="d-flex justify-content-end">
-                    <Button type="submit" style={saveButtonStyle}>
+                    <Button type="submit" style={{
+                         backgroundColor: darkMode ? "#424242" : "#7A7A7A",
+                         color: "#FFFFFF",
+                         border: "none",
+                    }}>
                       {loading ? (
                         <Spinner size="sm" color="light" />
                       ) : (
@@ -215,7 +217,11 @@ const AdicionarMaterial = ({ visible, setVisible, obra }) => {
                   </Col>
                   <Col>
                     <Button
-                      style={saveButtonStyle}
+                      style={{
+                        backgroundColor: darkMode ? "#424242" : "#7A7A7A",
+                        color: "#FFFFFF",
+                        border: "none",
+                      }}
                       onClick={() => setCadastrarMaterialModal(true)}
                     >
                       Cadastrar
@@ -337,7 +343,12 @@ const AdicionarMaterial = ({ visible, setVisible, obra }) => {
             </tbody>
           </Table>
         </ModalBody>
-        <ModalFooter style={modalStyle}>
+        <ModalFooter
+          style={{
+            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
+            color: darkMode ? "#FFFFFF" : "#000000",
+          }}
+        >
           <Button
             onClick={() => {
               setVisible(false);
@@ -392,11 +403,19 @@ const AdicionarMaterial = ({ visible, setVisible, obra }) => {
             setQuantidadeMaterial(0);
             setLoadingAddMaterial(false);
           }}
-          style={{ ...modalStyle }}
+          style={{
+            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
+            color: darkMode ? "#FFFFFF" : "#000000",
+          }}
         >
           Selecionar Quantidade
         </ModalHeader>
-        <ModalBody style={modalStyle}>
+        <ModalBody
+          style={{
+            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
+            color: darkMode ? "#FFFFFF" : "#000000",
+          }}
+        >
           <FormGroup>
             <Label for="nomeProduto">Nome</Label>
             <Input
@@ -442,7 +461,12 @@ const AdicionarMaterial = ({ visible, setVisible, obra }) => {
             />
           </FormGroup>
         </ModalBody>
-        <ModalFooter style={modalStyle}>
+        <ModalFooter
+          style={{
+            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
+            color: darkMode ? "#FFFFFF" : "#000000",
+          }}
+        >
           <Button
             color="primary"
             style={{
@@ -466,4 +490,4 @@ const AdicionarMaterial = ({ visible, setVisible, obra }) => {
   );
 };
 
-export default AdicionarMaterial;
+export default AdicionarEquipamentos;
