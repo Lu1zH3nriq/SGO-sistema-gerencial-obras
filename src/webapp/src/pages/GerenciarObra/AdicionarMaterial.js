@@ -20,8 +20,9 @@ import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
 import { useUIContextController } from "../../context/index.js";
 import { FaCheckSquare } from "react-icons/fa";
 import CadastrarMaterialModal from "components/Materiais/CadastrarMaterialModal.js";
+import CurrencyInput from "react-currency-input-field";
 
-const AdicionarMaterial = ({ visible, setVisible }) => {
+const AdicionarMaterial = ({ visible, setVisible, obra }) => {
   const URL_API = process.env.REACT_APP_URL_API;
   const [resultados, setResultados] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -44,6 +45,8 @@ const AdicionarMaterial = ({ visible, setVisible }) => {
   });
 
   const [loadingAddMaterial, setLoadingAddMaterial] = useState(false);
+  const [quantidadeMaterial, setQuantidadeMaterial] = useState(0);
+  const [valorMaterial, setValorMaterial] = useState(0);
 
   const handleSearch = () => {
     setLoading(true);
@@ -70,10 +73,32 @@ const AdicionarMaterial = ({ visible, setVisible }) => {
       .finally(() => setLoading(false));
   };
 
-  const handleSelect = (produto) => {
-    setSearchValues({ nome: "", codigo: "" });
-    setResultados([]);
-    setVisible(false);
+  const handleSelect = () => {
+    setLoadingAddMaterial(true);
+
+    const data = {
+      obraId: obra.id,
+      materialId: selectQuantidadeModal.produto.id,
+      quantidade: quantidadeMaterial,
+      valor: 0,
+      dataAlocacao: new Date(),
+      nomeMaterial: selectQuantidadeModal.produto.nome,
+      nomeObra: obra.nome,
+    };
+
+    console.log("DATA : ", data);
+
+    // axios.post(`${URL_API}/api/obraMateriais/addMaterialObra, `)
+    // .then((res)=>{
+
+    // })
+    // .catch((error)=>{
+    //   console.log(error)
+    // });
+
+    // setSearchValues({ nome: "", codigo: "" });
+    // setResultados([]);
+    // setVisible(false);
   };
 
   const modalStyle = {
@@ -217,7 +242,10 @@ const AdicionarMaterial = ({ visible, setVisible }) => {
                   <tr
                     key={index}
                     onClick={() =>
-                      setSelectQuantidadeModal({ state: true, produto })
+                      setSelectQuantidadeModal({
+                        state: true,
+                        produto: produto,
+                      })
                     }
                     style={{ cursor: "pointer" }}
                   >
@@ -350,7 +378,28 @@ const AdicionarMaterial = ({ visible, setVisible }) => {
           </FormGroup>
           <FormGroup>
             <Label for="quantidade">Quantidade</Label>
-            <Input type="number" id="quantidade" />
+            <Input
+              type="number"
+              id="quantidade"
+              value={quantidadeMaterial}
+              onChange={(e) => {
+                setQuantidadeMaterial(e.target.value);
+              }}
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label for="valor">Valor do Material</Label>
+            <CurrencyInput
+              id="valor"
+              name="valor"
+              placeholder="R$0,00"
+              decimalsLimit={2}
+              value={quantidadeMaterial}
+              onValueChange={(value) => setQuantidadeMaterial(value)}
+              prefix="R$"
+              decimalSeparator=","
+              groupSeparator="."
+            />
           </FormGroup>
         </ModalBody>
         <ModalFooter style={modalStyle}>
@@ -361,8 +410,11 @@ const AdicionarMaterial = ({ visible, setVisible }) => {
               color: darkMode ? "#FFFFFF" : "#343A40",
               border: "none",
             }}
+            onClick={() => {
+              handleSelect();
+            }}
           >
-            {true ? (
+            {loadingAddMaterial ? (
               <Spinner size="sm" color="light" />
             ) : (
               "Adicionar"

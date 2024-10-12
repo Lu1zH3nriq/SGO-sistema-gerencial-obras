@@ -1091,6 +1091,7 @@ const GerenciarObra = () => {
               state: false,
             })
           }
+          obra={obra}
         />
       </Container>
     </Layout>
