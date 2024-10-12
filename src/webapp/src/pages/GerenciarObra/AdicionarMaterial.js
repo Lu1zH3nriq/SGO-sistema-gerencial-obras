@@ -21,7 +21,7 @@ import { useUIContextController } from "../../context/index.js";
 import { FaCheckSquare } from "react-icons/fa";
 import CadastrarMaterialModal from "components/Materiais/CadastrarMaterialModal.js";
 
-const PesquisarProdutoModal = ({ visible, setVisible }) => {
+const AdicionarMaterial = ({ visible, setVisible }) => {
   const URL_API = process.env.REACT_APP_URL_API;
   const [resultados, setResultados] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -42,6 +42,8 @@ const PesquisarProdutoModal = ({ visible, setVisible }) => {
     state: false,
     produto: {},
   });
+
+  const [loadingAddMaterial, setLoadingAddMaterial] = useState(false);
 
   const handleSearch = () => {
     setLoading(true);
@@ -69,7 +71,7 @@ const PesquisarProdutoModal = ({ visible, setVisible }) => {
   };
 
   const handleSelect = (produto) => {
-    setSearchValues({ nome: "", categoria: "", codigo: "" });
+    setSearchValues({ nome: "", codigo: "" });
     setResultados([]);
     setVisible(false);
   };
@@ -92,24 +94,29 @@ const PesquisarProdutoModal = ({ visible, setVisible }) => {
         isOpen={visible}
         toggle={() => {
           setVisible(false);
-          setSearchValues({ nome: "", categoria: "", codigo: "" });
+          setSearchValues({ nome: "", codigo: "" });
           setResultados([]);
         }}
         centered
       >
-        <ModalHeader toggle={() => setVisible(false)} style={{ ...modalStyle }}>
+        <ModalHeader
+          toggle={() => {
+            setVisible(false);
+            setSearchValues({ nome: "", codigo: "" });
+            setResultados([]);
+          }}
+          style={{ ...modalStyle }}
+        >
           Pesquisar Material
         </ModalHeader>
-        <ModalBody
-          style={{ backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF" }}
-        >
+        <ModalBody style={modalStyle}>
           <Formik initialValues={searchValues} onSubmit={handleSearch}>
             {() => (
-              <Form style={modalStyle}>
-                <Row form>
+              <Form>
+                <Row>
                   <Col md={4}>
-                    <div className="form-group">
-                      <label htmlFor="nome">Nome do Material</label>
+                    <FormGroup>
+                      <Label for="nome">Nome do Material</Label>
                       <Field
                         type="text"
                         name="nome"
@@ -122,28 +129,11 @@ const PesquisarProdutoModal = ({ visible, setVisible }) => {
                           })
                         }
                       />
-                    </div>
+                    </FormGroup>
                   </Col>
                   <Col md={4}>
-                    <div className="form-group">
-                      <label htmlFor="categoria">Categoria</label>
-                      <Field
-                        type="text"
-                        name="categoria"
-                        className="form-control"
-                        value={searchValues.categoria}
-                        onChange={(e) =>
-                          setSearchValues({
-                            ...searchValues,
-                            categoria: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                  </Col>
-                  <Col md={4}>
-                    <div className="form-group">
-                      <label htmlFor="codigo">Código do Produto</label>
+                    <FormGroup>
+                      <Label for="codigo">Código do Material</Label>
                       <Field
                         type="text"
                         name="codigo"
@@ -156,38 +146,30 @@ const PesquisarProdutoModal = ({ visible, setVisible }) => {
                           })
                         }
                       />
-                    </div>
+                    </FormGroup>
                   </Col>
                 </Row>
-                <Row>
-                  <div
-                    className="d-flex justify-content-center"
-                    style={{ marginTop: "2rem" }}
-                  >
-                    <div style={{ marginRight: "1rem" }}>
-                      <Col>
-                        <Button type="submit" style={saveButtonStyle}>
-                          {loading ? (
-                            <Spinner size="sm" color="light" />
-                          ) : (
-                            "Pesquisar"
-                          )}
-                        </Button>
-                      </Col>
-                    </div>
-                    <div>
-                      <Col>
-                        <Button
-                          style={saveButtonStyle}
-                          onClick={() => {
-                            setCadastrarMaterialModal(true);
-                          }}
-                        >
-                          Cadastrar
-                        </Button>
-                      </Col>
-                    </div>
-                  </div>
+                <Row
+                  className="d-flex justify-content-center mt-3"
+                  style={{ marginBottom: "1rem" }}
+                >
+                  <Col className="d-flex justify-content-end">
+                    <Button type="submit" style={saveButtonStyle}>
+                      {loading ? (
+                        <Spinner size="sm" color="light" />
+                      ) : (
+                        "Pesquisar"
+                      )}
+                    </Button>
+                  </Col>
+                  <Col>
+                    <Button
+                      style={saveButtonStyle}
+                      onClick={() => setCadastrarMaterialModal(true)}
+                    >
+                      Cadastrar
+                    </Button>
+                  </Col>
                 </Row>
               </Form>
             )}
@@ -198,32 +180,33 @@ const PesquisarProdutoModal = ({ visible, setVisible }) => {
             size="sm"
             bordered
             dark={darkMode}
-            style={{ marginTop: "2vh" }}
+            className="mt-2"
+            style={{ whiteSpace: "nowrap" }}
           >
             <thead>
               <tr>
-                <th style={{ textAlign: "center", verticalAlign: "middle" }}>
+                <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
                   Nome
                 </th>
-                <th style={{ textAlign: "center", verticalAlign: "middle" }}>
+                <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
                   Código
                 </th>
-                <th style={{ textAlign: "center", verticalAlign: "middle" }}>
+                <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
                   Fornecedor
                 </th>
-                <th style={{ textAlign: "center", verticalAlign: "middle" }}>
+                <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
                   Unidade de Medida
                 </th>
-                <th style={{ textAlign: "center", verticalAlign: "middle" }}>
+                <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
                   Última Compra
                 </th>
-                <th style={{ textAlign: "center", verticalAlign: "middle" }}>
+                <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
                   Validade
                 </th>
-                <th style={{ textAlign: "center", verticalAlign: "middle" }}>
+                <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
                   Nota Fiscal
                 </th>
-                <th style={{ textAlign: "center", verticalAlign: "middle" }}>
+                <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
                   Selecionar
                 </th>
               </tr>
@@ -233,36 +216,33 @@ const PesquisarProdutoModal = ({ visible, setVisible }) => {
                 resultados.map((produto, index) => (
                   <tr
                     key={index}
-                    onClick={() => {
-                      setSelectQuantidadeModal({
-                        state: true,
-                        produto: produto,
-                      });
-                    }}
+                    onClick={() =>
+                      setSelectQuantidadeModal({ state: true, produto })
+                    }
                     style={{ cursor: "pointer" }}
                   >
                     <td
-                      style={{ textAlign: "center", verticalAlign: "middle" }}
+                      style={{ textAlign: "center", paddingInline: "0.5rem" }}
                     >
                       {produto.nome}
                     </td>
                     <td
-                      style={{ textAlign: "center", verticalAlign: "middle" }}
+                      style={{ textAlign: "center", paddingInline: "0.5rem" }}
                     >
                       {produto.codigo}
                     </td>
                     <td
-                      style={{ textAlign: "center", verticalAlign: "middle" }}
+                      style={{ textAlign: "center", paddingInline: "0.5rem" }}
                     >
                       {produto.principalFornecedor}
                     </td>
                     <td
-                      style={{ textAlign: "center", verticalAlign: "middle" }}
+                      style={{ textAlign: "center", paddingInline: "0.5rem" }}
                     >
                       {produto.unidadeMedida}
                     </td>
                     <td
-                      style={{ textAlign: "center", verticalAlign: "middle" }}
+                      style={{ textAlign: "center", paddingInline: "0.5rem" }}
                     >
                       {produto.dataUltimaCompra
                         ? new Date(
@@ -271,19 +251,19 @@ const PesquisarProdutoModal = ({ visible, setVisible }) => {
                         : ""}
                     </td>
                     <td
-                      style={{ textAlign: "center", verticalAlign: "middle" }}
+                      style={{ textAlign: "center", paddingInline: "0.5rem" }}
                     >
                       {produto.dataValidade
                         ? new Date(produto.dataValidade).toLocaleDateString()
-                        : ""}
+                        : "--"}
                     </td>
                     <td
-                      style={{ textAlign: "center", verticalAlign: "middle" }}
+                      style={{ textAlign: "center", paddingInline: "0.5rem" }}
                     >
-                      {produto.numeroNotaFiscal}
+                      {produto.numeroNotaFiscal || "--"}
                     </td>
                     <td
-                      style={{ textAlign: "center", verticalAlign: "middle" }}
+                      style={{ textAlign: "center", paddingInline: "0.5rem" }}
                     >
                       <FaCheckSquare
                         size={20}
@@ -295,10 +275,7 @@ const PesquisarProdutoModal = ({ visible, setVisible }) => {
                 ))
               ) : (
                 <tr>
-                  <td
-                    colSpan="8"
-                    style={{ textAlign: "center", verticalAlign: "middle" }}
-                  >
+                  <td colSpan="8" style={{ textAlign: "center" }}>
                     Nenhum resultado encontrado
                   </td>
                 </tr>
@@ -310,7 +287,7 @@ const PesquisarProdutoModal = ({ visible, setVisible }) => {
           <Button
             onClick={() => {
               setVisible(false);
-              setSearchValues({ nome: "", categoria: "", codigo: "" });
+              setSearchValues({ nome: "", codigo: "" });
               setResultados([]);
             }}
             style={{
@@ -330,89 +307,53 @@ const PesquisarProdutoModal = ({ visible, setVisible }) => {
         mensagem={confirmacaoVisible.mensagem}
         sucesso={confirmacaoVisible.sucesso}
       />
-
       <CadastrarMaterialModal
         visible={cadstrarMaterialModal}
-        setVisible={() => {
-          setCadastrarMaterialModal(false);
+        setVisible={() => setCadastrarMaterialModal(false)}
+        material={null}
+        getMaterials={() => {}}
+        materialCadastrado={(data) => {
+          setResultados((prevResultados) => [...prevResultados, data]);
         }}
       />
 
       <Modal
         size="sm"
         isOpen={selectQuantidadeModal.state}
-        toggle={() => {
-          setSelectQuantidadeModal({
-            state: false,
-            produto: {},
-          });
-        }}
+        toggle={() => setSelectQuantidadeModal({ state: false, produto: {} })}
         centered
       >
         <ModalHeader
-          toggle={() => {
-            setSelectQuantidadeModal({
-              state: false,
-              produto: {},
-            });
-          }}
-          style={{
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
-            color: darkMode ? "#FFFFFF" : "#000000",
-            border: "none",
-            borderBottom: darkMode
-              ? "1px solid rgba(255, 255, 255, 0.2)"
-              : "1px solid rgba(52, 58, 64, 0.2)",
-          }}
+          toggle={() => setSelectQuantidadeModal({ state: false, produto: {} })}
+          style={{ ...modalStyle }}
         >
           Selecionar Quantidade
         </ModalHeader>
-        <ModalBody
-          style={{
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
-            color: darkMode ? "#FFFFFF" : "#000000",
-            border: "none",
-          }}
-        >
+        <ModalBody style={modalStyle}>
           <FormGroup>
             <Label for="nomeProduto">Nome</Label>
             <Input
               type="text"
               id="nomeProduto"
-              value={selectQuantidadeModal.produto.nome || ""}
+              value={selectQuantidadeModal.produto.nome || "--"}
               disabled
-              style={{
-                backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
-                color: darkMode ? "#FFFFFF" : "#000000",
-                marginBottom: "10px",
-              }}
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label for="nomeProduto">Unidade</Label>
+            <Input
+              type="text"
+              id="unidadeMedida"
+              value={selectQuantidadeModal.produto.unidadeMedida || "--"}
+              disabled
             />
           </FormGroup>
           <FormGroup>
             <Label for="quantidade">Quantidade</Label>
-            <Input
-              type="number"
-              id="quantidade"
-              style={{
-                backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
-                color: darkMode ? "#FFFFFF" : "#000000",
-                marginBottom: "10px",
-              }}
-            />
+            <Input type="number" id="quantidade" />
           </FormGroup>
         </ModalBody>
-        <ModalFooter
-          style={{
-            border: "none",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
-          }}
-        >
+        <ModalFooter style={modalStyle}>
           <Button
             color="primary"
             style={{
@@ -421,7 +362,11 @@ const PesquisarProdutoModal = ({ visible, setVisible }) => {
               border: "none",
             }}
           >
-            Adicionar
+            {true ? (
+              <Spinner size="sm" color="light" />
+            ) : (
+              "Adicionar"
+            )}
           </Button>
         </ModalFooter>
       </Modal>
@@ -429,4 +374,4 @@ const PesquisarProdutoModal = ({ visible, setVisible }) => {
   );
 };
 
-export default PesquisarProdutoModal;
+export default AdicionarMaterial;

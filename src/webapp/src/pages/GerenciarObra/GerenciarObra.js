@@ -131,7 +131,7 @@ const GerenciarObra = () => {
           className="mb-3"
           style={{
             backgroundColor: darkMode ? "#414141" : "#FFFFFF",
-            padding: "1rem 0.5rem 1rem 0.5rem",
+            padding: "1rem 0.5rem",
             borderRadius: "0.5rem",
             boxShadow: darkMode
               ? "0px 0px 10px rgba(255, 255, 255, 0.1)"
@@ -141,70 +141,66 @@ const GerenciarObra = () => {
           {loading ? (
             <Skeleton height={40} width="100%" />
           ) : (
-            <>
-              <div className="d-flex justify-content-between align-items-center">
-                <div>
-                  <Button
-                    color="link"
-                    onClick={() => navigate(-1)}
-                    className="text-decoration-none"
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: darkMode ? "#FFFFFF" : "#343A40",
-                    }}
-                  >
-                    <FaChevronLeft />
-                    {""} Voltar
-                  </Button>
-                </div>
-                <div
-                  className="d-flex justify-content-start align-items-center"
+            <div className="d-flex justify-content-between align-items-center w-100">
+              <div>
+                <Button
+                  color="link"
+                  onClick={() => navigate(-1)}
+                  className="text-decoration-none"
                   style={{
-                    width: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                     color: darkMode ? "#FFFFFF" : "#343A40",
-                    height: "100%",
                   }}
                 >
-                  <h4 style={{ margin: "0" }}>
-                    {obra?.nome || "Nome da Obra"}
-                  </h4>
-                </div>
-                <div
-                  className="text-end"
+                  <FaChevronLeft /> Voltar
+                </Button>
+              </div>
+
+              <div
+                className="d-flex justify-content-start align-items-center"
+                style={{
+                  width: "50%",
+                  color: darkMode ? "#FFFFFF" : "#343A40",
+                }}
+              >
+                <h4 style={{ margin: "0" }}>{obra?.nome || "Nome da Obra"}</h4>
+              </div>
+
+              <div
+                className="text-end"
+                style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+              >
+                <Button
+                  color="link"
+                  className="text-decoration-none"
                   style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
                 >
-                  <Button
-                    color="link"
-                    style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                    className="text-decoration-none"
-                  >
-                    Equipamentos
-                  </Button>
-                  <Button
-                    color="link"
-                    style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                    className="text-decoration-none"
-                  >
-                    Funcionários
-                  </Button>
-                  <Button
-                    color="link"
-                    style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                    className="text-decoration-none"
-                    onClick={() => {
-                      setAdicionarMaterialModal({
-                        ...adicionarMaterialModal,
-                        state: true,
-                      });
-                    }}
-                  >
-                    Materiais
-                  </Button>
-                </div>
+                  Equipamentos
+                </Button>
+                <Button
+                  color="link"
+                  className="text-decoration-none"
+                  style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                >
+                  Funcionários
+                </Button>
+                <Button
+                  color="link"
+                  className="text-decoration-none"
+                  style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                  onClick={() => {
+                    setAdicionarMaterialModal({
+                      ...adicionarMaterialModal,
+                      state: true,
+                    });
+                  }}
+                >
+                  Materiais
+                </Button>
               </div>
-            </>
+            </div>
           )}
         </Row>
         <div
@@ -222,7 +218,7 @@ const GerenciarObra = () => {
           ) : (
             <>
               {/* Dados gerais da obra*/}
-              <Row className="mb-2" noGutters>
+              <Row className="mb-2 g-0">
                 <Col xs={12} sm={6} md={6} className="mb-4">
                   <Card
                     style={{
@@ -687,8 +683,9 @@ const GerenciarObra = () => {
                 </Col>
               </Row>
 
-              {/* Equipamentos e Materiais*/}
-              <Row className="mb-4" noGutters>
+              {/* Equipamentos e Materiais */}
+              <Row className="mb-4 g-0">
+                {/* Equipamentos */}
                 <Col
                   xs={12}
                   sm={6}
@@ -732,64 +729,63 @@ const GerenciarObra = () => {
                             Nenhum equipamento alocado
                           </div>
                         ) : (
-                          <div>
-                            {equipamentos.map((equipamento, index) => (
-                              <div className="d-flex justify-content-center align-items-center">
-                                <div
-                                  key={index}
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                    marginBottom: "1rem",
-                                    padding: "0.5rem 1rem",
-                                    width: "100%",
-                                    backgroundColor: darkMode
-                                      ? "#414141"
-                                      : "#FFFFFF",
-                                    borderRadius: "0.5rem",
-                                    border: darkMode
-                                      ? "1px solid rgba(255, 255, 255, 0.2)"
-                                      : "1px solid #CCCCCC",
-                                  }}
-                                >
-                                  <div style={{ width: "95%" }}>
-                                    <div className="d-flex justify-content-between">
-                                      <div>
-                                        <strong>Nome:</strong>{" "}
-                                        {equipamento.nome}
-                                      </div>
-                                      <div style={{ paddingRight: "0.5rem" }}>
-                                        <strong>Identificador:</strong>{" "}
-                                        {equipamento.identificador}
-                                      </div>
-                                    </div>
+                          equipamentos.map((equipamento, index) => (
+                            <div
+                              key={index}
+                              className="d-flex justify-content-center align-items-center mb-3"
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  padding: "0.5rem 1rem",
+                                  width: "100%",
+                                  backgroundColor: darkMode
+                                    ? "#414141"
+                                    : "#FFFFFF",
+                                  borderRadius: "0.5rem",
+                                  border: darkMode
+                                    ? "1px solid rgba(255, 255, 255, 0.2)"
+                                    : "1px solid #CCCCCC",
+                                }}
+                              >
+                                <div style={{ width: "95%" }}>
+                                  <div className="d-flex justify-content-between">
                                     <div>
-                                      <strong>Data Alocação:</strong>{" "}
-                                      {new Date(
-                                        equipamento.dataAlocacao
-                                      ).toLocaleDateString()}
+                                      <strong>Nome:</strong> {equipamento.nome}
                                     </div>
-                                    <div>
-                                      <strong>Responsável:</strong>{" "}
-                                      {equipamento.responsavel}
+                                    <div style={{ paddingRight: "0.5rem" }}>
+                                      <strong>Identificador:</strong>{" "}
+                                      {equipamento.identificador}
                                     </div>
                                   </div>
-                                  <div
-                                    style={{ cursor: "pointer", color: "red" }}
-                                  >
-                                    🗑️
+                                  <div>
+                                    <strong>Data Alocação:</strong>{" "}
+                                    {new Date(
+                                      equipamento.dataAlocacao
+                                    ).toLocaleDateString()}
+                                  </div>
+                                  <div>
+                                    <strong>Responsável:</strong>{" "}
+                                    {equipamento.responsavel}
                                   </div>
                                 </div>
+                                <div
+                                  style={{ cursor: "pointer", color: "red" }}
+                                >
+                                  🗑️
+                                </div>
                               </div>
-                            ))}
-                          </div>
+                            </div>
+                          ))
                         )}
                       </div>
                     </CardBody>
                   </Card>
                 </Col>
 
+                {/* Materiais */}
                 <Col
                   xs={12}
                   sm={6}
