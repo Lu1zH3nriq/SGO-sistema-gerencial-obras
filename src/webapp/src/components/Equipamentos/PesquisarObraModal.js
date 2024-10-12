@@ -108,12 +108,29 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
   return (
     <Container>
       <Modal
-        size="lg"
+        size="xl"
         isOpen={visible}
         toggle={() => setVisible(false)}
         centered
       >
-        <ModalHeader toggle={() => setVisible(false)} style={modalStyle}>
+        <ModalHeader
+          toggle={() => {
+            setVisible(false);
+            setResultados([]);
+            setLoading(false);
+            setConfirmacaoVisible({
+              visible: false,
+              mensagem: "",
+              sucesso: false,
+            });
+          }}
+          style={{
+            ...modalStyle,
+            borderBottom: darkMode
+              ? "1px solid rgba(255, 255, 255, 0.2)"
+              : "1px solid rgba(52, 58, 64, 0.2)",
+          }}
+        >
           Pesquisar Obra
         </ModalHeader>
         <ModalBody
@@ -123,7 +140,9 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
             initialValues={{ nome: "", contrato: "", alvara: "" }}
             onSubmit={handleSearch}
           >
-            {(setFieldValues, values) => (
+            {(
+              { setFieldValue, values }
+            ) => (
               <Form style={modalStyle}>
                 <div
                   style={{
@@ -137,7 +156,7 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
                       : "0px 0px 10px 0px #7A7A7A",
                   }}
                 >
-                  <Row form>
+                  <Row className="mt-3">
                     <Col md={4}>
                       <div className="form-group">
                         <label htmlFor="nome">Nome da Obra</label>
@@ -147,8 +166,8 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
                           className="form-control"
                           style={inputStyle}
                           onChange={(e) =>
-                            setFieldValues("nome", e.target.value)
-                          }
+                            setFieldValue("nome", e.target.value)
+                          } 
                         />
                       </div>
                     </Col>
@@ -161,8 +180,8 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
                           className="form-control"
                           style={inputStyle}
                           onChange={(e) =>
-                            setFieldValues("contrato", e.target.value)
-                          }
+                            setFieldValue("contrato", e.target.value)
+                          } 
                         />
                       </div>
                     </Col>
@@ -175,8 +194,8 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
                           className="form-control"
                           style={inputStyle}
                           onChange={(e) =>
-                            setFieldValues("alvara", e.target.value)
-                          }
+                            setFieldValue("alvara", e.target.value)
+                          } 
                         />
                       </div>
                     </Col>
@@ -212,6 +231,7 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
                 <th style={tableHeaderStyle}>Nome da obra</th>
                 <th style={tableHeaderStyle}>Cliente</th>
                 <th style={tableHeaderStyle}>Contrato</th>
+                <th style={tableHeaderStyle}>Alvará</th>
                 <th style={{ ...tableHeaderStyle, textAlign: "center" }}>
                   Ações
                 </th>
@@ -220,10 +240,17 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
             <tbody>
               {resultados.length > 0 ? (
                 resultados.map((obra, index) => (
-                  <tr key={index} style={{ cursor: "pointer" }}  onClick={()=>{ handleSelect(obra) }} >
+                  <tr
+                    key={index}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      handleSelect(obra);
+                    }}
+                  >
                     <td style={tableCellStyle}>{obra.nome || "--"}</td>
                     <td style={tableCellStyle}>{obra.cliente || "--"}</td>
                     <td style={tableCellStyle}>{obra.contrato || "--"}</td>
+                    <td style={tableCellStyle}>{obra.alvara || "--"}</td>
                     <td style={tableCellStyle}>
                       <div onClick={() => handleSelect(obra)}>
                         <FaCheckSquare
@@ -251,7 +278,16 @@ const PesquisarObraModal = ({ visible, setVisible, onSelectObra }) => {
         <ModalFooter style={modalStyle}>
           <Button
             color="secondary"
-            onClick={() => setVisible(false)}
+            onClick={() => {
+              setVisible(false);
+              setResultados([]);
+              setLoading(false);
+              setConfirmacaoVisible({
+                visible: false,
+                mensagem: "",
+                sucesso: false,
+              });
+            }}
             style={{
               backgroundColor: darkMode ? "#424242" : "#7A7A7A",
               color: darkMode ? "#FFFFFF" : "#FFFFFF",

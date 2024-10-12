@@ -9,5 +9,6 @@ equipamentosRoutes.get('/equipamento', EquipamentoController.getEquipamentoById)
 equipamentosRoutes.put('/alterarEquipamento', EquipamentoController.updateEquipamento);
 equipamentosRoutes.delete('/deleteEquipamento', EquipamentoController.deleteEquipamento);
 equipamentosRoutes.get('/equipamentosPorUser', EquipamentoController.getEquipamentosUsuario);
+equipamentosRoutes.get('/equipamentosPorObra', EquipamentoController.getEquipamentosObra);
 
 module.exports = equipamentosRoutes;

@@ -143,7 +143,7 @@ const ObraController = {
 
       if (urlContrato !== null) {
         const fileName = urlContrato.split("/").pop();
-        await deleteDocContrato(req.query.id, fileName);
+        await ObraController.deleteDocContrato(req.query.id, fileName);
       }
       const deleted = await Obra.destroy({
         where: { id: req.query.id },
@@ -164,16 +164,25 @@ const ObraController = {
       const where = {};
 
       if (nome) {
-        where.nome = nome;
+        where.nome = {
+          [Op.like]: `%${nome}%`,
+        };
       }
       if (contrato) {
-        where.numeroContrato = contrato;
+        where.contrato = {
+          [Op.like]: `%${contrato}%`,
+        };
       }
       if (alvara) {
-        where.alvara = alvara;
+        where.alvara = {
+          [Op.like]: `%${alvara}%`,
+        };
       }
 
-      const obras = await Obra.findAll({ where });
+      const obras =
+        Object.keys(where).length === 0
+          ? await Obra.findAll()
+          : await Obra.findAll({ where });
 
       if (obras.length > 0) {
         res.status(200).json(obras);
@@ -227,8 +236,9 @@ const ObraController = {
       const id = _id;
       const file = _file;
 
+      const date = new Date().toISOString().split("T")[0].toString();
       const containerName = "contratos";
-      const blobName = `${id}-${file.originalname}-${new Date()}`;
+      const blobName = `${id}-${date}-${file.originalname}`;
       const containerClient =
         blobServiceClient.getContainerClient(containerName);
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
@@ -244,17 +254,30 @@ const ObraController = {
     }
   },
 
-  async deleteDocContrato(_id, fileName) {
+  async deleteDocContrato(_id, fileUrl) {
     try {
       const id = _id;
       const containerName = "contratos";
-      const blobName = `${id}-${fileName}`;
-      const containerClient =
-        blobServiceClient.getContainerClient(containerName);
+  
+      // Extrair o nome do blob da URL completa
+      const blobName = fileUrl.split('/').pop().split('?')[0];
+  
+      console.log("blobName", blobName);
+  
+      if (!blobName) {
+        throw new Error('Nome do blob não pôde ser extraído da URL.');
+      }
+  
+      const containerClient = blobServiceClient.getContainerClient(containerName);
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-
+  
+      const exists = await blockBlobClient.exists();
+      if (!exists) {
+        throw new Error(`O blob ${blobName} não existe.`);
+      }
+  
       await blockBlobClient.delete();
-
+  
       return `Contrato ${blobName} excluído com sucesso.`;
     } catch (error) {
       throw new Error(`Erro ao excluir o contrato: ${error.message}`);
@@ -285,6 +308,7 @@ const ObraController = {
       res.status(400).json({ message: error.message });
     }
   },
+
   async getObrasPorDataFinal(req, res) {
     try {
       const { dataInicial, dataFinal } = req.query;

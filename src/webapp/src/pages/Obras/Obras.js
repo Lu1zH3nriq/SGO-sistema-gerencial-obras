@@ -29,16 +29,18 @@ import {
   FaTrash,
   FaChevronLeft,
   FaChevronRight,
-  FaExpandArrowsAlt,
 } from "react-icons/fa";
+import { BsClipboard2Data } from 'react-icons/bs';
 import { Spinner } from "reactstrap";
 import CadastrarObraModal from "components/Obras/CadastrarObraModa.js";
 import DateSelectionModal from "components/Obras/CustomDates.js";
 import DeleteObraModal from "components/Obras/DeleteObraModal.js";
 import axios from "axios";
-import { formatarData } from "components/utils/utilsMask.js";
+import { formatarData, formatarOrcamento } from "components/utils/utilsMask.js";
+import { useNavigate } from 'react-router-dom';
 
 const Obras = () => {
+  const navigate = useNavigate();
   const URL_API = process.env.REACT_APP_URL_API;
   const [obras, setObras] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -106,6 +108,11 @@ const Obras = () => {
   };
 
   const handleModalClose = () => {
+    setModalDatasOpen(false);
+    setObrasAFiltrar(obras);
+  };
+  const handleModalCloseCancel = () => {
+    handleFiltroChange({ target: { value: "Nenhum" } });
     setModalDatasOpen(false);
     setObrasAFiltrar(obras);
   };
@@ -189,25 +196,25 @@ const Obras = () => {
         });
     } else if (selectDateFilter === "Data de Término") {
       axios
-      .get(`${URL_API}/api/obras/buscaObraPorDataFinal`, {
-        params: {
-          dataInicial: dataInicial,
-          dataFinal: dataFinal,
-        },
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        console.log("OBRAS FILTRADAS POR DATAS: ", response.data);
-        setObrasAFiltrar(response.data);
-      })
-      .catch((error) => {
-        console.error("ERRO AO FILTRAR OBRAS POR DATAS: ", error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+        .get(`${URL_API}/api/obras/buscaObraPorDataFinal`, {
+          params: {
+            dataInicial: dataInicial,
+            dataFinal: dataFinal,
+          },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          console.log("OBRAS FILTRADAS POR DATAS: ", response.data);
+          setObrasAFiltrar(response.data);
+        })
+        .catch((error) => {
+          console.error("ERRO AO FILTRAR OBRAS POR DATAS: ", error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
   };
   const cadastrarObra = () => {
@@ -235,14 +242,13 @@ const Obras = () => {
     <Layout rotaAtual="Obras">
       <Container
         style={{
-          marginTop: "8vh",
+          marginTop: "2vh",
         }}
       >
         {/* Linha com botão "Adicionar" e campo de pesquisa */}
         <Row
           className="mb-4"
           style={{
-            marginTop: "2%",
             backgroundColor: darkMode ? "#414141" : "#FFFFFF",
             padding: "1rem 0.5rem 1rem 0.5rem",
             borderRadius: "0.5rem",
@@ -507,6 +513,7 @@ const Obras = () => {
                       unmountOnExit
                     >
                       <CardContent>
+                        {/* Renderização dos campos */}
                         <Typography
                           variant="body2"
                           color="textSecondary"
@@ -521,7 +528,6 @@ const Obras = () => {
                         >
                           Data Início: {formatarData(obra.dataInicio)}
                         </Typography>
-
                         <Typography
                           variant="body2"
                           color="textSecondary"
@@ -532,7 +538,6 @@ const Obras = () => {
                             ? formatarData(obra.dataFinal)
                             : "Não informado"}
                         </Typography>
-
                         <Typography
                           variant="body2"
                           color="textSecondary"
@@ -552,7 +557,7 @@ const Obras = () => {
                           color="textSecondary"
                           style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
                         >
-                          Orçamento inicial: {obra.orcamento}
+                          Orçamento inicial: {formatarOrcamento(obra.orcamento)}
                         </Typography>
 
                         <Box
@@ -563,7 +568,7 @@ const Obras = () => {
                             marginTop: "2.5rem",
                           }}
                         >
-                          <FaExpandArrowsAlt
+                          <BsClipboard2Data
                             style={{
                               cursor: "pointer",
                               marginRight: "10px",
@@ -571,9 +576,7 @@ const Obras = () => {
                             }}
                             size={20}
                             title="Gerenciar"
-                            onClick={() => {
-                              console.log("Detalhes da obra : ", obra);
-                            }}
+                            onClick={() => navigate(`/obra/${obra.id}`)}
                           />
                           <FaEdit
                             style={{
@@ -581,9 +584,7 @@ const Obras = () => {
                               marginRight: "10px",
                               color: darkMode ? "#FFFFFF" : "#343A40",
                             }}
-                            onClick={() => {
-                              editarObra(obra);
-                            }}
+                            onClick={() => editarObra(obra)}
                             size={20}
                             title="Editar"
                           />
@@ -594,9 +595,7 @@ const Obras = () => {
                             }}
                             size={20}
                             title="Excluir"
-                            onClick={() => {
-                              deleteObra(obra);
-                            }}
+                            onClick={() => deleteObra(obra)}
                           />
                         </Box>
                       </CardContent>
@@ -682,7 +681,8 @@ const Obras = () => {
       {/* Modal para selecionar datas */}
       <DateSelectionModal
         show={modalDatasOpen}
-        onHide={handleModalClose}
+        closeModal={handleModalClose}
+        closeModalCancel={handleModalCloseCancel}
         darkMode={darkMode}
         setCustomDates={(dataInicio, dataFinal, selectDateFilter) => {
           filtrarPorDatas(dataInicio, dataFinal, selectDateFilter);
