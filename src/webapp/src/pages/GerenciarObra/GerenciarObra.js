@@ -14,7 +14,7 @@ import {
   ModalBody,
   ModalFooter,
 } from "reactstrap";
-import { FaChevronLeft, FaTrash } from "react-icons/fa";
+import { FaChevronLeft, FaTrash, FaMinusCircle } from "react-icons/fa";
 import Layout from "../../components/layout/Layout.js";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -27,6 +27,10 @@ import {
 import AdicionarMaterial from "./AdicionarMaterial.js";
 import AdicionarEquipamentos from "./AdicionarEquipamentos.js";
 import AdicionarFuncionario from "./AdicionarFuncionario.js";
+
+import RemoverFuncionario from "./RemoverFuncionario.js";
+import RemoverEquipamento from "./RemoverEquipamento.js";
+import RemoverMaterial from "./RemoverMaterial.js";
 
 const GerenciarObra = () => {
   const { id } = useParams();
@@ -51,6 +55,21 @@ const GerenciarObra = () => {
   const [adicionarFuncionarioModal, setAdicionarFuncionarioModal] =
     useState(false);
 
+
+  const [removerFuncionarioModal, setRemoverFuncionarioModal] = useState({
+    state: false,
+    funcionario: {}
+  });
+  const [removerEquipamentoModal, setRemoverEquipamentoModal] = useState({
+    state: false,
+    equipamento: {}
+  });
+  const [removerMaterialModa, setRemoverMaterialModal] = useState({
+    state: false,
+    material: {}
+  })
+
+
   async function getObra() {
     axios
       .get(`${URL_API}/api/obras/obra?id=${id}`)
@@ -71,6 +90,7 @@ const GerenciarObra = () => {
         setFuncionarios(response.data);
       })
       .catch((error) => {
+        setFuncionarios([])
         console.error(error);
       });
   }
@@ -784,9 +804,15 @@ const GerenciarObra = () => {
                                     color: darkMode ? "#FFFFFF" : "red",
                                   }}
                                 >
-                                  <FaTrash
+                                  <FaMinusCircle
                                     size={15}
                                     title="Remover equipamento"
+                                    onClick={() => {
+                                      setRemoverEquipamentoModal({
+                                        state: true,
+                                        equipamento: equipamento
+                                      })
+                                    }}
                                   />
                                 </div>
                               </div>
@@ -923,8 +949,8 @@ const GerenciarObra = () => {
                                   >
                                     {material.ObraMateriais?.dataAlocacao
                                       ? new Date(
-                                          material.ObraMateriais.dataAlocacao
-                                        ).toLocaleDateString()
+                                        material.ObraMateriais.dataAlocacao
+                                      ).toLocaleDateString()
                                       : "--"}
                                   </td>
                                   <td
@@ -938,6 +964,12 @@ const GerenciarObra = () => {
                                     <FaTrash
                                       size={15}
                                       title="Remover material"
+                                      onClick={() => {
+                                        setRemoverMaterialModal({
+                                          state: true,
+                                          material: material
+                                        })
+                                      }}
                                     />
                                   </td>
                                 </tr>
@@ -989,65 +1021,73 @@ const GerenciarObra = () => {
                             Nenhum funcionário alocado
                           </div>
                         ) : (
-                          funcionarios.map((funcionario, index) => (
-                            <div
-                              key={index}
-                              className="d-flex justify-content-center align-items-center mb-3"
-                            >
-                              <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  alignItems: "center",
-                                  padding: "0.5rem 1rem",
-                                  width: "100%",
-                                  backgroundColor: darkMode
-                                    ? "#414141"
-                                    : "#FFFFFF",
-                                  borderRadius: "0.5rem",
-                                  border: darkMode
-                                    ? "1px solid rgba(255, 255, 255, 0.2)"
-                                    : "1px solid #CCCCCC",
-                                }}
-                              >
-                                <div style={{ width: "95%" }}>
-                                  <div className="d-flex justify-content-between">
-                                    <div>
-                                      <strong>Nome:</strong> {funcionario.nome}
-                                    </div>
-                                    <div style={{ paddingRight: "0.5rem" }}>
-                                      <strong>Cargo:</strong>{" "}
-                                      {funcionario.cargo}
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <strong>Data Contratação:</strong>{" "}
-                                    {new Date(
-                                      funcionario.dataContratacao
-                                    ).toLocaleDateString()}
-                                  </div>
-                                  {funcionario.id === obra.responsavelId && (
-                                    <div>
-                                      <strong style={{ fontSize: 14 }}>
-                                        Responsável pela Obra
-                                      </strong>
-                                    </div>
-                                  )}
-                                </div>
+                          <Row>
+                            {funcionarios.map((funcionario, index) => (
+                              <Col xs={12} sm={6} md={3} key={index} className="mb-3">
                                 <div
                                   style={{
-                                    cursor: "pointer",
-                                    color: darkMode ? "#FFFFFF" : "red",
+                                    alignItems: "center",
+                                    padding: "0.5rem 1rem",
+                                    backgroundColor: darkMode ? "#414141" : "#FFFFFF",
+                                    borderRadius: "0.5rem",
+                                    border: darkMode
+                                      ? "1px solid rgba(255, 255, 255, 0.2)"
+                                      : "1px solid #CCCCCC",
+                                    height: "100%",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "space-between",
                                   }}
                                 >
-                                  <FaTrash
-                                    size={15}
-                                    title="Remover funcionário"
-                                  />
+                                  <div style={{ width: "100%" }}>
+                                    <div className="d-flex justify-content-between">
+                                      <div>
+                                        <strong>Nome:</strong> {funcionario.nome}
+                                      </div>
+                                    </div>
+                                    <div style={{ paddingRight: "0.5rem" }}>
+                                      <strong>Cargo:</strong> {funcionario.cargo}
+                                    </div>
+                                    <div style={{ paddingRight: "0.5rem" }}>
+                                      <strong>Tipo:</strong> {funcionario.tipo}
+                                    </div>
+                                    <div style={{ paddingRight: "0.5rem" }}>
+                                      <strong>Status:</strong> {funcionario.status}
+                                    </div>
+                                    <div>
+                                      <strong>Data Contratação:</strong>{" "}
+                                      {new Date(funcionario.dataContratacao).toLocaleDateString()}
+                                    </div>
+                                    {funcionario.id === obra.responsavelId && (
+                                      <div>
+                                        <strong style={{ fontSize: 14 }}>
+                                          Responsável pela Obra
+                                        </strong>
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div
+                                    style={{
+                                      cursor: "pointer",
+                                      color: darkMode ? "#FFFFFF" : "red",
+                                      textAlign: "end",
+                                    }}
+                                  >
+                                    <FaMinusCircle
+                                      size={15}
+                                      title="Remover funcionário"
+                                      onClick={() => {
+                                        setRemoverFuncionarioModal({
+                                          state: true,
+                                          funcionario: funcionario,
+                                        });
+                                      }}
+                                    />
+                                  </div>
                                 </div>
-                              </div>
-                            </div>
-                          ))
+                              </Col>
+                            ))}
+                          </Row>
                         )}
                       </div>
                     </CardBody>
@@ -1115,6 +1155,53 @@ const GerenciarObra = () => {
             getFuncionariosDaObra(id);
           }}
         />
+
+
+        <RemoverFuncionario
+          visible={removerFuncionarioModal.state}
+          funcionario={removerFuncionarioModal.funcionario}
+          setVisible={() => {
+            setRemoverFuncionarioModal({
+              state: false,
+              funcionario: {}
+            })
+          }}
+          obra={obra}
+          getFuncionarios={(data) => {
+            getFuncionariosDaObra(data);
+          }}
+        />
+
+        <RemoverEquipamento
+          visible={removerEquipamentoModal.state}
+          equipamento={removerEquipamentoModal.equipamento}
+          setVisible={() => {
+            setRemoverEquipamentoModal({
+              state: false,
+              equipamento: {},
+            })
+          }}
+          obra={obra}
+          getEquipamentos={(data) => {
+            getEquipamentosDaObra(data);
+          }}
+        />
+
+        <RemoverMaterial
+          visible={removerMaterialModa.state}
+          setVisible={() => {
+            setRemoverMaterialModal({
+              state: false,
+              material: {}
+            })
+          }}
+          material={removerMaterialModa.material}
+          obra={obra}
+          getMateriais={(data) => {
+            getMateriaisDaObra(data);
+          }}
+        />
+
       </Container>
     </Layout>
   );

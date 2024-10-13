@@ -94,7 +94,7 @@ const ObraMateriaisController = {
 
   async removeMaterial(req, res) {
     try {
-      const { obraId, materialId } = req.body;
+      const { obraId, materialId } = req.query;
 
       const obra = await Obra.findByPk(obraId);
       const material = await Material.findByPk(materialId);

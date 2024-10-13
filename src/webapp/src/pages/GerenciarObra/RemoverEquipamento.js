@@ -11,13 +11,12 @@ import { useUIContextController } from "../../context/index.js";
 import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
 import axios from "axios";
 
-const RemoverFuncionario = ({
+const RemoverEquipamento = ({
   visible,
   setVisible,
-  funcionario,
-  onDelete,
-  getFuncionarios,
+  equipamento,
   obra,
+  getEquipamentos,
 
 }) => {
   const URL_API = process.env.REACT_APP_URL_API;
@@ -30,18 +29,6 @@ const RemoverFuncionario = ({
   });
   const [state] = useUIContextController();
   const { darkMode } = state;
-  const [isResponsavelObra, setIsResponsavelObra] = React.useState(false);
-
-
-  React.useEffect(() => {
-    const funcId = funcionario.id;
-    const obraRespId = obra.responsavelId;
-
-    if (funcId === obraRespId) {
-      setIsResponsavelObra(true);
-    }
-
-  }, [funcionario, obra]);
 
   const toggleModal = () => {
     setVisible(false);
@@ -51,23 +38,23 @@ const RemoverFuncionario = ({
     setLoading(true);
 
     let data = {
-      ...funcionario,
+      ...equipamento,
       obraId: null,
     }
     axios
-      .put(`${URL_API}/api/funcionarios/alterarFuncionario?id=${data.id}`, data)
+      .put(`${URL_API}/api/equipamentos/alterarEquipamento?id=${data.id}`, data)
       .then((response) => {
         setConfirmacaoModal({
           visible: true,
-          mensagem: "Funcionário removido com sucesso!",
+          mensagem: "Equipamento removido com sucesso!",
           sucesso: true,
         });
-        getFuncionarios(obra.id);
+        getEquipamentos(obra.id);
       })
       .catch((error) => {
         setConfirmacaoModal({
           visible: true,
-          mensagem: "Erro ao remover este funcionário!",
+          mensagem: "Erro ao remover este equipamento!",
           sucesso: false,
         });
       })
@@ -109,20 +96,17 @@ const RemoverFuncionario = ({
           }}
         >
 
-          {funcionario ? (
+          {equipamento ? (
             <>
-              {
-                isResponsavelObra ? (
-                  <p>Não é possível remover {funcionario.nome} dos funcionários alocados na obra: <strong>{obra.nome}</strong> pois este funcionário é o responável pela obra!</p>
-                ) : (
-                  <p>Tem certeza que deseja remover {funcionario.nome} dos funcionários alocados na obra: <strong>{obra.nome}</strong></p>
-                )}
+
+              <p>Tem certeza que deseja remover {equipamento.nome} dos equipamentos alocados na obra: <strong>{obra.nome}</strong></p>
+
               <p>
-                Nome: <strong>{funcionario.nome}</strong>
+                Nome: <strong>{equipamento.nome}</strong>
               </p>
               <p>
-                CPF:
-                <strong>{funcionario.cpf}</strong>
+                Identificador: 
+                 <strong> {equipamento.identificador}</strong>
               </p>
             </>
           ) : (
@@ -145,7 +129,6 @@ const RemoverFuncionario = ({
             color="danger"
             onClick={handleDelete}
             style={deleteButtonStyle}
-            disabled={isResponsavelObra}
           >
             {loading ? <Spinner size="sm" color="light" /> : "Remover"}
           </Button>
@@ -162,4 +145,4 @@ const RemoverFuncionario = ({
   );
 };
 
-export default RemoverFuncionario;
+export default RemoverEquipamento;

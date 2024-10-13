@@ -66,8 +66,8 @@ const AdicionarFuncionario = ({
           tipoFuncionario: tipoFuncionario.efetivo
             ? "Efetivo"
             : tipoFuncionario.terceirizado
-            ? "Terceirizado"
-            : "Todos",
+              ? "Terceirizado"
+              : "Todos",
         },
       })
       .then((response) => {
@@ -152,8 +152,6 @@ const AdicionarFuncionario = ({
   };
 
   const modalStyle = {
-    alignItems: "center",
-    justifyContent: "center",
     backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
     color: darkMode ? "#FFFFFF" : "#000000",
     border: "none",
@@ -508,7 +506,10 @@ const AdicionarFuncionario = ({
             </tbody>
           </Table>
         </ModalBody>
-        <ModalFooter style={modalStyle}>
+        <ModalFooter style={{
+          backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
+          color: darkMode ? "#FFFFFF" : "#000000",
+        }}>
           <Button
             onClick={() => {
               setVisible(false);
@@ -520,7 +521,11 @@ const AdicionarFuncionario = ({
                 todos: true,
               });
             }}
-            style={buttonStyle}
+            style={{
+              backgroundColor: darkMode ? "#4A4A4A" : "#CECFCB",
+              color: darkMode ? "#FFFFFF" : "#4A4A4A",
+              border: "none",
+            }}
           >
             Fechar
           </Button>
