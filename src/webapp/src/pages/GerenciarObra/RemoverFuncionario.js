@@ -30,18 +30,7 @@ const RemoverFuncionario = ({
   });
   const [state] = useUIContextController();
   const { darkMode } = state;
-  const [isResponsavelObra, setIsResponsavelObra] = React.useState(false);
 
-
-  React.useEffect(() => {
-    const funcId = funcionario.id;
-    const obraRespId = obra.responsavelId;
-
-    if (funcId === obraRespId) {
-      setIsResponsavelObra(true);
-    }
-
-  }, [funcionario, obra]);
 
   const toggleModal = () => {
     setVisible(false);
@@ -111,12 +100,9 @@ const RemoverFuncionario = ({
 
           {funcionario ? (
             <>
-              {
-                isResponsavelObra ? (
-                  <p>Não é possível remover {funcionario.nome} dos funcionários alocados na obra: <strong>{obra.nome}</strong> pois este funcionário é o responável pela obra!</p>
-                ) : (
-                  <p>Tem certeza que deseja remover {funcionario.nome} dos funcionários alocados na obra: <strong>{obra.nome}</strong></p>
-                )}
+
+              <p>Tem certeza que deseja remover {funcionario.nome} dos funcionários alocados na obra: <strong>{obra.nome}</strong></p>
+
               <p>
                 Nome: <strong>{funcionario.nome}</strong>
               </p>
@@ -145,7 +131,6 @@ const RemoverFuncionario = ({
             color="danger"
             onClick={handleDelete}
             style={deleteButtonStyle}
-            disabled={isResponsavelObra}
           >
             {loading ? <Spinner size="sm" color="light" /> : "Remover"}
           </Button>

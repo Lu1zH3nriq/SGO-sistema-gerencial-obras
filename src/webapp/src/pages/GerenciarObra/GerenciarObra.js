@@ -35,12 +35,11 @@ import RemoverMaterial from "./RemoverMaterial.js";
 const GerenciarObra = () => {
   const { id } = useParams();
   const [state] = useUIContextController();
-  const { darkMode } = state;
+  const { darkMode, userType } = state;
   const navigate = useNavigate();
   const URL_API = process.env.REACT_APP_URL_API;
   const [loading, setLoading] = useState(false);
   const [obra, setObra] = useState({});
-  const [modal, setModal] = useState(false);
 
   const [funcionarios, setFuncionarios] = useState([]);
   const [cliente, setCliente] = useState({});
@@ -140,10 +139,6 @@ const GerenciarObra = () => {
         setLoading(false);
       });
   }, []);
-
-  const toggleModal = () => {
-    setModal(!modal);
-  };
 
   return (
     <Layout rotaAtual="Obras">
@@ -254,7 +249,7 @@ const GerenciarObra = () => {
             <>
               {/* Dados gerais da obra*/}
               <Row className="mb-2 g-0">
-                <Col xs={12} sm={6} md={6} className="mb-4">
+                <Col xs={12} sm={12} md={12} className="mb-4">
                   <Card
                     style={{
                       backgroundColor: darkMode ? "#676767" : "#FFFFFF",
@@ -567,14 +562,15 @@ const GerenciarObra = () => {
                             }}
                           >
                             <button
-                              onClick={toggleModal}
+                              onClick={() => window.open(obra.urlContrato, "_blank")}
                               style={{
-                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                color: darkMode ? "#46CBFF" : "#0074B6",
                                 background: "none",
                                 border: "none",
                                 padding: 0,
                                 cursor: "pointer",
                               }}
+                              title="Baixar contrato"
                             >
                               Visualizar Contrato
                             </button>
@@ -634,7 +630,7 @@ const GerenciarObra = () => {
                             </CardText>
                           </Col>
                           <Col
-                            xs={12}
+                            xs={6}
                             style={{ display: "flex", flexDirection: "column" }}
                           >
                             <CardText
@@ -655,7 +651,7 @@ const GerenciarObra = () => {
                             </CardText>
                           </Col>
                           <Col
-                            xs={12}
+                            xs={6}
                             style={{ display: "flex", flexDirection: "column" }}
                           >
                             <CardText
@@ -681,7 +677,7 @@ const GerenciarObra = () => {
                   </Card>
                 </Col>
 
-                <Col xs={12} sm={6} md={6} className="mb-4">
+                {/* <Col xs={12} sm={6} md={6} className="mb-4">
                   <Card
                     style={{
                       backgroundColor: darkMode ? "#676767" : "#FFFFFF",
@@ -715,7 +711,7 @@ const GerenciarObra = () => {
                       </CardText>
                     </CardBody>
                   </Card>
-                </Col>
+                </Col> */}
               </Row>
 
               <Row className="mb-4 g-0">
@@ -897,14 +893,16 @@ const GerenciarObra = () => {
                               >
                                 Data
                               </th>
-                              <th
-                                style={{
-                                  borderBottom: "1px solid #CCCCCC",
-                                  padding: "0.5rem",
-                                }}
-                              >
-                                Ações
-                              </th>
+                              {userType === 1 ? (
+                                <th
+                                  style={{
+                                    borderBottom: "1px solid #CCCCCC",
+                                    padding: "0.5rem",
+                                  }}
+                                >
+                                  Ações
+                                </th>
+                              ) : null}
                             </tr>
                           </thead>
                           <tbody>
@@ -953,25 +951,27 @@ const GerenciarObra = () => {
                                       ).toLocaleDateString()
                                       : "--"}
                                   </td>
-                                  <td
-                                    style={{
-                                      padding: "0.5rem",
-                                      borderBottom: "1px solid #CCCCCC",
-                                      cursor: "pointer",
-                                      color: darkMode ? "#FFFFFF" : "red",
-                                    }}
-                                  >
-                                    <FaTrash
-                                      size={15}
-                                      title="Remover material"
-                                      onClick={() => {
-                                        setRemoverMaterialModal({
-                                          state: true,
-                                          material: material
-                                        })
+                                  {userType === 1 ? (
+                                    <td
+                                      style={{
+                                        padding: "0.5rem",
+                                        borderBottom: "1px solid #CCCCCC",
+                                        cursor: "pointer",
+                                        color: darkMode ? "#FFFFFF" : "red",
                                       }}
-                                    />
-                                  </td>
+                                    >
+                                      <FaTrash
+                                        size={15}
+                                        title="Remover material"
+                                        onClick={() => {
+                                          setRemoverMaterialModal({
+                                            state: true,
+                                            material: material
+                                          })
+                                        }}
+                                      />
+                                    </td>
+                                  ) : null}
                                 </tr>
                               ))
                             )}
@@ -1097,31 +1097,6 @@ const GerenciarObra = () => {
             </>
           )}
         </div>
-
-        {/* Modal */}
-        <Modal isOpen={modal} toggle={toggleModal} size="xl">
-          <ModalHeader toggle={toggleModal}>Visualizar Contrato</ModalHeader>
-          <ModalBody>
-            {obra.urlContrato && (
-              <iframe
-                src={`${obra.urlContrato}`}
-                style={{ width: "100%", height: "500px", border: "none" }}
-                title="Contrato"
-              />
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              color={darkMode ? "secondary" : "primary"}
-              onClick={() => window.open(obra.urlContrato, "_blank")}
-            >
-              Baixar Contrato
-            </Button>
-            <Button color="secondary" onClick={toggleModal}>
-              Fechar
-            </Button>
-          </ModalFooter>
-        </Modal>
 
         {/* Modal Adicionar Material */}
         <AdicionarMaterial

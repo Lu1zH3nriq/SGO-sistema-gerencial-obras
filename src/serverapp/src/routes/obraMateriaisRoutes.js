@@ -7,6 +7,7 @@ obraMateriaisRoutes.post('/addMaterialObra', ObraMateriaisController.addMaterial
 obraMateriaisRoutes.get('/materiaisPorObra', ObraMateriaisController.getMateriaisPorObra);
 obraMateriaisRoutes.put('/updateMaterialObra', ObraMateriaisController.updateMaterialObra);
 obraMateriaisRoutes.delete('/removeMaterialObra', ObraMateriaisController.removeMaterial);
+obraMateriaisRoutes.get('/getObrasComMaisMateriais', ObraMateriaisController.getObrasComMaisMateriais)
 
 
 module.exports = obraMateriaisRoutes;

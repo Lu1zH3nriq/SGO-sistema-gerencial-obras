@@ -10,5 +10,6 @@ funcionariosRoutes.put('/alterarFuncionario', FuncionarioController.updateFuncio
 funcionariosRoutes.delete('/deleteFuncionario', FuncionarioController.deleteFuncionario);
 funcionariosRoutes.get('/buscaFuncionarioQuery', FuncionarioController.buscaFuncionarioQuery);
 funcionariosRoutes.get('/buscaFuncionarioPorObra', FuncionarioController.buscaFuncionariosPorObra);
+funcionariosRoutes.get('/funcionariosPorStatus', FuncionarioController.getStatusFuncionarios);
 
 module.exports = funcionariosRoutes;
