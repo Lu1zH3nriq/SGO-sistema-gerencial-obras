@@ -14,7 +14,7 @@ import {
   ModalBody,
   ModalFooter,
 } from "reactstrap";
-import { FaChevronLeft, FaTrash } from "react-icons/fa";
+import { FaChevronLeft, FaTrash, FaMinusCircle } from "react-icons/fa";
 import Layout from "../../components/layout/Layout.js";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -26,16 +26,20 @@ import {
 } from "../../components/utils/utilsMask.js";
 import AdicionarMaterial from "./AdicionarMaterial.js";
 import AdicionarEquipamentos from "./AdicionarEquipamentos.js";
+import AdicionarFuncionario from "./AdicionarFuncionario.js";
+
+import RemoverFuncionario from "./RemoverFuncionario.js";
+import RemoverEquipamento from "./RemoverEquipamento.js";
+import RemoverMaterial from "./RemoverMaterial.js";
 
 const GerenciarObra = () => {
   const { id } = useParams();
   const [state] = useUIContextController();
-  const { darkMode } = state;
+  const { darkMode, userType } = state;
   const navigate = useNavigate();
   const URL_API = process.env.REACT_APP_URL_API;
   const [loading, setLoading] = useState(false);
   const [obra, setObra] = useState({});
-  const [modal, setModal] = useState(false);
 
   const [funcionarios, setFuncionarios] = useState([]);
   const [cliente, setCliente] = useState({});
@@ -45,7 +49,25 @@ const GerenciarObra = () => {
   const [adicionarMaterialModal, setAdicionarMaterialModal] = useState({
     state: false,
   });
-  const [AdicionarEquipamentoModal, setAdicionarEquipamentoModal] = useState(false)
+  const [AdicionarEquipamentoModal, setAdicionarEquipamentoModal] =
+    useState(false);
+  const [adicionarFuncionarioModal, setAdicionarFuncionarioModal] =
+    useState(false);
+
+
+  const [removerFuncionarioModal, setRemoverFuncionarioModal] = useState({
+    state: false,
+    funcionario: {}
+  });
+  const [removerEquipamentoModal, setRemoverEquipamentoModal] = useState({
+    state: false,
+    equipamento: {}
+  });
+  const [removerMaterialModa, setRemoverMaterialModal] = useState({
+    state: false,
+    material: {}
+  })
+
 
   async function getObra() {
     axios
@@ -67,6 +89,7 @@ const GerenciarObra = () => {
         setFuncionarios(response.data);
       })
       .catch((error) => {
+        setFuncionarios([])
         console.error(error);
       });
   }
@@ -116,10 +139,6 @@ const GerenciarObra = () => {
         setLoading(false);
       });
   }, []);
-
-  const toggleModal = () => {
-    setModal(!modal);
-  };
 
   return (
     <Layout rotaAtual="Obras">
@@ -178,7 +197,7 @@ const GerenciarObra = () => {
                   color="link"
                   className="text-decoration-none"
                   style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                  onClick={()=>{
+                  onClick={() => {
                     setAdicionarEquipamentoModal(true);
                   }}
                   title="Alocar Equipamento"
@@ -190,6 +209,9 @@ const GerenciarObra = () => {
                   className="text-decoration-none"
                   style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
                   title="Alocar Funcionário"
+                  onClick={() => {
+                    setAdicionarFuncionarioModal(true);
+                  }}
                 >
                   Funcionários
                 </Button>
@@ -227,7 +249,7 @@ const GerenciarObra = () => {
             <>
               {/* Dados gerais da obra*/}
               <Row className="mb-2 g-0">
-                <Col xs={12} sm={6} md={6} className="mb-4">
+                <Col xs={12} sm={12} md={12} className="mb-4">
                   <Card
                     style={{
                       backgroundColor: darkMode ? "#676767" : "#FFFFFF",
@@ -540,14 +562,15 @@ const GerenciarObra = () => {
                             }}
                           >
                             <button
-                              onClick={toggleModal}
+                              onClick={() => window.open(obra.urlContrato, "_blank")}
                               style={{
-                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                color: darkMode ? "#46CBFF" : "#0074B6",
                                 background: "none",
                                 border: "none",
                                 padding: 0,
                                 cursor: "pointer",
                               }}
+                              title="Baixar contrato"
                             >
                               Visualizar Contrato
                             </button>
@@ -607,7 +630,7 @@ const GerenciarObra = () => {
                             </CardText>
                           </Col>
                           <Col
-                            xs={12}
+                            xs={6}
                             style={{ display: "flex", flexDirection: "column" }}
                           >
                             <CardText
@@ -628,7 +651,7 @@ const GerenciarObra = () => {
                             </CardText>
                           </Col>
                           <Col
-                            xs={12}
+                            xs={6}
                             style={{ display: "flex", flexDirection: "column" }}
                           >
                             <CardText
@@ -654,7 +677,7 @@ const GerenciarObra = () => {
                   </Card>
                 </Col>
 
-                <Col xs={12} sm={6} md={6} className="mb-4">
+                {/* <Col xs={12} sm={6} md={6} className="mb-4">
                   <Card
                     style={{
                       backgroundColor: darkMode ? "#676767" : "#FFFFFF",
@@ -688,7 +711,7 @@ const GerenciarObra = () => {
                       </CardText>
                     </CardBody>
                   </Card>
-                </Col>
+                </Col> */}
               </Row>
 
               <Row className="mb-4 g-0">
@@ -698,8 +721,8 @@ const GerenciarObra = () => {
                     style={{
                       backgroundColor: darkMode ? "#676767" : "#FFFFFF",
                       margin: "0.5rem",
-                      height: "400px", 
-                      overflowY: "auto", 
+                      height: "400px",
+                      overflowY: "auto",
                       borderRadius: "0.5rem",
                       boxShadow: darkMode
                         ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
@@ -772,9 +795,21 @@ const GerenciarObra = () => {
                                   </div>
                                 </div>
                                 <div
-                                  style={{ cursor: "pointer", color: darkMode ? "#FFFFFF" : "red" }}
+                                  style={{
+                                    cursor: "pointer",
+                                    color: darkMode ? "#FFFFFF" : "red",
+                                  }}
                                 >
-                                  <FaTrash size={15} title="Remover equipamento"/>
+                                  <FaMinusCircle
+                                    size={15}
+                                    title="Remover equipamento"
+                                    onClick={() => {
+                                      setRemoverEquipamentoModal({
+                                        state: true,
+                                        equipamento: equipamento
+                                      })
+                                    }}
+                                  />
                                 </div>
                               </div>
                             </div>
@@ -791,8 +826,8 @@ const GerenciarObra = () => {
                     style={{
                       backgroundColor: darkMode ? "#676767" : "#FFFFFF",
                       margin: "0.5rem",
-                      height: "400px", 
-                      overflowY: "auto", 
+                      height: "400px",
+                      overflowY: "auto",
                       borderRadius: "0.5rem",
                       boxShadow: darkMode
                         ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
@@ -858,14 +893,16 @@ const GerenciarObra = () => {
                               >
                                 Data
                               </th>
-                              <th
-                                style={{
-                                  borderBottom: "1px solid #CCCCCC",
-                                  padding: "0.5rem",
-                                }}
-                              >
-                                Ações
-                              </th>
+                              {userType === 1 ? (
+                                <th
+                                  style={{
+                                    borderBottom: "1px solid #CCCCCC",
+                                    padding: "0.5rem",
+                                  }}
+                                >
+                                  Ações
+                                </th>
+                              ) : null}
                             </tr>
                           </thead>
                           <tbody>
@@ -900,7 +937,7 @@ const GerenciarObra = () => {
                                       borderBottom: "1px solid #CCCCCC",
                                     }}
                                   >
-                                  {material.ObraMateriais.valor},00
+                                    {material.ObraMateriais.valor},00
                                   </td>
                                   <td
                                     style={{
@@ -910,20 +947,31 @@ const GerenciarObra = () => {
                                   >
                                     {material.ObraMateriais?.dataAlocacao
                                       ? new Date(
-                                          material.ObraMateriais.dataAlocacao
-                                        ).toLocaleDateString()
+                                        material.ObraMateriais.dataAlocacao
+                                      ).toLocaleDateString()
                                       : "--"}
                                   </td>
-                                  <td
-                                    style={{
-                                      padding: "0.5rem",
-                                      borderBottom: "1px solid #CCCCCC",
-                                      cursor: "pointer",
-                                      color: darkMode ? "#FFFFFF" : "red",
-                                    }}
-                                  >
-                                    <FaTrash size={15} title="Remover material"/>
-                                  </td>
+                                  {userType === 1 ? (
+                                    <td
+                                      style={{
+                                        padding: "0.5rem",
+                                        borderBottom: "1px solid #CCCCCC",
+                                        cursor: "pointer",
+                                        color: darkMode ? "#FFFFFF" : "red",
+                                      }}
+                                    >
+                                      <FaTrash
+                                        size={15}
+                                        title="Remover material"
+                                        onClick={() => {
+                                          setRemoverMaterialModal({
+                                            state: true,
+                                            material: material
+                                          })
+                                        }}
+                                      />
+                                    </td>
+                                  ) : null}
                                 </tr>
                               ))
                             )}
@@ -936,12 +984,14 @@ const GerenciarObra = () => {
               </Row>
 
               {/* Funcionários */}
-              <Row className="mb-4">
+              <Row className="mb-4 g-0">
                 <Col xs={12} sm={12} md={12} className="mb-1">
                   <Card
                     style={{
                       backgroundColor: darkMode ? "#676767" : "#FFFFFF",
                       margin: "0.5rem",
+                      height: "400px",
+                      overflowY: "auto",
                       borderRadius: "0.5rem",
                       boxShadow: darkMode
                         ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
@@ -952,89 +1002,94 @@ const GerenciarObra = () => {
                       <CardTitle
                         style={{
                           color: darkMode ? "#FFFFFF" : "#343A40",
-                          textAlign: "left",
+                          textAlign: "start",
                           borderBottom: darkMode
                             ? "1px solid rgba(255, 255, 255, 0.2)"
                             : "1px solid rgba(52, 58, 64, 0.2)",
-                          paddingBottom: "0.5rem",
-                          marginBottom: "1rem",
                         }}
                       >
                         Funcionários
                       </CardTitle>
-
-                      {funcionarios.length === 0 ? (
-                        <div
-                          style={{
-                            textAlign: "center",
-                            padding: "2rem",
-                            color: darkMode ? "#FFFFFF" : "#343A40",
-                          }}
-                        >
-                          Nenhum funcionário alocado
-                        </div>
-                      ) : (
-                        <Row>
-                          {funcionarios.map((funcionario, index) => (
-                            <Col
-                              xs={12}
-                              sm={6}
-                              md={3}
-                              lg={3}
-                              xl={3}
-                              key={index}
-                              className="mb-3"
-                            >
-                              <Card
-                                style={{
-                                  backgroundColor: darkMode
-                                    ? "#414141"
-                                    : "#FFFFFF",
-                                  padding: "1rem",
-                                  borderRadius: "0.5rem",
-                                  color: darkMode ? "#FFFFFF" : "#343A40",
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  justifyContent: "space-between",
-                                  height: "100%",
-                                  border: darkMode
-                                    ? "1px solid rgba(255, 255, 255, 0.2)"
-                                    : "1px solid #CCCCCC",
-                                }}
-                              >
-                                <div style={{ marginBottom: "1rem" }}>
-                                  <div style={{ textAlign: "left" }}>
-                                    <strong>Nome:</strong> {funcionario.nome}
-                                  </div>
-                                  <div style={{ textAlign: "left" }}>
-                                    <strong>Cargo:</strong> {funcionario.cargo}
-                                  </div>
-                                  <div style={{ textAlign: "left" }}>
-                                    <strong>Data Contratação:</strong>{" "}
-                                    {new Date(
-                                      funcionario.dataContratacao
-                                    ).toLocaleDateString()}
-                                  </div>
-                                </div>
-
-                                {funcionario.id === obra.responsavelId && (
-                                  <div>
-                                    <div style={{ textAlign: "left" }}>
-                                      <strong style={{ fontSize: 14 }}>
-                                        Responsável pela Obra
-                                      </strong>
+                      <div
+                        style={{
+                          color: darkMode ? "#FFFFFF" : "#343A40",
+                          padding: "1rem 0rem 0.5rem 0rem",
+                        }}
+                      >
+                        {funcionarios.length === 0 ? (
+                          <div style={{ textAlign: "center" }}>
+                            Nenhum funcionário alocado
+                          </div>
+                        ) : (
+                          <Row>
+                            {funcionarios.map((funcionario, index) => (
+                              <Col xs={12} sm={6} md={3} key={index} className="mb-3">
+                                <div
+                                  style={{
+                                    alignItems: "center",
+                                    padding: "0.5rem 1rem",
+                                    backgroundColor: darkMode ? "#414141" : "#FFFFFF",
+                                    borderRadius: "0.5rem",
+                                    border: darkMode
+                                      ? "1px solid rgba(255, 255, 255, 0.2)"
+                                      : "1px solid #CCCCCC",
+                                    height: "100%",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <div style={{ width: "100%" }}>
+                                    <div className="d-flex justify-content-between">
+                                      <div>
+                                        <strong>Nome:</strong> {funcionario.nome}
+                                      </div>
                                     </div>
+                                    <div style={{ paddingRight: "0.5rem" }}>
+                                      <strong>Cargo:</strong> {funcionario.cargo}
+                                    </div>
+                                    <div style={{ paddingRight: "0.5rem" }}>
+                                      <strong>Tipo:</strong> {funcionario.tipo}
+                                    </div>
+                                    <div style={{ paddingRight: "0.5rem" }}>
+                                      <strong>Status:</strong> {funcionario.status}
+                                    </div>
+                                    <div>
+                                      <strong>Data Contratação:</strong>{" "}
+                                      {new Date(funcionario.dataContratacao).toLocaleDateString()}
+                                    </div>
+                                    {funcionario.id === obra.responsavelId && (
+                                      <div>
+                                        <strong style={{ fontSize: 14 }}>
+                                          Responsável pela Obra
+                                        </strong>
+                                      </div>
+                                    )}
                                   </div>
-                                )}
-
-                                <div style={{ textAlign: "right", cursor: "pointer" }}>
-                                  <FaTrash color={darkMode ?  "white" : "red"}  size={15} title="Remover funcionário" />
+                                  <div
+                                    style={{
+                                      cursor: "pointer",
+                                      color: darkMode ? "#FFFFFF" : "red",
+                                      textAlign: "end",
+                                    }}
+                                  >
+                                    <FaMinusCircle
+                                      size={15}
+                                      title="Remover funcionário"
+                                      onClick={() => {
+                                        setRemoverFuncionarioModal({
+                                          state: true,
+                                          funcionario: funcionario,
+                                        });
+                                      }}
+                                    />
+                                  </div>
                                 </div>
-                              </Card>
-                            </Col>
-                          ))}
-                        </Row>
-                      )}
+                              </Col>
+                            ))}
+                          </Row>
+                        )}
+                      </div>
                     </CardBody>
                   </Card>
                 </Col>
@@ -1042,31 +1097,6 @@ const GerenciarObra = () => {
             </>
           )}
         </div>
-
-        {/* Modal */}
-        <Modal isOpen={modal} toggle={toggleModal} size="xl">
-          <ModalHeader toggle={toggleModal}>Visualizar Contrato</ModalHeader>
-          <ModalBody>
-            {obra.urlContrato && (
-              <iframe
-                src={`${obra.urlContrato}`}
-                style={{ width: "100%", height: "500px", border: "none" }}
-                title="Contrato"
-              />
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              color={darkMode ? "secondary" : "primary"}
-              onClick={() => window.open(obra.urlContrato, "_blank")}
-            >
-              Baixar Contrato
-            </Button>
-            <Button color="secondary" onClick={toggleModal}>
-              Fechar
-            </Button>
-          </ModalFooter>
-        </Modal>
 
         {/* Modal Adicionar Material */}
         <AdicionarMaterial
@@ -1081,10 +1111,70 @@ const GerenciarObra = () => {
           obra={obra}
         />
 
-        <AdicionarEquipamentos 
+        <AdicionarEquipamentos
           visible={AdicionarEquipamentoModal}
-          setVisible={()=>{setAdicionarEquipamentoModal(false)}}
+          setVisible={() => {
+            setAdicionarEquipamentoModal(false);
+          }}
           obra={obra}
+          getEquipamentosDaObra={getEquipamentosDaObra}
+        />
+
+        <AdicionarFuncionario
+          visible={adicionarFuncionarioModal}
+          setVisible={() => {
+            setAdicionarFuncionarioModal(false);
+          }}
+          obra={obra}
+          refreshFuncionarios={(id) => {
+            getFuncionariosDaObra(id);
+          }}
+        />
+
+
+        <RemoverFuncionario
+          visible={removerFuncionarioModal.state}
+          funcionario={removerFuncionarioModal.funcionario}
+          setVisible={() => {
+            setRemoverFuncionarioModal({
+              state: false,
+              funcionario: {}
+            })
+          }}
+          obra={obra}
+          getFuncionarios={(data) => {
+            getFuncionariosDaObra(data);
+          }}
+        />
+
+        <RemoverEquipamento
+          visible={removerEquipamentoModal.state}
+          equipamento={removerEquipamentoModal.equipamento}
+          setVisible={() => {
+            setRemoverEquipamentoModal({
+              state: false,
+              equipamento: {},
+            })
+          }}
+          obra={obra}
+          getEquipamentos={(data) => {
+            getEquipamentosDaObra(data);
+          }}
+        />
+
+        <RemoverMaterial
+          visible={removerMaterialModa.state}
+          setVisible={() => {
+            setRemoverMaterialModal({
+              state: false,
+              material: {}
+            })
+          }}
+          material={removerMaterialModa.material}
+          obra={obra}
+          getMateriais={(data) => {
+            getMateriaisDaObra(data);
+          }}
         />
 
       </Container>

@@ -15,14 +15,6 @@ import {
 } from "reactstrap";
 import Layout from "../../components/layout/Layout.js";
 import { useUIContextController } from "../../context/index.js";
-import classnames from "classnames";
-
-import FuncionariosPorObra from "./FuncionariosPorObra.js";
-import StatusFuncionarios from "./StatusFuncionarios.js";
-import ObrasChart from "./ObrasCharts.js";
-import StatusEquipamentos from "./StatusEquipamentos.js";
-import MateriaisPorObra from "./MateriaisPorObra.js";
-
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import axios from "axios";
@@ -333,186 +325,58 @@ const Dashboard = () => {
                         : "1px solid rgba(52, 58, 64, 0.2)",
                     }}
                   >
-                    Obras
+                    {loading ? <Skeleton height={20} width="30%" /> : "Minhas Obras"}
                   </CardTitle>
-                  <div style={{ height: "calc(100% - 2rem)" }}>
-                    <ObrasChart data={dataObras} darkMode={darkMode} />
-                  </div>
+
+                  {loading ? (
+                    <Skeleton height="80%" width="100%" />
+                  ) : (
+                    <></>
+                  )}
                 </CardBody>
               </Card>
             </Col>
           </>
         </Row>
 
-        {/* Linha com funcionarios*/}
         <Row className="mt-4">
-          <Col xs={12} md={12} className="mb-4">
-            <Card
-              style={{
-                backgroundColor: darkMode ? "#676767" : "#FFFFFF",
-                margin: "0.5rem",
-                height: "100%",
-                borderRadius: "0.5rem",
-                boxShadow: darkMode
-                  ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
-                  : "0px 0px 10px rgba(0, 0, 0, 0.3)",
-              }}
-            >
-              <CardBody>
-                {/* Header com título e abas */}
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
+          <>
+            <Col xs={12} md={12} className="mb-4" style={{ height: "40vh" }}>
+              <Card
+                style={{
+                  backgroundColor: darkMode ? "#676767" : "#FFFFFF",
+                  margin: "0.5rem",
+                  height: "100%",
+                  borderRadius: "0.5rem",
+                  boxShadow: darkMode
+                    ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
+                    : "0px 0px 10px rgba(0, 0, 0, 0.3)",
+                }}
+              >
+                <CardBody style={{ height: "100%" }}>
                   <CardTitle
                     style={{
-                      color: darkMode ? "#FFFFFF" : "#2E2E33",
-                      textAlign: "left",
+                      color: darkMode ? "#FFFFFF" : "#343A40",
+                      textAlign: "start",
                       borderBottom: darkMode
                         ? "1px solid rgba(255, 255, 255, 0.2)"
                         : "1px solid rgba(52, 58, 64, 0.2)",
                     }}
                   >
-                    Funcionários
+                    {loading ? <Skeleton height={20} width="30%" /> : "Meus Equipamentos"}
                   </CardTitle>
 
-                  {/* Abas para alternar entre gráficos */}
-                  <Nav tabs>
-                    <NavItem>
-                      <NavLink
-                        className={classnames({ active: activeTab === "1" })}
-                        onClick={() => toggle("1")}
-                        style={{
-                          cursor: "pointer",
-                          color: darkMode ? "#FFFFFF" : "#2E2E33",
-                          backgroundColor: darkMode ? "#676767" : "#FFFFFF",
-                          border: "none",
-                          opacity: activeTab === "1" ? 1 : 0.5,
-                        }}
-                      >
-                        Por obra
-                      </NavLink>
-                    </NavItem>
-                    <NavItem>
-                      <NavLink
-                        className={classnames({ active: activeTab === "2" })}
-                        onClick={() => toggle("2")}
-                        style={{
-                          cursor: "pointer",
-                          color: darkMode ? "#FFFFFF" : "#2E2E33",
-                          backgroundColor: darkMode ? "#676767" : "#FFFFFF",
-                          border: "none",
-                          opacity: activeTab === "2" ? 1 : 0.5,
-                        }}
-                      >
-                        Status
-                      </NavLink>
-                    </NavItem>
-                  </Nav>
-                </div>
-
-                {/* Conteúdo condicional com base na aba selecionada */}
-                <TabContent activeTab={activeTab}>
-                  <TabPane tabId="1">
-                    <CardText
-                      style={{
-                        color: darkMode ? "#FFFFFF" : "#2E2E33",
-                        padding: "1rem 0rem 0.5rem 0rem",
-                      }}
-                    >
-                      <FuncionariosPorObra darkMode={darkMode} />
-                    </CardText>
-                  </TabPane>
-                  <TabPane tabId="2">
-                    <CardText
-                      style={{
-                        color: darkMode ? "#FFFFFF" : "#2E2E33",
-                        padding: "1rem 0rem 0.5rem 0rem",
-                      }}
-                    >
-                      <StatusFuncionarios darkMode={darkMode}/>
-                    </CardText>
-                  </TabPane>
-                </TabContent>
-              </CardBody>
-            </Card>
-          </Col>
-
-          <Col xs={12} sm={6} md={6} className="mb-4">
-            <Card
-              style={{
-                backgroundColor: darkMode ? "#676767" : "#FFFFFF",
-                margin: "0.5rem",
-                height: "100%",
-                borderRadius: "0.5rem",
-                boxShadow: darkMode
-                  ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
-                  : "0px 0px 10px rgba(0, 0, 0, 0.3)",
-              }}
-            >
-              <CardBody>
-                <CardTitle
-                  style={{
-                    color: darkMode ? "#FFFFFF" : "#343A40",
-                    textAlign: "start",
-                    borderBottom: darkMode
-                      ? "1px solid rgba(255, 255, 255, 0.2)"
-                      : "1px solid rgba(52, 58, 64, 0.2)",
-                  }}
-                >
-                  Equipamentos
-                </CardTitle>
-                <CardText
-                  style={{
-                    color: darkMode ? "#FFFFFF" : "#343A40",
-                    padding: "1rem 0rem 0.5rem 0rem",
-                  }}
-                >
-                  <StatusEquipamentos darkMode={darkMode} data={equipamentos} />
-                </CardText>
-              </CardBody>
-            </Card>
-          </Col>
-
-          <Col xs={12} sm={6} md={6} className="mb-4">
-            <Card
-              style={{
-                backgroundColor: darkMode ? "#676767" : "#FFFFFF",
-                margin: "0.5rem",
-                height: "100%",
-                borderRadius: "0.5rem",
-                boxShadow: darkMode
-                  ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
-                  : "0px 0px 10px rgba(0, 0, 0, 0.3)",
-              }}
-            >
-              <CardBody>
-                <CardTitle
-                  style={{
-                    color: darkMode ? "#FFFFFF" : "#343A40",
-                    textAlign: "start",
-                    borderBottom: darkMode
-                      ? "1px solid rgba(255, 255, 255, 0.2)"
-                      : "1px solid rgba(52, 58, 64, 0.2)",
-                  }}
-                >
-                  Materiais
-                </CardTitle>
-                <CardText
-                  style={{
-                    color: darkMode ? "#FFFFFF" : "#343A40",
-                    padding: "1rem 0rem 0.5rem 0rem",
-                  }}
-                >
-                  <MateriaisPorObra darkMode={darkMode} />
-                </CardText>
-              </CardBody>
-            </Card>
-          </Col>
+                  {loading ? (
+                    <Skeleton height="80%" width="100%" />
+                  ) : (
+                    <></>
+                  )}
+                </CardBody>
+              </Card>
+            </Col>
+          </>
         </Row>
+
       </Container>
     </Layout>
   );

@@ -76,12 +76,15 @@ const AdicionarMaterial = ({ visible, setVisible, obra }) => {
   const handleSelect = () => {
     setLoadingAddMaterial(true);
 
+    const dataAtual = new Date();
+    dataAtual.setHours(0, 0, 0, 0);
+
     const data = {
       ObraId: obra.id,
       MaterialId: selectQuantidadeModal.produto.id,
       quantidade: quantidadeMaterial,
       valor: parseFloat(valorMaterial).toFixed(2),
-      dataAlocacao: new Date().toLocaleString().split(",")[0],
+      dataAlocacao: dataAtual.toISOString(),
       nomeMaterial: selectQuantidadeModal.produto.nome,
       nomeObra: obra.nome,
     };
