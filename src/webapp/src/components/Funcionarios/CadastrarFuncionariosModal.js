@@ -14,7 +14,6 @@ import { useUIContextController } from "../../context/index.js";
 import axios from "axios";
 import {
   formatarCPF,
-  formatarData,
   formatarTelefone,
   removerFormatacaoCPF,
   removerFormatacaoTelefone,
@@ -40,7 +39,8 @@ const CadastrarFuncionariosModal = ({
     mensagem: "",
     sucesso: false,
   });
-  const [erroCPF, setErroCPF] = React.useState("");
+  const [erroCPF, setErroCPF] = useState("");
+
   const handleSubmit = (values) => {
     setLoading(true);
     const data = {
@@ -191,7 +191,7 @@ const CadastrarFuncionariosModal = ({
           <Formik initialValues={initialValues} onSubmit={handleSubmit}>
             {({ values, setFieldValue }) => (
               <Form style={formStyle}>
-                <Row form style={{ padding: "0.5rem 0rem 0.5rem 0rem" }}>
+                <Row style={{ padding: "0.5rem 0rem 0.5rem 0rem" }}>
                   <Col md={6}>
                     <div className="form-group">
                       <label htmlFor="nome">Nome</label>
@@ -252,7 +252,7 @@ const CadastrarFuncionariosModal = ({
                     </div>
                   </Col>
                 </Row>
-                <Row form>
+                <Row>
                   <Col md={6}>
                     <div className="form-group">
                       <label htmlFor="sexo">Sexo</label>
@@ -284,7 +284,7 @@ const CadastrarFuncionariosModal = ({
                     </div>
                   </Col>
                 </Row>
-                <Row form>
+                <Row>
                   <Col md={6}>
                     <div className="form-group">
                       <label htmlFor="email">Email</label>
@@ -355,7 +355,7 @@ const CadastrarFuncionariosModal = ({
                     </div>
                   </Col>
                 </Row>
-                <Row form>
+                <Row>
                   <Col md={6}>
                     <div className="form-group">
                       <label htmlFor="tipo">Tipo</label>

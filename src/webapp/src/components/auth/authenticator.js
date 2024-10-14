@@ -15,6 +15,7 @@ import GerenciarObra from "pages/GerenciarObra/GerenciarObra.js";
 
 import EquipamentosComum from "pages/EquipamentosComum/EquipamentosComum.js";
 import ObrasComum from "../../pages/ObrasComum/ObraComum.js";
+import DashboardComum from "pages/Dashboard/DashboardComum.js";
 
 import Unauthorized from "../../pages/Unauthorized/Unauthorized.js";
 
@@ -50,7 +51,7 @@ const Authenticator = () => {
       setUserDetails();
       // Redireciona para o dashboard se não estiver em uma rota válida
       if (currentPath === "/" || currentPath === "/authentication/login") {
-        navigate(userType === 1 ? "/dashboard" : "/resumo");
+        navigate(userType === 1 ? "/dashboard" : "/obras");
       }
     } else {
       // Se o usuário não estiver logado, redireciona para a página de login
@@ -87,7 +88,7 @@ const Authenticator = () => {
     if (data.user.nivelUsuario === 1) {
       navigate("/dashboard");
     } else {
-      navigate("/resumo");
+      navigate("/obras");
     }
   };
 
@@ -124,7 +125,7 @@ const Authenticator = () => {
               userType === 1 ? <Dashboard /> : <Navigate to={"/unauthorized"} />
             }
           />
-          <Route path="/resumo" element={<Dashboard />} />
+          {/* <Route path="/resumo" element={<DashboardComum />} /> */}
           <Route
             path="/obras"
             element={userType === 1 ? <Obras /> : <ObrasComum />}
@@ -165,7 +166,7 @@ const Authenticator = () => {
           <Route
             path="/obra/:id"
             element={
-              userType === 1 ? <GerenciarObra /> : <Navigate to={"/unauthorized"} />
+              <GerenciarObra />
             }
           />
           <Route path="/resetSenha" element={<ResetPass />} />

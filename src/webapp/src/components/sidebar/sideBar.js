@@ -37,7 +37,7 @@ const SideBar = ({ trocaRotas }) => {
   ];
 
   const menuOptionsComum = [
-    { route: "Resumo", icon: <FaChartPie /> },
+    // { route: "Resumo", icon: <FaChartPie /> },
     { route: "Obras", icon: <FaRegBuilding /> },
     { route: "Equipamentos", icon: <FaWrench /> },
     { route: "Perfil", icon: <FaUser /> },

@@ -2,7 +2,7 @@ const { Obra, Cliente } = require("../models");
 const { Funcionario } = require("../models");
 const Usuario = require("../models/User");
 const { BlobServiceClient } = require("@azure/storage-blob");
-const { Op } = require("sequelize");
+const { Op, Sequelize } = require("sequelize");
 
 const blobServiceClient = BlobServiceClient.fromConnectionString(
   process.env.AZURE_STORAGE_CONNECTION_STRING
@@ -197,17 +197,17 @@ const ObraController = {
   async getObrasPorFuncionario(req, res) {
     const userEmail = req.query.userId;
     try {
-      // Buscar o funcionário pelo email
+      
       const funcionario = await Funcionario.findOne({
         where: { email: userEmail },
       });
 
-      // Verificar se o funcionário existe
+      
       if (!funcionario) {
         return res.status(404).json({ message: "Funcionario não encontrado" });
       }
 
-      // Buscar todas as obras associadas ao funcionário
+      
       const obras = await Obra.findAll({
         include: [
           {
@@ -217,14 +217,14 @@ const ObraController = {
         ],
       });
 
-      // Verificar se foram encontradas obras
+      
       if (obras.length === 0) {
         return res
           .status(404)
           .json({ message: "Nenhuma obra encontrada para este funcionário" });
       }
 
-      // Retornar as obras encontradas
+      
       res.status(200).json(obras);
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -331,6 +331,55 @@ const ObraController = {
       res.status(200).json(obras);
     } catch (error) {
       res.status(400).json({ message: error.message });
+    }
+  },
+
+  async getFuncionariosPorObra(req, res) {
+    try {
+      const obras = await Obra.findAll({
+        include: [
+          {
+            model: Funcionario,
+            attributes: [],
+          },
+        ],
+        attributes: [
+          'id',
+          'nome',
+          [Sequelize.fn('COUNT', Sequelize.col('Funcionarios.id')), 'qtdFuncionarios'],
+        ],
+        group: ['Obra.id'],
+      });
+      
+      if (obras.length > 0) {
+        res.status(200).json(obras);
+      } else {
+        res.status(404).json({ message: "Nenhuma obra encontrada" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }, 
+  async getObrasComFuncionarios(req, res) {
+    try {
+      const obras = await Obra.findAll({
+        order: [['createdAt', 'DESC']], 
+        limit: 5, 
+      });
+
+      const obrasComFuncionarios = await Promise.all(
+        obras.map(async (obra) => {
+          const qtdFuncionarios = await Funcionario.count({ where: { obraId: obra.id } });
+          return {
+            obra: obra.nome,
+            operarios: qtdFuncionarios, 
+          };
+        })
+      );
+
+      res.status(200).json(obrasComFuncionarios);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
     }
   },
 };

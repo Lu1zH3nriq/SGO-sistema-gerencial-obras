@@ -19,10 +19,16 @@ import axios from "axios";
 import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
 import { useUIContextController } from "../../context/index.js";
 import { FaCheckSquare } from "react-icons/fa";
-import CadastrarMaterialModal from "components/Materiais/CadastrarMaterialModal.js";
 import CurrencyInput from "react-currency-input-field";
 
-const AdicionarEquipamentos = ({ visible, setVisible, obra }) => {
+import CadastrarEquipamentoModal from "components/Equipamentos/CadastrarEquipamentoModal.js";
+
+const AdicionarEquipamentos = ({
+  visible,
+  setVisible,
+  obra,
+  getEquipamentosDaObra,
+}) => {
   const URL_API = process.env.REACT_APP_URL_API;
   const [resultados, setResultados] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -35,27 +41,22 @@ const AdicionarEquipamentos = ({ visible, setVisible, obra }) => {
   });
   const [searchValues, setSearchValues] = useState({
     nome: "",
-    codigo: "",
+    identificador: "",
   });
+  const [cadastrarEquipamentoModal, setCadastrarEquipamentoModal] =
+    useState(false);
 
-  const [cadstrarMaterialModal, setCadastrarMaterialModal] = useState(false);
-  const [selectQuantidadeModal, setSelectQuantidadeModal] = useState({
-    state: false,
-    produto: {},
-  });
-
-  const [loadingAddMaterial, setLoadingAddMaterial] = useState(false);
-  const [quantidadeMaterial, setQuantidadeMaterial] = useState(0);
-  const [valorMaterial, setValorMaterial] = useState(0);
+  const [equipamentoSelecionado, setEquipamentoSelecionado] = useState({});
+  const [loadingEquipamento, setLoadingEquipamento] = useState(false);
 
   const handleSearch = () => {
     setLoading(true);
 
     axios
-      .get(`${URL_API}/api/materiais/buscaMateriaisQuery`, {
+      .get(`${URL_API}/api/equipamentos/buscaEquipamentosQuery`, {
         params: {
           nome: searchValues.nome || "",
-          codigo: searchValues.codigo || "",
+          indentificador: searchValues.identificador || "",
         },
       })
       .then((response) => {
@@ -73,54 +74,49 @@ const AdicionarEquipamentos = ({ visible, setVisible, obra }) => {
       .finally(() => setLoading(false));
   };
 
-  const handleSelect = () => {
-    setLoadingAddMaterial(true);
+  const handleSelect = (equipamento) => {
+    setLoadingEquipamento(true);
 
-    const data = {
-      ObraId: obra.id,
-      MaterialId: selectQuantidadeModal.produto.id,
-      quantidade: quantidadeMaterial,
-      valor: parseFloat(valorMaterial).toFixed(2),
-      dataAlocacao: new Date().toLocaleString().split(",")[0],
-      nomeMaterial: selectQuantidadeModal.produto.nome,
-      nomeObra: obra.nome,
+    const dataAtual = new Date();
+    dataAtual.setHours(0, 0, 0, 0);
+
+    let data = equipamento;
+
+    data = {
+      ...data,
+      status: "Em uso",
+      dataAlocacao: dataAtual.toISOString(),
+      funcionarioId: obra.responsavelId,
+      responsavel: obra.responsavel,
+      obraAlocado: obra.nome,
+      obraId: obra.id,
     };
-    console.log("data to send: ", data);
+
     axios
-      .post(`${URL_API}/api/obraMateriais/addMaterialObra`, data)
+      .put(`${URL_API}/api/equipamentos/alterarEquipamento?id=${data.id}`, data)
       .then((res) => {
+        console.log(res.data);
         setConfirmacaoVisible({
           visible: true,
-          mensagem: res.data.message,
+          mensagem: "Equipamento alocado com sucesso!",
           sucesso: true,
         });
-        setLoadingAddMaterial(false);
-        setSelectQuantidadeModal({
-          state: false,
-          produto: {},
-        });
-        setQuantidadeMaterial(0);
-        setValorMaterial(0);
+        getEquipamentosDaObra();
+        setResultados([]);
         setVisible();
       })
       .catch((error) => {
         console.log(error);
         setConfirmacaoVisible({
           visible: true,
-          mensagem: "Erro ao adicionar material a obra!",
+          mensagem: "Ocorreu um erro ao alocar este equipamento!",
           sucesso: false,
         });
-        setLoadingAddMaterial(false);
-        setSelectQuantidadeModal({
-          state: false,
-          produto: {},
-        });
-        setQuantidadeMaterial(0);
-        setValorMaterial(0);
-        setVisible();
+      })
+      .finally(() => {
+        setLoadingEquipamento(false);
       });
   };
-
 
   return (
     <Container>
@@ -129,11 +125,8 @@ const AdicionarEquipamentos = ({ visible, setVisible, obra }) => {
         isOpen={visible}
         toggle={() => {
           setVisible(false);
-          setSearchValues({ nome: "", codigo: "" });
+          setSearchValues({ nome: "", identificador: "" });
           setResultados([]);
-          setValorMaterial(0);
-          setQuantidadeMaterial(0);
-          setLoadingAddMaterial(false);
         }}
         centered
       >
@@ -142,16 +135,14 @@ const AdicionarEquipamentos = ({ visible, setVisible, obra }) => {
             setVisible(false);
             setSearchValues({ nome: "", codigo: "" });
             setResultados([]);
-            setValorMaterial(0);
-            setQuantidadeMaterial(0);
-            setLoadingAddMaterial(false);
+            setCadastrarEquipamentoModal(false);
           }}
           style={{
             backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
             color: darkMode ? "#FFFFFF" : "#000000",
           }}
         >
-          Pesquisar Material
+          Pesquisar Equipamento
         </ModalHeader>
         <ModalBody
           style={{
@@ -165,7 +156,7 @@ const AdicionarEquipamentos = ({ visible, setVisible, obra }) => {
                 <Row>
                   <Col md={4}>
                     <FormGroup>
-                      <Label for="nome">Nome do Material</Label>
+                      <Label for="nome">Nome do Equipamento</Label>
                       <Field
                         type="text"
                         name="nome"
@@ -182,16 +173,16 @@ const AdicionarEquipamentos = ({ visible, setVisible, obra }) => {
                   </Col>
                   <Col md={4}>
                     <FormGroup>
-                      <Label for="codigo">Código do Material</Label>
+                      <Label for="codigo">Identificador do Equipamento</Label>
                       <Field
                         type="text"
                         name="codigo"
                         className="form-control"
-                        value={searchValues.codigo}
+                        value={searchValues.identificador}
                         onChange={(e) =>
                           setSearchValues({
                             ...searchValues,
-                            codigo: e.target.value,
+                            identificador: e.target.value,
                           })
                         }
                       />
@@ -203,11 +194,14 @@ const AdicionarEquipamentos = ({ visible, setVisible, obra }) => {
                   style={{ marginBottom: "1rem" }}
                 >
                   <Col className="d-flex justify-content-end">
-                    <Button type="submit" style={{
-                         backgroundColor: darkMode ? "#424242" : "#7A7A7A",
-                         color: "#FFFFFF",
-                         border: "none",
-                    }}>
+                    <Button
+                      type="submit"
+                      style={{
+                        backgroundColor: darkMode ? "#424242" : "#7A7A7A",
+                        color: "#FFFFFF",
+                        border: "none",
+                      }}
+                    >
                       {loading ? (
                         <Spinner size="sm" color="light" />
                       ) : (
@@ -222,7 +216,7 @@ const AdicionarEquipamentos = ({ visible, setVisible, obra }) => {
                         color: "#FFFFFF",
                         border: "none",
                       }}
-                      onClick={() => setCadastrarMaterialModal(true)}
+                      onClick={() => setCadastrarEquipamentoModal(true)}
                     >
                       Cadastrar
                     </Button>
@@ -232,116 +226,127 @@ const AdicionarEquipamentos = ({ visible, setVisible, obra }) => {
             )}
           </Formik>
 
-          <Table
-            responsive
-            size="sm"
-            bordered
-            dark={darkMode}
-            className="mt-2"
-            style={{ whiteSpace: "nowrap" }}
-          >
-            <thead>
-              <tr>
-                <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
-                  Nome
-                </th>
-                <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
-                  Código
-                </th>
-                <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
-                  Fornecedor
-                </th>
-                <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
-                  Unidade de Medida
-                </th>
-                <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
-                  Última Compra
-                </th>
-                <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
-                  Validade
-                </th>
-                <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
-                  Nota Fiscal
-                </th>
-                <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
-                  Selecionar
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {resultados.length > 0 ? (
-                resultados.map((produto, index) => (
-                  <tr
-                    key={index}
-                    onClick={() =>
-                      setSelectQuantidadeModal({
-                        state: true,
-                        produto: produto,
-                      })
-                    }
-                    style={{ cursor: "pointer" }}
-                  >
-                    <td
-                      style={{ textAlign: "center", paddingInline: "0.5rem" }}
+          {loadingEquipamento ? (
+            <div
+              className="d-flex justify-content-center align-items-center"
+              style={{ paddingTop: "1rem" }}
+            >
+              <Spinner color={darkMode ? "light" : "secondary"} />
+            </div>
+          ) : (
+            <Table
+              responsive
+              size="sm"
+              bordered
+              dark={darkMode}
+              className="mt-2"
+              style={{ whiteSpace: "nowrap" }}
+            >
+              <thead>
+                <tr>
+                  <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
+                    Nome
+                  </th>
+                  <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
+                    Identificador
+                  </th>
+                  <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
+                    Peso
+                  </th>
+                  <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
+                    Status do Equipamento
+                  </th>
+                  <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
+                    Cadastro
+                  </th>
+                  <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
+                    Derivado de:
+                  </th>
+                  <th style={{ paddingInline: "0.3rem", textAlign: "center" }}>
+                    Selecionar
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {resultados.length > 0 ? (
+                  resultados.map((produto, index) => (
+                    <tr
+                      key={index}
+                      onClick={
+                        produto.status !== "Em uso"
+                          ? () => {
+                              setEquipamentoSelecionado(produto);
+                              handleSelect(produto);
+                            }
+                          : null
+                      }
+                      style={{
+                        cursor:
+                          produto.status !== "Em uso"
+                            ? "pointer"
+                            : "not-allowed",
+                        backgroundColor:
+                          produto.status === "Em uso" ? "#f8d7da" : "inherit",
+                      }}
+                      title={
+                        produto.status !== "Em uso"
+                          ? "Selecionar Equipamento"
+                          : "Equipamento em uso"
+                      }
                     >
-                      {produto.nome}
-                    </td>
-                    <td
-                      style={{ textAlign: "center", paddingInline: "0.5rem" }}
-                    >
-                      {produto.codigo}
-                    </td>
-                    <td
-                      style={{ textAlign: "center", paddingInline: "0.5rem" }}
-                    >
-                      {produto.principalFornecedor}
-                    </td>
-                    <td
-                      style={{ textAlign: "center", paddingInline: "0.5rem" }}
-                    >
-                      {produto.unidadeMedida}
-                    </td>
-                    <td
-                      style={{ textAlign: "center", paddingInline: "0.5rem" }}
-                    >
-                      {produto.dataUltimaCompra
-                        ? new Date(
-                            produto.dataUltimaCompra
-                          ).toLocaleDateString()
-                        : ""}
-                    </td>
-                    <td
-                      style={{ textAlign: "center", paddingInline: "0.5rem" }}
-                    >
-                      {produto.dataValidade
-                        ? new Date(produto.dataValidade).toLocaleDateString()
-                        : "--"}
-                    </td>
-                    <td
-                      style={{ textAlign: "center", paddingInline: "0.5rem" }}
-                    >
-                      {produto.numeroNotaFiscal || "--"}
-                    </td>
-                    <td
-                      style={{ textAlign: "center", paddingInline: "0.5rem" }}
-                    >
-                      <FaCheckSquare
-                        size={20}
-                        color={darkMode ? "#FFFFFF" : "#7A7A7A"}
-                        title="Selecionar"
-                      />
+                      <td
+                        style={{ textAlign: "center", paddingInline: "0.5rem" }}
+                      >
+                        {produto.nome}
+                      </td>
+                      <td
+                        style={{ textAlign: "center", paddingInline: "0.5rem" }}
+                      >
+                        {produto.identificador}
+                      </td>
+                      <td
+                        style={{ textAlign: "center", paddingInline: "0.5rem" }}
+                      >
+                        {produto.peso}
+                      </td>
+                      <td
+                        style={{ textAlign: "center", paddingInline: "0.5rem" }}
+                      >
+                        {produto.status}
+                      </td>
+                      <td
+                        style={{ textAlign: "center", paddingInline: "0.5rem" }}
+                      >
+                        {produto.dataCadastro
+                          ? new Date(produto.dataCadastro).toLocaleDateString()
+                          : ""}
+                      </td>
+                      <td
+                        style={{ textAlign: "center", paddingInline: "0.5rem" }}
+                      >
+                        {produto.derivado || "--"}
+                      </td>
+                      <td
+                        style={{ textAlign: "center", paddingInline: "0.5rem" }}
+                      >
+                        <FaCheckSquare
+                          size={20}
+                          color={darkMode ? "#FFFFFF" : "#7A7A7A"}
+                          title="Selecionar"
+                        />
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" style={{ textAlign: "center" }}>
+                      Nenhum resultado encontrado
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="8" style={{ textAlign: "center" }}>
-                    Nenhum resultado encontrado
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </Table>
+                )}
+              </tbody>
+            </Table>
+          )}
         </ModalBody>
         <ModalFooter
           style={{
@@ -352,11 +357,9 @@ const AdicionarEquipamentos = ({ visible, setVisible, obra }) => {
           <Button
             onClick={() => {
               setVisible(false);
-              setSearchValues({ nome: "", codigo: "" });
+              setSearchValues({ nome: "", indentificador: "" });
               setResultados([]);
-              setValorMaterial(0);
-              setQuantidadeMaterial(0);
-              setLoadingAddMaterial(false);
+              setCadastrarEquipamentoModal(false);
             }}
             style={{
               backgroundColor: darkMode ? "#4A4A4A" : "#CECFCB",
@@ -375,117 +378,17 @@ const AdicionarEquipamentos = ({ visible, setVisible, obra }) => {
         mensagem={confirmacaoVisible.mensagem}
         sucesso={confirmacaoVisible.sucesso}
       />
-      <CadastrarMaterialModal
-        visible={cadstrarMaterialModal}
-        setVisible={() => setCadastrarMaterialModal(false)}
-        material={null}
-        getMaterials={() => {}}
-        materialCadastrado={(data) => {
+
+      <CadastrarEquipamentoModal
+        visible={cadastrarEquipamentoModal}
+        setVisible={() => {
+          setCadastrarEquipamentoModal(false);
+        }}
+        equipamento={null}
+        getEquipamentos={(data) => {
           setResultados((prevResultados) => [...prevResultados, data]);
         }}
       />
-
-      <Modal
-        size="sm"
-        isOpen={selectQuantidadeModal.state}
-        toggle={() => {
-          setSelectQuantidadeModal({ state: false, produto: {} });
-          setValorMaterial(0);
-          setQuantidadeMaterial(0);
-          setLoadingAddMaterial(false);
-        }}
-        centered
-      >
-        <ModalHeader
-          toggle={() => {
-            setSelectQuantidadeModal({ state: false, produto: {} });
-            setValorMaterial(0);
-            setQuantidadeMaterial(0);
-            setLoadingAddMaterial(false);
-          }}
-          style={{
-            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
-            color: darkMode ? "#FFFFFF" : "#000000",
-          }}
-        >
-          Selecionar Quantidade
-        </ModalHeader>
-        <ModalBody
-          style={{
-            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
-            color: darkMode ? "#FFFFFF" : "#000000",
-          }}
-        >
-          <FormGroup>
-            <Label for="nomeProduto">Nome</Label>
-            <Input
-              type="text"
-              id="nomeProduto"
-              value={selectQuantidadeModal.produto.nome || "--"}
-              disabled
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label for="nomeProduto">Unidade</Label>
-            <Input
-              type="text"
-              id="unidadeMedida"
-              value={selectQuantidadeModal.produto.unidadeMedida || "--"}
-              disabled
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label for="quantidade">Quantidade</Label>
-            <Input
-              type="number"
-              id="quantidade"
-              value={quantidadeMaterial}
-              onChange={(e) => {
-                setQuantidadeMaterial(e.target.value);
-              }}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label for="valor">Valor do Material</Label>
-            <CurrencyInput
-              id="valor"
-              name="valor"
-              placeholder="R$0,00"
-              decimalsLimit={2}
-              value={valorMaterial}
-              onValueChange={(value) => setValorMaterial(value)}
-              prefix="R$"
-              decimalSeparator=","
-              groupSeparator="."
-              style={{ width: "100%" }}
-            />
-          </FormGroup>
-        </ModalBody>
-        <ModalFooter
-          style={{
-            backgroundColor: darkMode ? "#6E6E6E" : "#FFFFFF",
-            color: darkMode ? "#FFFFFF" : "#000000",
-          }}
-        >
-          <Button
-            color="primary"
-            style={{
-              backgroundColor: darkMode ? "#4A4A4A" : "#CECFCB",
-              color: darkMode ? "#FFFFFF" : "#343A40",
-              border: "none",
-            }}
-            onClick={() => {
-              handleSelect();
-            }}
-          >
-            {loadingAddMaterial ? (
-              <Spinner size="sm" color="light" />
-            ) : (
-              "Adicionar"
-            )}
-          </Button>
-        </ModalFooter>
-      </Modal>
     </Container>
   );
 };
