@@ -8,8 +8,10 @@ import {
   setUserName,
   setUserId,
 } from "../../context/index.js";
+import { useNavigate } from "react-router-dom";
 
 const LogoutModal = ({ visible, setVisible }) => {
+  const navigate = useNavigate();
   const [controller, dispatch] = useUIContextController();
   const { darkMode } = controller;
 
@@ -26,6 +28,7 @@ const LogoutModal = ({ visible, setVisible }) => {
     handleClose();
   
     window.location.reload();
+    navigate('/');
   };
 
   const modalStyle = {

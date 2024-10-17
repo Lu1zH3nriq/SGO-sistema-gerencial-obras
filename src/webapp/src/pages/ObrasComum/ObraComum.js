@@ -29,31 +29,25 @@ import {
   FaTrash,
   FaChevronLeft,
   FaChevronRight,
-  FaExpandArrowsAlt,
 } from "react-icons/fa";
+import { BsClipboard2Data } from 'react-icons/bs';
 import { Spinner } from "reactstrap";
 import CadastrarObraModal from "components/Obras/CadastrarObraModa.js";
 import DateSelectionModal from "components/Obras/CustomDates.js";
 import DeleteObraModal from "components/Obras/DeleteObraModal.js";
 import axios from "axios";
-import { formatarData } from "components/utils/utilsMask.js";
+import { formatarData, formatarOrcamento } from "components/utils/utilsMask.js";
+import { useNavigate } from 'react-router-dom';
 
 const ObraComum = () => {
+  const navigate = useNavigate();
   const URL_API = process.env.REACT_APP_URL_API;
   const [obras, setObras] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingInfo, setLoadingInfo] = useState(false);
   const [state] = useUIContextController();
-  const { darkMode } = state;
+  const { darkMode, userId } = state;
   const [expanded, setExpanded] = useState(null);
-  const [viewCadastrarObraModal, setViewCadastrarObraModal] = useState({
-    visible: false,
-    obra: null,
-  });
-  const [viewDeleteObraModal, setViewDeleteObraModal] = useState({
-    visible: false,
-    obra: null,
-  });
   const [filtro, setFiltro] = useState("Nenhum");
   const [modalDatasOpen, setModalDatasOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -109,6 +103,11 @@ const ObraComum = () => {
     setModalDatasOpen(false);
     setObrasAFiltrar(obras);
   };
+  const handleModalCloseCancel = () => {
+    handleFiltroChange({ target: { value: "Nenhum" } });
+    setModalDatasOpen(false);
+    setObrasAFiltrar(obras);
+  };
 
   const [obrasAFiltrar, setObrasAFiltrar] = useState(obras);
 
@@ -125,7 +124,6 @@ const ObraComum = () => {
     }
   });
 
-  // Calcular índices de paginação
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredObras.slice(indexOfFirstItem, indexOfLastItem);
@@ -145,9 +143,8 @@ const ObraComum = () => {
   const getObras = async () => {
     setLoading(true);
     axios
-      .get(`${URL_API}/api/obras/obras`)
+      .get(`${URL_API}/api/obras/buscaObraPorUser?userId=${userId}`)
       .then((response) => {
-        console.log("OBRAS :", response.data);
         setObras(response.data);
         setObrasAFiltrar(response.data);
       })
@@ -189,46 +186,26 @@ const ObraComum = () => {
         });
     } else if (selectDateFilter === "Data de Término") {
       axios
-      .get(`${URL_API}/api/obras/buscaObraPorDataFinal`, {
-        params: {
-          dataInicial: dataInicial,
-          dataFinal: dataFinal,
-        },
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        console.log("OBRAS FILTRADAS POR DATAS: ", response.data);
-        setObrasAFiltrar(response.data);
-      })
-      .catch((error) => {
-        console.error("ERRO AO FILTRAR OBRAS POR DATAS: ", error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+        .get(`${URL_API}/api/obras/buscaObraPorDataFinal`, {
+          params: {
+            dataInicial: dataInicial,
+            dataFinal: dataFinal,
+          },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          console.log("OBRAS FILTRADAS POR DATAS: ", response.data);
+          setObrasAFiltrar(response.data);
+        })
+        .catch((error) => {
+          console.error("ERRO AO FILTRAR OBRAS POR DATAS: ", error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
-  };
-  const cadastrarObra = () => {
-    setViewCadastrarObraModal({
-      visible: true,
-      obra: null,
-    });
-  };
-
-  const editarObra = (obra) => {
-    setViewCadastrarObraModal({
-      visible: true,
-      obra: obra,
-    });
-  };
-
-  const deleteObra = (obra) => {
-    setViewDeleteObraModal({
-      visible: true,
-      obra: obra,
-    });
   };
 
   return (
@@ -240,7 +217,7 @@ const ObraComum = () => {
       >
         {/* Linha com botão "Adicionar" e campo de pesquisa */}
         <Row
-          className="mb-4"
+          className="mb-4 d-flex justify-content-between"
           style={{
             backgroundColor: darkMode ? "#414141" : "#FFFFFF",
             padding: "1rem 0.5rem 1rem 0.5rem",
@@ -250,20 +227,7 @@ const ObraComum = () => {
               : "0px 0px 10px rgba(0, 0, 0, 0.1)",
           }}
         >
-          <Col md={2} className="d-flex align-items-center">
-            <Button
-              variant="secondary"
-              className="d-flex align-items-center"
-              style={{
-                backgroundColor: darkMode ? "#676767" : "#CECFCB",
-                color: darkMode ? "#FFFFFF" : "#343A40",
-              }}
-              onClick={cadastrarObra}
-            >
-              <FaPlus className="me-2" /> Adicionar
-            </Button>
-          </Col>
-          <Col md={2} className="d-flex align-items-center">
+          <Col md={3} className="d-flex align-items-center">
             <Typography
               variant="subtitle1"
               className="me-2"
@@ -364,256 +328,193 @@ const ObraComum = () => {
           </Box>
         ) : (
           <Container>
-            {currentItems.length > 0 ? (
-              currentItems.map((obra, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    width: "100%",
-                    mb: 2,
-                    boxShadow: darkMode
-                      ? "0px 0px 10px rgba(255, 255, 255, 0.1)"
-                      : "0px 0px 10px rgba(0, 0, 0, 0.1)",
-                  }}
-                >
-                  <Card
-                    style={{
-                      backgroundColor: darkMode ? "#676767" : "#FFFFFF",
-                      color: darkMode ? "#FFFFFF" : "#343A40",
-                    }}
-                  >
-                    <CardContent
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        position: "relative",
-                      }}
-                    >
-                      <Box sx={{ flex: 1 }}>
-                        <Typography
-                          variant="h5"
-                          style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                        >
-                          {obra.nome}
-                        </Typography>
-
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                        >
-                          <strong style={{ marginRight: "0.5rem" }}>
-                            Endereço:
-                          </strong>
-                          {obra.endereco}
-                        </Typography>
-
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                        >
-                          <strong style={{ marginRight: "0.5rem" }}>
-                            Responsável pela obra:
-                          </strong>
-                          {obra.responsavel || "Não informado"}
-                        </Typography>
-                      </Box>
-
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          flex: 1,
-                        }}
-                      >
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          style={{
-                            color: darkMode ? "#FFFFFF" : "#343A40",
-                            marginBottom: "0.5rem",
-                          }}
-                        >
-                          Status da Obra:
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          style={{
-                            color: darkMode ? "#FFFFFF" : "#343A40",
-                          }}
-                        >
-                          {obra.status === "Em andamento" ? (
-                            <span
-                              style={{
-                                color: darkMode ? " #23A9F2 " : "#008AD3",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              {obra.status}
-                            </span>
-                          ) : obra.status === "Concluida" ? (
-                            <span
-                              style={{
-                                color: darkMode ? "#00EA00" : "#00B900",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              {obra.status}
-                            </span>
-                          ) : obra.status === "Atrasada" ? (
-                            <span
-                              style={{
-                                color: darkMode ? "#FF4848" : "red",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              {obra.status}
-                            </span>
-                          ) : (
-                            <span
-                              style={{ color: "#FFA500", fontWeight: "bold" }}
-                            >
-                              {obra.status}
-                            </span>
-                          )}
-                        </Typography>
-                      </Box>
-
-                      <IconButton
-                        onClick={() => handleExpandClick(index)}
-                        style={{
-                          color: darkMode ? "#FFFFFF" : "#343A40",
-                          position: "absolute",
-                          top: 0,
-                          right: 0,
-                        }}
-                      >
-                        {expanded === index ? (
-                          <FaChevronUp />
-                        ) : (
-                          <FaChevronDown />
-                        )}
-                      </IconButton>
-                    </CardContent>
-                    <Collapse
-                      in={expanded === index}
-                      timeout="auto"
-                      unmountOnExit
-                    >
-                      <CardContent>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                        >
-                          Cliente: {obra.cliente}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                        >
-                          Data Início: {formatarData(obra.dataInicio)}
-                        </Typography>
-
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                        >
-                          Previsão para entrega:{" "}
-                          {obra?.dataFinal
-                            ? formatarData(obra.dataFinal)
-                            : "Não informado"}
-                        </Typography>
-
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                        >
-                          Alvará: {obra.alvara}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                        >
-                          Contrato: {obra.contrato}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
-                        >
-                          Orçamento inicial: {obra.orcamento}
-                        </Typography>
-
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "end",
-                            alignItems: "center",
-                            marginTop: "2.5rem",
-                          }}
-                        >
-                          <FaExpandArrowsAlt
-                            style={{
-                              cursor: "pointer",
-                              marginRight: "10px",
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                            }}
-                            size={20}
-                            title="Gerenciar"
-                            onClick={() => {
-                              console.log("Detalhes da obra : ", obra);
-                            }}
-                          />
-                          <FaEdit
-                            style={{
-                              cursor: "pointer",
-                              marginRight: "10px",
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                            }}
-                            onClick={() => {
-                              editarObra(obra);
-                            }}
-                            size={20}
-                            title="Editar"
-                          />
-                          <FaTrash
-                            style={{
-                              cursor: "pointer",
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                            }}
-                            size={20}
-                            title="Excluir"
-                            onClick={() => {
-                              deleteObra(obra);
-                            }}
-                          />
-                        </Box>
-                      </CardContent>
-                    </Collapse>
-                  </Card>
-                </Box>
-              ))
-            ) : (
-              <Typography
-                variant="h6"
-                style={{
-                  color: darkMode ? "#FFFFFF" : "#343A40",
-                  textAlign: "center",
+            {currentItems.map((obra, index) => (
+              <Box
+                key={index}
+                sx={{
+                  width: "100%",
+                  mb: 2,
+                  boxShadow: darkMode
+                    ? "0px 0px 10px rgba(255, 255, 255, 0.1)"
+                    : "0px 0px 10px rgba(0, 0, 0, 0.1)",
                 }}
               >
-                Nenhuma obra encontrada
-              </Typography>
-            )}
+                <Card
+                  style={{
+                    backgroundColor: darkMode ? "#676767" : "#FFFFFF",
+                    color: darkMode ? "#FFFFFF" : "#343A40",
+                  }}
+                >
+                  <CardContent
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      position: "relative",
+                    }}
+                  >
+                    <Box sx={{ flex: 1 }}>
+                      <Typography
+                        variant="h5"
+                        style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                      >
+                        {obra.nome}
+                      </Typography>
+
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                      >
+                        <strong style={{ marginRight: "0.5rem" }}>Endereço:</strong>
+                        {obra.endereco}
+                      </Typography>
+
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                      >
+                        <strong style={{ marginRight: "0.5rem" }}>
+                          Responsável pela obra:
+                        </strong>
+                        {obra.responsavel || "Não informado"}
+                      </Typography>
+                    </Box>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flex: 1,
+                      }}
+                    >
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        style={{
+                          color: darkMode ? "#FFFFFF" : "#343A40",
+                          marginBottom: "0.5rem",
+                        }}
+                      >
+                        Status da Obra:
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        style={{
+                          color: darkMode ? "#FFFFFF" : "#343A40",
+                        }}
+                      >
+                        {obra.status === "Em andamento" ? (
+                          <span
+                            style={{
+                              color: darkMode ? " #23A9F2 " : "#008AD3",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {obra.status}
+                          </span>
+                        ) : obra.status === "Concluida" ? (
+                          <span
+                            style={{
+                              color: darkMode ? "#00EA00" : "#00B900",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {obra.status}
+                          </span>
+                        ) : obra.status === "Atrasada" ? (
+                          <span
+                            style={{
+                              color: darkMode ? "#FF4848" : "red",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {obra.status}
+                          </span>
+                        ) : (
+                          <span
+                            style={{ color: "#FFA500", fontWeight: "bold" }}
+                          >
+                            {obra.status}
+                          </span>
+                        )}
+                      </Typography>
+                    </Box>
+                  </CardContent>
+
+                  <CardContent>
+                    {/* Renderização dos campos */}
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                    >
+                      Cliente: {obra.cliente}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                    >
+                      Data Início: {formatarData(obra.dataInicio)}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                    >
+                      Previsão para entrega:{" "}
+                      {obra?.dataFinal ? formatarData(obra.dataFinal) : "Não informado"}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                    >
+                      Alvará: {obra.alvara}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                    >
+                      Contrato: {obra.contrato}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      style={{ color: darkMode ? "#FFFFFF" : "#343A40" }}
+                    >
+                      Orçamento inicial: {formatarOrcamento(obra.orcamento)}
+                    </Typography>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "end",
+                        alignItems: "center",
+                        marginTop: "2.5rem",
+                      }}
+                    >
+                      <BsClipboard2Data
+                        style={{
+                          cursor: "pointer",
+                          marginRight: "10px",
+                          color: darkMode ? "#FFFFFF" : "#343A40",
+                        }}
+                        size={20}
+                        title="Gerenciar"
+                        onClick={() => navigate(`/obra/${obra.id}`)}
+                      />
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Box>
+            ))}
           </Container>
         )}
 
@@ -670,33 +571,17 @@ const ObraComum = () => {
         </Box>
       </Container>
 
-      {/* Modal para cadastrar obra */}
-      <CadastrarObraModal
-        visible={viewCadastrarObraModal.visible}
-        setVisible={setViewCadastrarObraModal}
-        obra={viewCadastrarObraModal.obra}
-        getObras={getObras}
-      />
-
       {/* Modal para selecionar datas */}
       <DateSelectionModal
         show={modalDatasOpen}
-        onHide={handleModalClose}
+        closeModal={handleModalClose}
+        closeModalCancel={handleModalCloseCancel}
         darkMode={darkMode}
         setCustomDates={(dataInicio, dataFinal, selectDateFilter) => {
           filtrarPorDatas(dataInicio, dataFinal, selectDateFilter);
         }}
       />
 
-      {/* Modal para excluir obra */}
-      <DeleteObraModal
-        visible={viewDeleteObraModal.visible}
-        setVisible={() =>
-          setViewDeleteObraModal({ visible: false, obra: null })
-        }
-        obra={viewDeleteObraModal.obra}
-        onDelete={getObras}
-      />
     </Layout>
   );
 };

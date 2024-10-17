@@ -232,7 +232,7 @@ const EquipamentosComum = () => {
               : "0px 0px 10px rgba(0, 0, 0, 0.1)",
           }}
         >
-          <Col md={2} className="d-flex align-items-center">
+          <Col md={4} className="d-flex align-items-center">
             <Button
               variant="secondary"
               className="d-flex align-items-center"
@@ -243,7 +243,7 @@ const EquipamentosComum = () => {
             </Button>
           </Col>
           <Col
-            md={{ size: 4, offset: 2 }}
+            md={4}
             className="d-flex align-items-center ml-auto"
           >
             <Typography
@@ -487,50 +487,24 @@ const EquipamentosComum = () => {
                               ))}
                           </Grid>
                         </Grid>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "end",
-                            alignItems: "center",
-                            marginTop: "2.5rem",
+
+                        <IconButton
+                          onClick={() => {
+                            editarEquipamento(equipamento);
+                          }}
+                          style={{
+                            color: darkMode ? "#FFFFFF" : "#343A40",
+                            position: "absolute",
+                            bottom: 0,
+                            right: 0,
                           }}
                         >
-                          <FaExpandArrowsAlt
-                            style={{
-                              cursor: "pointer",
-                              marginRight: "10px",
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                            }}
-                            size={20}
-                            title="Gerenciar"
-                            onClick={() => {
-                              console.log("Detalhes dp equipamento : ", equipamento );
-                            }}
-                          />
                           <FaEdit
-                            style={{
-                              cursor: "pointer",
-                              marginRight: "10px",
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                            }}
-                            onClick={() => {
-                              editarEquipamento(equipamento);
-                            }}
                             size={20}
                             title="Editar"
                           />
-                          <FaTrash
-                            style={{
-                              cursor: "pointer",
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                            }}
-                            size={20}
-                            title="Excluir"
-                            onClick={() => {
-                              deleteEquipamento(equipamento);
-                            }}
-                          />
-                        </Box>
+                        </IconButton>
+
                       </CardContent>
                     </Collapse>
                   </Card>

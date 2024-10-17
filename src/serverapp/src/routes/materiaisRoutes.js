@@ -9,5 +9,6 @@ materiaisRoutes.get('/material', MaterialController.getMaterialById);
 materiaisRoutes.put('/alterarMaterial', MaterialController.updateMaterial);
 materiaisRoutes.delete('/deleteMaterial', MaterialController.deleteMaterial);
 materiaisRoutes.get('/buscaMateriaisPorObra', MaterialController.buscaMateriaisPorObra);
+materiaisRoutes.get('/buscaMateriaisQuery', MaterialController.buscaMateriaisQuery);
 
 module.exports = materiaisRoutes;

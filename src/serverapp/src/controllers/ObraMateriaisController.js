@@ -1,28 +1,41 @@
 const { Material, Obra, ObraMateriais } = require('../models');
+const sequelize = require('sequelize');
 
 const ObraMateriaisController = {
   async addMaterial(req, res) {
     try {
-      const { obraId, materialId, quantidade, valor, dataAlocacao, nomeMaterial, nomeObra } = req.body;
+      const { ObraId, MaterialId, quantidade, valor, dataAlocacao, nomeMaterial, nomeObra } = req.body;
 
-      const obra = await Obra.findByPk(obraId);
-      const material = await Material.findByPk(materialId);
+      const obra = await Obra.findByPk(ObraId);
+      const material = await Material.findByPk(MaterialId);
 
       if (!obra || !material) {
         return res.status(404).json({ error: 'Obra ou material não encontrado' });
       }
 
-      await ObraMateriais.create({
-        obraId,
-        materialId,
-        quantidade,
-        valor,
-        dataAlocacao,
-        nomeMaterial,
-        nomeObra
-      });
+      const existingEntry = await ObraMateriais.findOne({ where: { ObraId, MaterialId } });
 
-      res.status(200).json({ message: 'Material adicionado à obra com sucesso' });
+      if (existingEntry) {
+        await existingEntry.update({
+          quantidade,
+          valor,
+          dataAlocacao,
+          nomeMaterial,
+          nomeObra
+        });
+      } else {
+        await ObraMateriais.create({
+          ObraId,
+          MaterialId,
+          quantidade,
+          valor,
+          dataAlocacao,
+          nomeMaterial,
+          nomeObra
+        });
+      }
+
+      res.status(200).json({ message: 'Material adicionado ou atualizado com sucesso à obra' });
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
@@ -30,9 +43,9 @@ const ObraMateriaisController = {
 
   async getMateriaisPorObra(req, res) {
     try {
-      const { obraId } = req.query;
+      const { ObraId } = req.query;
 
-      const obra = await Obra.findByPk(obraId, {
+      const obra = await Obra.findByPk(ObraId, {
         include: {
           model: Material,
           as: 'materiais',
@@ -54,10 +67,10 @@ const ObraMateriaisController = {
 
   async updateMaterialObra(req, res) {
     try {
-      const { obraId, materialId, quantidade, valor, dataAlocacao, nomeMaterial, nomeObra } = req.body;
+      const { ObraId, MaterialId, quantidade, valor, dataAlocacao, nomeMaterial, nomeObra } = req.body;
 
-      const obra = await Obra.findByPk(obraId);
-      const material = await Material.findByPk(materialId);
+      const obra = await Obra.findByPk(ObraId);
+      const material = await Material.findByPk(MaterialId);
 
       if (!obra || !material) {
         return res.status(404).json({ error: 'Obra ou material não encontrado' });
@@ -69,7 +82,7 @@ const ObraMateriaisController = {
         dataAlocacao,
         nomeMaterial,
         nomeObra
-      }, { where: { obraId, materialId } });
+      }, { where: { ObraId, MaterialId } });
 
       res.status(200).json({ message: 'Material atualizado na obra com sucesso' });
     } catch (error) {
@@ -79,21 +92,49 @@ const ObraMateriaisController = {
 
   async removeMaterial(req, res) {
     try {
-      const { obraId, materialId } = req.body;
+      const { ObraId, MaterialId } = req.query;
 
-      const obra = await Obra.findByPk(obraId);
-      const material = await Material.findByPk(materialId);
+      const obra = await Obra.findByPk(ObraId);
+      const material = await Material.findByPk(MaterialId);
 
       if (!obra || !material) {
         return res.status(404).json({ error: 'Obra ou material não encontrado' });
       }
 
-      await ObraMateriais.destroy({ where: { obraId, materialId } });
+      await ObraMateriais.destroy({ where: { ObraId, MaterialId } });
       res.status(200).json({ message: 'Material removido da obra com sucesso' });
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
-  }
+  },
+
+  async getObrasComMaisMateriais(req, res) {
+    try {
+      const obras = await Obra.findAll({
+        order: [['createdAt', 'DESC']],
+        limit: 5,
+      });
+  
+      const obraComMateriais = await Promise.all(
+        obras.map(async (obra) => {
+          const qtdMateriais = await ObraMateriais.count({ where: { ObraId: obra.id } });
+          const totalMateriais = await ObraMateriais.sum('valor', { where: { ObraId: obra.id } });
+          return {
+            obra: obra.nome,
+            materiais: {
+              quantidade: qtdMateriais,
+              totalMateriais: parseFloat(totalMateriais).toFixed(2) || 0,
+            }, 
+          };
+        })
+      );
+  
+      res.status(200).json(obraComMateriais);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+
 };
 
 module.exports = ObraMateriaisController;

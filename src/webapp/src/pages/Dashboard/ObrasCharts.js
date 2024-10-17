@@ -89,6 +89,74 @@ const ObrasChart = ({ data, darkMode }) => {
 
   const textColor = darkMode ? "#FFFFFF" : "#343A40";
 
+  const CustomTooltip = ({ payload, label }) => {
+    if (payload && payload.length) {
+      const { atrasadas, emAndamento, concluidas, fullMonth } = payload[0].payload;
+
+      const statusStyles = {
+        concluidas: { backgroundColor: "#28a745", color: "#FFFFFF" },
+        emAndamento: { backgroundColor: "#007bff", color: "#FFFFFF" },
+        atrasadas: { backgroundColor: "#dc3545", color: "#FFFFFF" },
+      };
+
+      return (
+        <div
+          style={{
+            backgroundColor: darkMode ? "#676767" : "#FFFFFF",
+            padding: "0.5rem",
+            borderRadius: "5px",
+            border: "1px solid #E0E0E0",
+            color: darkMode ? "#FFFFFF" : "#000000",
+          }}
+        >
+          <p>
+            <strong>{fullMonth}</strong>
+          </p>
+          <p>
+            <span
+              style={{
+                display: "inline-block",
+                width: "10px",
+                height: "10px",
+                borderRadius: "50%",
+                backgroundColor: statusStyles.concluidas.backgroundColor,
+                marginRight: "15px",
+              }}
+            />
+            Concluídas: {concluidas}
+          </p>
+          <p>
+            <span
+              style={{
+                display: "inline-block",
+                width: "10px",
+                height: "10px",
+                borderRadius: "50%",
+                backgroundColor: statusStyles.emAndamento.backgroundColor,
+                marginRight: "15px",
+              }}
+            />
+            Em Andamento: {emAndamento}
+          </p>
+          <p>
+            <span
+              style={{
+                display: "inline-block",
+                width: "10px",
+                height: "10px",
+                borderRadius: "50%",
+                backgroundColor: statusStyles.atrasadas.backgroundColor,
+                marginRight: "15px",
+              }}
+            />
+            Atrasadas: {atrasadas}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <LineChart
@@ -117,78 +185,7 @@ const ObrasChart = ({ data, darkMode }) => {
           domain={[0, "dataMax"]}
           ticks={yTicks}
         />
-        <Tooltip
-          formatter={(value, name) => `${value} obras`}
-          content={({ payload, label }) => {
-            if (payload && payload.length) {
-              const { atrasadas, emAndamento, concluidas, fullMonth } =
-                payload[0].payload;
-
-              const statusStyles = {
-                concluidas: { backgroundColor: "#28a745", color: "#FFFFFF" }, 
-                emAndamento: { backgroundColor: "#007bff", color: "#FFFFFF" }, 
-                atrasadas: { backgroundColor: "#dc3545", color: "#FFFFFF" }, 
-              };
-
-              return (
-                <div
-                  style={{
-                    backgroundColor: darkMode ? "#676767" : "#FFFFFF",
-                    padding: "0.5rem",
-                    borderRadius: "5px",
-                  }}
-                >
-                  <p>
-                    <strong>{fullMonth}</strong>
-                  </p>
-                  <p>
-                    <span
-                      style={{
-                        display: "inline-block",
-                        width: "10px",
-                        height: "10px",
-                        borderRadius: "50%",
-                        backgroundColor:
-                          statusStyles.concluidas.backgroundColor,
-                        marginRight: "15px",
-                      }}
-                    />
-                    Concluídas: {concluidas}
-                  </p>
-                  <p>
-                    <span
-                      style={{
-                        display: "inline-block",
-                        width: "10px",
-                        height: "10px",
-                        borderRadius: "50%",
-                        backgroundColor:
-                          statusStyles.emAndamento.backgroundColor,
-                        marginRight: "15px",
-                      }}
-                    />
-                    Em Andamento: {emAndamento}
-                  </p>
-                  <p>
-                    <span
-                      style={{
-                        display: "inline-block",
-                        width: "10px",
-                        height: "10px",
-                        borderRadius: "50%",
-                        backgroundColor: statusStyles.atrasadas.backgroundColor,
-                        marginRight: "15px",
-                      }}
-                    />
-                    Atrasadas: {atrasadas}
-                  </p>
-                </div>
-              );
-            }
-            return null;
-          }}
-        />
-
+        <Tooltip content={<CustomTooltip />} />
         <Legend />
         <Line
           type="monotone"

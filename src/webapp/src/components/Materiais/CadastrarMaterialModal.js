@@ -19,6 +19,7 @@ const CadastrarMaterialModal = ({
   setVisible,
   material,
   getMaterials,
+  materialCadastrado
 }) => {
   const URL_API = process.env.REACT_APP_URL_API;
   const [loading, setLoading] = useState(false);
@@ -34,9 +35,7 @@ const CadastrarMaterialModal = ({
   const handleSubmit = (values) => {
     setLoading(true);
 
-    const data = {
-      ...values,
-    };
+    const data = { ...values };
 
     if (data.dataValidade === "--") {
       data.dataValidade = null;
@@ -51,7 +50,6 @@ const CadastrarMaterialModal = ({
             message: "Material editado com sucesso!",
             sucesso: true,
           });
-
           getMaterials();
         })
         .catch((error) => {
@@ -69,13 +67,14 @@ const CadastrarMaterialModal = ({
     } else {
       axios
         .post(`${URL_API}/api/materiais/novoMaterial`, data)
-        .then(() => {
+        .then((res) => {
           setConfirmacaoVisible({
             visible: true,
             message: "Material cadastrado com sucesso!",
             sucesso: true,
           });
-
+          console.log("MATERIAL CADASTRADO: ", res.data)
+          materialCadastrado(res.data);
           getMaterials();
         })
         .catch((error) => {
@@ -162,7 +161,7 @@ const CadastrarMaterialModal = ({
           <Formik initialValues={initialValues} onSubmit={handleSubmit}>
             {({ setFieldValue, values }) => (
               <Form style={formStyle}>
-                <Row form>
+                <Row>
                   <Col md={6}>
                     <div className="form-group">
                       <label htmlFor="nome">Nome</label>
@@ -171,9 +170,7 @@ const CadastrarMaterialModal = ({
                         name="nome"
                         className="form-control"
                         style={inputStyle}
-                        onChange={(e) => {
-                          setFieldValue("nome", e.target.value);
-                        }}
+                        onChange={(e) => setFieldValue("nome", e.target.value)}
                       />
                     </div>
                   </Col>
@@ -185,14 +182,12 @@ const CadastrarMaterialModal = ({
                         name="codigo"
                         className="form-control"
                         style={inputStyle}
-                        onChange={(e) => {
-                          setFieldValue("codigo", e.target.value);
-                        }}
+                        onChange={(e) => setFieldValue("codigo", e.target.value)}
                       />
                     </div>
                   </Col>
                 </Row>
-                <Row form>
+                <Row>
                   <Col md={6}>
                     <div className="form-group">
                       <label htmlFor="principalFornecedor">
@@ -203,9 +198,9 @@ const CadastrarMaterialModal = ({
                         name="principalFornecedor"
                         className="form-control"
                         style={inputStyle}
-                        onChange={(e) => {
-                          setFieldValue("principalFornecedor", e.target.value);
-                        }}
+                        onChange={(e) =>
+                          setFieldValue("principalFornecedor", e.target.value)
+                        }
                       />
                     </div>
                   </Col>
@@ -217,27 +212,25 @@ const CadastrarMaterialModal = ({
                         name="unidadeMedida"
                         className="form-control"
                         style={inputStyle}
-                        onChange={(e) => {
-                          setFieldValue("unidadeMedida", e.target.value);
-                        }}
+                        onChange={(e) =>
+                          setFieldValue("unidadeMedida", e.target.value)
+                        }
                       />
                     </div>
                   </Col>
                 </Row>
-                <Row form>
+                <Row>
                   <Col md={6}>
                     <div className="form-group">
-                      <label htmlFor="dataUltimaCompra">
-                        Data Última Compra
-                      </label>
+                      <label htmlFor="dataUltimaCompra">Data Última Compra</label>
                       <Field
                         type="date"
                         name="dataUltimaCompra"
                         className="form-control"
                         style={inputStyle}
-                        onChange={(e) => {
-                          setFieldValue("dataUltimaCompra", e.target.value);
-                        }}
+                        onChange={(e) =>
+                          setFieldValue("dataUltimaCompra", e.target.value)
+                        }
                       />
                     </div>
                   </Col>
@@ -249,14 +242,14 @@ const CadastrarMaterialModal = ({
                         name="dataValidade"
                         className="form-control"
                         style={inputStyle}
-                        onChange={(e) => {
-                          setFieldValue("dataValidade", e.target.value);
-                        }}
+                        onChange={(e) =>
+                          setFieldValue("dataValidade", e.target.value)
+                        }
                       />
                     </div>
                   </Col>
                 </Row>
-                <Row form>
+                <Row>
                   <Col md={6}>
                     <div className="form-group">
                       <label htmlFor="numeroNotaFiscal">Nota Fiscal</label>
@@ -265,14 +258,13 @@ const CadastrarMaterialModal = ({
                         name="numeroNotaFiscal"
                         className="form-control"
                         style={inputStyle}
-                        onChange={(e) => {
-                          setFieldValue("numeroNotaFiscal", e.target.value);
-                        }}
+                        onChange={(e) =>
+                          setFieldValue("numeroNotaFiscal", e.target.value)
+                        }
                       />
                     </div>
                   </Col>
                 </Row>
-                {/* Adicione mais campos do formulário aqui */}
                 <ModalFooter style={modalStyle}>
                   <Button
                     color="secondary"

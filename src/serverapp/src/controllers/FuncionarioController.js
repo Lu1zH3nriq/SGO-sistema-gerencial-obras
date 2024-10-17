@@ -170,6 +170,23 @@ const FuncionarioController = {
       res.status(400).json({ error: error.message });
     }
   },
+
+  async getStatusFuncionarios(req, res) {
+    try {
+      const totalFuncionarios = await Funcionario.count();
+      const alocados = await Funcionario.count({ where: { obraId: { [Op.ne]: null } } });
+      const disponiveis = totalFuncionarios - alocados;
+
+      const status = [
+        { name: 'Disponíveis', value: disponiveis },
+        { name: 'Alocados', value: alocados },
+      ];
+
+      res.status(200).json(status);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
 };
 
 module.exports = FuncionarioController;
