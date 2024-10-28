@@ -13,12 +13,14 @@ const ObraMateriaisController = {
         return res.status(404).json({ error: 'Obra ou material não encontrado' });
       }
 
+      const valorDecimal = parseFloat(valor); 
+
       const existingEntry = await ObraMateriais.findOne({ where: { ObraId, MaterialId } });
 
       if (existingEntry) {
         await existingEntry.update({
           quantidade,
-          valor,
+          valor: valorDecimal,
           dataAlocacao,
           nomeMaterial,
           nomeObra
@@ -28,14 +30,14 @@ const ObraMateriaisController = {
           ObraId,
           MaterialId,
           quantidade,
-          valor,
+          valor: valorDecimal,
           dataAlocacao,
           nomeMaterial,
           nomeObra
         });
       }
 
-      res.status(200).json({ message: 'Material adicionado ou atualizado com sucesso à obra' });
+      res.status(200).json({ message: 'Material adicionado à obra' });
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
@@ -92,16 +94,16 @@ const ObraMateriaisController = {
 
   async removeMaterial(req, res) {
     try {
-      const { ObraId, MaterialId } = req.query;
+      const { obraId, materialId } = req.query;
 
-      const obra = await Obra.findByPk(ObraId);
-      const material = await Material.findByPk(MaterialId);
+      const obra = await Obra.findByPk(obraId);
+      const material = await Material.findByPk(materialId);
 
       if (!obra || !material) {
         return res.status(404).json({ error: 'Obra ou material não encontrado' });
       }
 
-      await ObraMateriais.destroy({ where: { ObraId, MaterialId } });
+      await ObraMateriais.destroy({ where: { obraId, materialId } });
       res.status(200).json({ message: 'Material removido da obra com sucesso' });
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -114,7 +116,7 @@ const ObraMateriaisController = {
         order: [['createdAt', 'DESC']],
         limit: 5,
       });
-  
+
       const obraComMateriais = await Promise.all(
         obras.map(async (obra) => {
           const qtdMateriais = await ObraMateriais.count({ where: { ObraId: obra.id } });
@@ -124,11 +126,11 @@ const ObraMateriaisController = {
             materiais: {
               quantidade: qtdMateriais,
               totalMateriais: parseFloat(totalMateriais).toFixed(2) || 0,
-            }, 
+            },
           };
         })
       );
-  
+
       res.status(200).json(obraComMateriais);
     } catch (error) {
       res.status(400).json({ error: error.message });

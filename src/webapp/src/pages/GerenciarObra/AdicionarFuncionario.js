@@ -28,6 +28,9 @@ const AdicionarFuncionario = ({
   setVisible,
   obra,
   refreshFuncionarios,
+
+  addAoEquipamento,
+  funcionarioSelecionado
 }) => {
   const URL_API = process.env.REACT_APP_URL_API;
   const [resultados, setResultados] = useState([]);
@@ -90,65 +93,78 @@ const AdicionarFuncionario = ({
   const handleSelect = (funcionario) => {
     setLoadingAddFuncionario(true);
 
-    let data = {
-      ...funcionario,
-      obraId: obra.id,
-    };
-
-    axios
-      .put(`${URL_API}/api/funcionarios/alterarFuncionario?id=${data.id}`, data)
-      .then((res) => {
-        setConfirmacaoVisible({
-          visible: true,
-          mensagem: "Funcionário alocado com sucesso!",
-          sucesso: true,
-        });
-        setResultados([]);
-        setSearchValues({
-          nome: "",
-          email: "",
-          cpf: "",
-        });
-        setTipoFuncionario({
-          efetivo: false,
-          terceirizado: false,
-          todos: true,
-        });
-        refreshFuncionarios(obra.id);
-        setVisible();
-      })
-      .catch((error) => {
-        console.log(error);
-        setConfirmacaoVisible({
-          visible: true,
-          mensagem: "Ocorreu um erro ao alocar este funcionário!",
-          sucesso: false,
-        });
-        setResultados([]);
-        setSearchValues({
-          nome: "",
-          email: "",
-          cpf: "",
-        });
-        setTipoFuncionario({
-          efetivo: false,
-          terceirizado: false,
-          todos: true,
-        });
-        setVisible();
-      })
-      .finally(() => {
-        setLoadingAddFuncionario(false);
+    if (addAoEquipamento === true) {
+      funcionarioSelecionado(funcionario);
+      setSearchValues({ nome: "", email: "", cpf: "", cnpj: "" });
+      setResultados([]);
+      setVisible(false);
+      setTipoFuncionario({
+        efetivo: false,
+        terceirizado: false,
+        todos: true,
       });
+    } else {
+      
+      let data = {
+        ...funcionario,
+        obraId: obra.id,
+      };
 
-    setSearchValues({ nome: "", email: "", cpf: "", cnpj: "" });
-    setResultados([]);
-    setVisible(false);
-    setTipoFuncionario({
-      efetivo: false,
-      terceirizado: false,
-      todos: true,
-    });
+      axios
+        .put(`${URL_API}/api/funcionarios/alterarFuncionario?id=${data.id}`, data)
+        .then((res) => {
+          setConfirmacaoVisible({
+            visible: true,
+            mensagem: "Funcionário alocado com sucesso!",
+            sucesso: true,
+          });
+          setResultados([]);
+          setSearchValues({
+            nome: "",
+            email: "",
+            cpf: "",
+          });
+          setTipoFuncionario({
+            efetivo: false,
+            terceirizado: false,
+            todos: true,
+          });
+          refreshFuncionarios(obra.id);
+          setVisible();
+        })
+        .catch((error) => {
+          console.log(error);
+          setConfirmacaoVisible({
+            visible: true,
+            mensagem: "Ocorreu um erro ao alocar este funcionário!",
+            sucesso: false,
+          });
+          setResultados([]);
+          setSearchValues({
+            nome: "",
+            email: "",
+            cpf: "",
+          });
+          setTipoFuncionario({
+            efetivo: false,
+            terceirizado: false,
+            todos: true,
+          });
+          setVisible();
+        })
+        .finally(() => {
+          setLoadingAddFuncionario(false);
+        });
+
+      setSearchValues({ nome: "", email: "", cpf: "", cnpj: "" });
+      setResultados([]);
+      setVisible(false);
+      setTipoFuncionario({
+        efetivo: false,
+        terceirizado: false,
+        todos: true,
+      });
+    }
   };
 
   const modalStyle = {

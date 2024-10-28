@@ -37,10 +37,17 @@ const RemoverEquipamento = ({
   const handleDelete = () => {
     setLoading(true);
 
-    let data = {
+    const data = {
       ...equipamento,
       obraId: null,
-    }
+      funcionarioId: null,
+      responsavel: '',
+      obraAlocado: '',
+      status: 'Disponível',
+      dataAlocacao: null,
+    };
+
+
     axios
       .put(`${URL_API}/api/equipamentos/alterarEquipamento?id=${data.id}`, data)
       .then((response) => {
@@ -105,8 +112,8 @@ const RemoverEquipamento = ({
                 Nome: <strong>{equipamento.nome}</strong>
               </p>
               <p>
-                Identificador: 
-                 <strong> {equipamento.identificador}</strong>
+                Identificador:
+                <strong> {equipamento.identificador}</strong>
               </p>
             </>
           ) : (

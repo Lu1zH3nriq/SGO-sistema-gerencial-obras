@@ -311,7 +311,7 @@ const Dashboard = () => {
         {/* Linha com obras */}
         <Row className="mt-4">
           <>
-            <Col xs={12} md={12} className="mb-4" style={{ height: "40vh" }}>
+            <Col xs={12} md={12} className="mb-4" style={{ height: "70vh" }}>
               <Card
                 style={{
                   backgroundColor: darkMode ? "#676767" : "#FFFFFF",

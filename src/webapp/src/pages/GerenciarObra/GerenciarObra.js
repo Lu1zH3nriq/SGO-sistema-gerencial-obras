@@ -714,8 +714,8 @@ const GerenciarObra = () => {
                 </Col> */}
               </Row>
 
+              {/* Equipamentos */}
               <Row className="mb-4 g-0">
-                {/* Equipamentos */}
                 <Col xs={12} sm={6} md={6} className="mb-1">
                   <Card
                     style={{
@@ -919,6 +919,7 @@ const GerenciarObra = () => {
                                     style={{
                                       padding: "0.5rem",
                                       borderBottom: "1px solid #CCCCCC",
+                                      whiteSpace: "nowrap",
                                     }}
                                   >
                                     {material.nome}
@@ -1109,6 +1110,7 @@ const GerenciarObra = () => {
             })
           }
           obra={obra}
+          _getMateriaisDaObra={getMateriaisDaObra}
         />
 
         <AdicionarEquipamentos
