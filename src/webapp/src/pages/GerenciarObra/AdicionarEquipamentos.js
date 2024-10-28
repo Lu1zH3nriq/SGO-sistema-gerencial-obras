@@ -19,9 +19,9 @@ import axios from "axios";
 import ConfirmacaoModal from "components/utils/ConfirmacaoModal.js";
 import { useUIContextController } from "../../context/index.js";
 import { FaCheckSquare } from "react-icons/fa";
-import CurrencyInput from "react-currency-input-field";
 
 import CadastrarEquipamentoModal from "components/Equipamentos/CadastrarEquipamentoModal.js";
+import AdicionarFuncionario from "./AdicionarFuncionario.js";
 
 const AdicionarEquipamentos = ({
   visible,
@@ -49,6 +49,8 @@ const AdicionarEquipamentos = ({
   const [equipamentoSelecionado, setEquipamentoSelecionado] = useState({});
   const [loadingEquipamento, setLoadingEquipamento] = useState(false);
 
+  const [selecionarResponsavel, setSelecionarResponsavel] = useState(false);
+
   const handleSearch = () => {
     setLoading(true);
 
@@ -74,7 +76,7 @@ const AdicionarEquipamentos = ({
       .finally(() => setLoading(false));
   };
 
-  const handleSelect = (equipamento) => {
+  const handleSelect = (equipamento, funcionario) => {
     setLoadingEquipamento(true);
 
     const dataAtual = new Date();
@@ -86,8 +88,8 @@ const AdicionarEquipamentos = ({
       ...data,
       status: "Em uso",
       dataAlocacao: dataAtual.toISOString(),
-      funcionarioId: obra.responsavelId,
-      responsavel: obra.responsavel,
+      funcionarioId: funcionario.id,
+      responsavel: funcionario.nome,
       obraAlocado: obra.nome,
       obraId: obra.id,
     };
@@ -275,9 +277,9 @@ const AdicionarEquipamentos = ({
                       onClick={
                         produto.status !== "Em uso"
                           ? () => {
-                              setEquipamentoSelecionado(produto);
-                              handleSelect(produto);
-                            }
+                            setEquipamentoSelecionado(produto);
+                            setSelecionarResponsavel(true);
+                          }
                           : null
                       }
                       style={{
@@ -387,6 +389,20 @@ const AdicionarEquipamentos = ({
         equipamento={null}
         getEquipamentos={(data) => {
           setResultados((prevResultados) => [...prevResultados, data]);
+        }}
+      />
+
+
+      <AdicionarFuncionario
+        visible={selecionarResponsavel}
+        setVisible={() => { setSelecionarResponsavel(false) }}
+        equipamento={equipamentoSelecionado}
+        obra={obra}
+        getEquipamentosDaObra={getEquipamentosDaObra}
+        addAoEquipamento={true}
+        funcionarioSelecionado={(responsavel) => {
+          setSelecionarResponsavel(false);
+          handleSelect(equipamentoSelecionado, responsavel );
         }}
       />
     </Container>

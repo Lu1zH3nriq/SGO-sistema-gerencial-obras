@@ -114,11 +114,11 @@ const Materiais = () => {
   // Função para atualizar o termo de pesquisa
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1); // Resetar para a primeira página ao pesquisar
+    setCurrentPage(1);
   };
   const handleSearchCod = (event) => {
     setSearchCod(event.target.value);
-    setCurrentPage(1); // Resetar para a primeira página ao pesquisar
+    setCurrentPage(1); 
   };
 
   // Filtrar a lista de materiais com base no termo de pesquisa

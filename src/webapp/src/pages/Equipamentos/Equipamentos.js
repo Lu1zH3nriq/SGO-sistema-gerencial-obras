@@ -495,18 +495,6 @@ const Equipamentos = () => {
                             marginTop: "2.5rem",
                           }}
                         >
-                          <FaExpandArrowsAlt
-                            style={{
-                              cursor: "pointer",
-                              marginRight: "10px",
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                            }}
-                            size={20}
-                            title="Gerenciar"
-                            onClick={() => {
-                              console.log("Detalhes dp equipamento : ", equipamento );
-                            }}
-                          />
                           <FaEdit
                             style={{
                               cursor: "pointer",
