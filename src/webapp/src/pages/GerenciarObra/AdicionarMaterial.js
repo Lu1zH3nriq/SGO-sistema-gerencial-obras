@@ -22,7 +22,7 @@ import { FaCheckSquare } from "react-icons/fa";
 import CadastrarMaterialModal from "components/Materiais/CadastrarMaterialModal.js";
 import CurrencyInput from "react-currency-input-field";
 
-const AdicionarMaterial = ({ visible, setVisible, obra }) => {
+const AdicionarMaterial = ({ visible, setVisible, obra, _getMateriaisDaObra }) => {
   const URL_API = process.env.REACT_APP_URL_API;
   const [resultados, setResultados] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -79,19 +79,24 @@ const AdicionarMaterial = ({ visible, setVisible, obra }) => {
     const dataAtual = new Date();
     dataAtual.setHours(0, 0, 0, 0);
 
+    const valorMaterialFloat = parseFloat(valorMaterial.replace(',', '.'));
+
     const data = {
       ObraId: obra.id,
       MaterialId: selectQuantidadeModal.produto.id,
       quantidade: quantidadeMaterial,
-      valor: parseFloat(valorMaterial).toFixed(2),
+      valor: valorMaterialFloat,
       dataAlocacao: dataAtual.toISOString(),
       nomeMaterial: selectQuantidadeModal.produto.nome,
       nomeObra: obra.nome,
     };
-    console.log("data to send: ", data);
+
     axios
       .post(`${URL_API}/api/obraMateriais/addMaterialObra`, data)
       .then((res) => {
+
+        _getMateriaisDaObra();
+
         setConfirmacaoVisible({
           visible: true,
           mensagem: res.data.message,
@@ -303,8 +308,8 @@ const AdicionarMaterial = ({ visible, setVisible, obra }) => {
                     >
                       {produto.dataUltimaCompra
                         ? new Date(
-                            produto.dataUltimaCompra
-                          ).toLocaleDateString()
+                          produto.dataUltimaCompra
+                        ).toLocaleDateString()
                         : ""}
                     </td>
                     <td
@@ -371,7 +376,7 @@ const AdicionarMaterial = ({ visible, setVisible, obra }) => {
         visible={cadstrarMaterialModal}
         setVisible={() => setCadastrarMaterialModal(false)}
         material={null}
-        getMaterials={() => {}}
+        getMaterials={() => { }}
         materialCadastrado={(data) => {
           setResultados((prevResultados) => [...prevResultados, data]);
         }}

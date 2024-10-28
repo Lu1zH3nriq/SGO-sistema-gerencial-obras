@@ -3,7 +3,7 @@ const sequelize = require("../config/config");
 
 const ObraMateriais = sequelize.define("ObraMateriais", {
     valor: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
     },
     quantidade: {
@@ -22,7 +22,6 @@ const ObraMateriais = sequelize.define("ObraMateriais", {
         type: DataTypes.STRING,
         allowNull: false,
     },
-}
-);
+});
 
 module.exports = ObraMateriais;
