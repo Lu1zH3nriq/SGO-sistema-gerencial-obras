@@ -248,356 +248,158 @@ const GerenciarObra = () => {
           ) : (
             <>
               {/* Dados gerais da obra*/}
-              <Row className="mb-2 g-0">
-                <Col xs={12} sm={12} md={12} className="mb-4">
-                  <Card
-                    style={{
-                      backgroundColor: darkMode ? "#676767" : "#FFFFFF",
-                      margin: "0.5rem",
-                      height: "100%",
-                      borderRadius: "0.5rem",
-                      boxShadow: darkMode
-                        ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
-                        : "0px 0px 10px rgba(0, 0, 0, 0.3)",
-                    }}
-                  >
-                    <CardBody>
-                      <CardTitle
-                        style={{
-                          color: darkMode ? "#FFFFFF" : "#343A40",
-                          textAlign: "start",
-                          borderBottom: darkMode
-                            ? "1px solid rgba(255, 255, 255, 0.2)"
-                            : "1px solid rgba(52, 58, 64, 0.2)",
-                        }}
-                      >
-                        Informações gerais
-                      </CardTitle>
-                      <Row style={{ marginBottom: "0.5rem" }}>
-                        <Col
-                          xs={6}
-                          style={{ display: "flex", flexDirection: "column" }}
+              {loading ? (
+                <Row className="mb-2 g-0">
+                  <Col xs={12} sm={12} md={12} className="mb-4">
+                    <Card
+                      style={{
+                        backgroundColor: darkMode ? "#676767" : "#FFFFFF",
+                        margin: "0.5rem",
+                        height: "100%",
+                        borderRadius: "0.5rem",
+                        boxShadow: darkMode
+                          ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
+                          : "0px 0px 10px rgba(0, 0, 0, 0.3)",
+                      }}
+                    >
+                      <CardBody>
+                        <CardTitle
+                          style={{
+                            color: darkMode ? "#FFFFFF" : "#343A40",
+                            textAlign: "start",
+                            borderBottom: darkMode
+                              ? "1px solid rgba(255, 255, 255, 0.2)"
+                              : "1px solid rgba(52, 58, 64, 0.2)",
+                          }}
                         >
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginBottom: 0,
-                            }}
-                          >
-                            <strong>Nome da Obra:</strong>
-                          </CardText>
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginTop: 0,
-                            }}
-                          >
-                            {obra.nome}
-                          </CardText>
-                        </Col>
-                        <Col
-                          xs={6}
-                          style={{ display: "flex", flexDirection: "column" }}
-                        >
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginBottom: 0,
-                            }}
-                          >
-                            <strong>Identificador:</strong>
-                          </CardText>
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginTop: 0,
-                            }}
-                          >
-                            {obra.identificador}
-                          </CardText>
-                        </Col>
-                      </Row>
-
-                      <Row style={{ marginBottom: "0.5rem" }}>
-                        <Col
-                          xs={6}
-                          style={{ display: "flex", flexDirection: "column" }}
-                        >
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginBottom: 0,
-                            }}
-                          >
-                            <strong>Endereço:</strong>
-                          </CardText>
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginTop: 0,
-                            }}
-                          >
-                            {obra.endereco}
-                          </CardText>
-                        </Col>
-                        <Col
-                          xs={6}
-                          style={{ display: "flex", flexDirection: "column" }}
-                        >
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginBottom: 0,
-                            }}
-                          >
-                            <strong>Data de Início:</strong>
-                          </CardText>
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginTop: 0,
-                            }}
-                          >
-                            {formatarData(obra.dataInicio)}
-                          </CardText>
-                        </Col>
-                      </Row>
-
-                      <Row style={{ marginBottom: "0.5rem" }}>
-                        <Col
-                          xs={6}
-                          style={{ display: "flex", flexDirection: "column" }}
-                        >
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginBottom: 0,
-                            }}
-                          >
-                            <strong>Data Final:</strong>
-                          </CardText>
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginTop: 0,
-                            }}
-                          >
-                            {obra.dataFinal
-                              ? formatarData(obra.dataFinal)
-                              : "Não informado"}
-                          </CardText>
-                        </Col>
-                        <Col
-                          xs={6}
-                          style={{ display: "flex", flexDirection: "column" }}
-                        >
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginBottom: 0,
-                            }}
-                          >
-                            <strong>Contrato:</strong>
-                          </CardText>
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginTop: 0,
-                            }}
-                          >
-                            {obra.contrato}
-                          </CardText>
-                        </Col>
-                      </Row>
-
-                      <Row style={{ marginBottom: "0.5rem" }}>
-                        <Col
-                          xs={6}
-                          style={{ display: "flex", flexDirection: "column" }}
-                        >
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginBottom: 0,
-                            }}
-                          >
-                            <strong>Alvará:</strong>
-                          </CardText>
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginTop: 0,
-                            }}
-                          >
-                            {obra.alvara}
-                          </CardText>
-                        </Col>
-                        <Col
-                          xs={6}
-                          style={{ display: "flex", flexDirection: "column" }}
-                        >
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginBottom: 0,
-                            }}
-                          >
-                            <strong>Orçamento:</strong>
-                          </CardText>
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginTop: 0,
-                            }}
-                          >
-                            {formatarOrcamento(obra.orcamento)}
-                          </CardText>
-                        </Col>
-                      </Row>
-
-                      <Row style={{ marginBottom: "0.5rem" }}>
-                        <Col
-                          xs={6}
-                          style={{ display: "flex", flexDirection: "column" }}
-                        >
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginBottom: 0,
-                            }}
-                          >
-                            <strong>Responsável:</strong>
-                          </CardText>
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginTop: 0,
-                            }}
-                          >
-                            {obra.responsavel}
-                          </CardText>
-                        </Col>
-                        <Col
-                          xs={6}
-                          style={{ display: "flex", flexDirection: "column" }}
-                        >
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginBottom: 0,
-                            }}
-                          >
-                            <strong>Status:</strong>
-                          </CardText>
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginTop: 0,
-                            }}
-                          >
-                            {obra.status}
-                          </CardText>
-                        </Col>
-                      </Row>
-
-                      <Row style={{ marginBottom: "0.5rem" }}>
-                        <Col
-                          xs={6}
-                          style={{ display: "flex", flexDirection: "column" }}
-                        >
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginBottom: 0,
-                            }}
-                          >
-                            <strong>Última alteração:</strong>
-                          </CardText>
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginTop: 0,
-                            }}
-                          >
-                            {new Date(obra.updatedAt).toLocaleDateString()}
-                          </CardText>
-                        </Col>
-                        <Col
-                          xs={6}
-                          style={{ display: "flex", flexDirection: "column" }}
-                        >
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginBottom: 0,
-                            }}
-                          >
-                            <strong>Data de cadastro:</strong>
-                          </CardText>
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginTop: 0,
-                            }}
-                          >
-                            {formatarData(obra.createdAt)}
-                          </CardText>
-                        </Col>
-                        <Col
-                          xs={12}
-                          style={{ display: "flex", flexDirection: "column" }}
-                        >
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginBottom: 0,
-                            }}
-                          >
-                            <strong>Contrato:</strong>
-                          </CardText>
-                          <CardText
-                            style={{
-                              color: darkMode ? "#FFFFFF" : "#343A40",
-                              marginTop: 0,
-                            }}
-                          >
-                            <button
-                              onClick={() => window.open(obra.urlContrato, "_blank")}
-                              style={{
-                                color: darkMode ? "#46CBFF" : "#0074B6",
-                                background: "none",
-                                border: "none",
-                                padding: 0,
-                                cursor: "pointer",
-                              }}
-                              title="Baixar contrato"
-                            >
-                              Visualizar Contrato
-                            </button>
-                          </CardText>
-                        </Col>
-                      </Row>
-
-                      <div
-                        style={{
-                          paddingTop: "1rem",
-                          borderTop: darkMode
-                            ? "1px solid rgba(255, 255, 255, 0.2)"
-                            : "1px solid rgba(52, 58, 64, 0.2)",
-                        }}
-                      >
+                          <Skeleton width="50%" />
+                        </CardTitle>
                         <Row style={{ marginBottom: "0.5rem" }}>
-                          <Col
-                            xs={6}
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <Skeleton height={20} width="80%" />
+                            <Skeleton height={20} width="60%" />
+                          </Col>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <Skeleton height={20} width="80%" />
+                            <Skeleton height={20} width="60%" />
+                          </Col>
+                        </Row>
+                        <Row style={{ marginBottom: "0.5rem" }}>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <Skeleton height={20} width="80%" />
+                            <Skeleton height={20} width="60%" />
+                          </Col>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <Skeleton height={20} width="80%" />
+                            <Skeleton height={20} width="60%" />
+                          </Col>
+                        </Row>
+                        <Row style={{ marginBottom: "0.5rem" }}>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <Skeleton height={20} width="80%" />
+                            <Skeleton height={20} width="60%" />
+                          </Col>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <Skeleton height={20} width="80%" />
+                            <Skeleton height={20} width="60%" />
+                          </Col>
+                        </Row>
+                        <Row style={{ marginBottom: "0.5rem" }}>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <Skeleton height={20} width="80%" />
+                            <Skeleton height={20} width="60%" />
+                          </Col>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <Skeleton height={20} width="80%" />
+                            <Skeleton height={20} width="60%" />
+                          </Col>
+                        </Row>
+                        <Row style={{ marginBottom: "0.5rem" }}>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <Skeleton height={20} width="80%" />
+                            <Skeleton height={20} width="60%" />
+                          </Col>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <Skeleton height={20} width="80%" />
+                            <Skeleton height={20} width="60%" />
+                          </Col>
+                        </Row>
+                        <Row style={{ marginBottom: "0.5rem" }}>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <Skeleton height={20} width="80%" />
+                            <Skeleton height={20} width="60%" />
+                          </Col>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <Skeleton height={20} width="80%" />
+                            <Skeleton height={20} width="60%" />
+                          </Col>
+                        </Row>
+                        <div
+                          style={{
+                            paddingTop: "1rem",
+                            borderTop: darkMode
+                              ? "1px solid rgba(255, 255, 255, 0.2)"
+                              : "1px solid rgba(52, 58, 64, 0.2)",
+                          }}
+                        >
+                          <Row style={{ marginBottom: "0.5rem" }}>
+                            <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                              <Skeleton height={20} width="80%" />
+                              <Skeleton height={20} width="60%" />
+                            </Col>
+                            <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                              <Skeleton height={20} width="80%" />
+                              <Skeleton height={20} width="60%" />
+                            </Col>
+                            <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                              <Skeleton height={20} width="80%" />
+                              <Skeleton height={20} width="60%" />
+                            </Col>
+                            <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                              <Skeleton height={20} width="80%" />
+                              <Skeleton height={20} width="60%" />
+                            </Col>
+                          </Row>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  </Col>
+                </Row>
+              ) : (
+                <Row className="mb-2 g-0">
+                  <Col xs={12} sm={12} md={12} className="mb-4">
+                    <Card
+                      style={{
+                        backgroundColor: darkMode ? "#676767" : "#FFFFFF",
+                        margin: "0.5rem",
+                        height: "100%",
+                        borderRadius: "0.5rem",
+                        boxShadow: darkMode
+                          ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
+                          : "0px 0px 10px rgba(0, 0, 0, 0.3)",
+                      }}
+                    >
+                      <CardBody>
+                        <CardTitle
+                          style={{
+                            color: darkMode ? "#FFFFFF" : "#343A40",
+                            textAlign: "start",
+                            borderBottom: darkMode
+                              ? "1px solid rgba(255, 255, 255, 0.2)"
+                              : "1px solid rgba(52, 58, 64, 0.2)",
+                          }}
+                        >
+                          Informações gerais
+                        </CardTitle>
+                        <Row style={{ marginBottom: "0.5rem" }}>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
                             <CardText
                               style={{
                                 color: darkMode ? "#FFFFFF" : "#343A40",
                                 marginBottom: 0,
                               }}
                             >
-                              <strong>Cliente:</strong>
+                              <strong>Nome da Obra:</strong>
                             </CardText>
                             <CardText
                               style={{
@@ -605,20 +407,17 @@ const GerenciarObra = () => {
                                 marginTop: 0,
                               }}
                             >
-                              {obra.cliente}
+                              {obra.nome || "Carregando..."}
                             </CardText>
                           </Col>
-                          <Col
-                            xs={6}
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
                             <CardText
                               style={{
                                 color: darkMode ? "#FFFFFF" : "#343A40",
                                 marginBottom: 0,
                               }}
                             >
-                              <strong>Telefone:</strong>
+                              <strong>Identificador:</strong>
                             </CardText>
                             <CardText
                               style={{
@@ -626,34 +425,13 @@ const GerenciarObra = () => {
                                 marginTop: 0,
                               }}
                             >
-                              {cliente.telefone}
+                              {obra.identificador || "Carregando..."}
                             </CardText>
                           </Col>
-                          <Col
-                            xs={6}
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
-                            <CardText
-                              style={{
-                                color: darkMode ? "#FFFFFF" : "#343A40",
-                                marginBottom: 0,
-                              }}
-                            >
-                              <strong>Email:</strong>
-                            </CardText>
-                            <CardText
-                              style={{
-                                color: darkMode ? "#FFFFFF" : "#343A40",
-                                marginTop: 0,
-                              }}
-                            >
-                              {cliente.email}
-                            </CardText>
-                          </Col>
-                          <Col
-                            xs={6}
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
+                        </Row>
+
+                        <Row style={{ marginBottom: "0.5rem" }}>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
                             <CardText
                               style={{
                                 color: darkMode ? "#FFFFFF" : "#343A40",
@@ -668,51 +446,305 @@ const GerenciarObra = () => {
                                 marginTop: 0,
                               }}
                             >
-                              {cliente.endereco}
+                              {obra.endereco || "Carregando..."}
+                            </CardText>
+                          </Col>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginBottom: 0,
+                              }}
+                            >
+                              <strong>Data de Início:</strong>
+                            </CardText>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginTop: 0,
+                              }}
+                            >
+                              {obra.dataInicio ? formatarData(obra.dataInicio) : "Carregando..."}
                             </CardText>
                           </Col>
                         </Row>
-                      </div>
-                    </CardBody>
-                  </Card>
-                </Col>
 
-                {/* <Col xs={12} sm={6} md={6} className="mb-4">
-                  <Card
-                    style={{
-                      backgroundColor: darkMode ? "#676767" : "#FFFFFF",
-                      margin: "0.5rem",
-                      height: "100%",
-                      borderRadius: "0.5rem",
-                      boxShadow: darkMode
-                        ? "0px 0px 10px rgba(255, 255, 255, 0.2)"
-                        : "0px 0px 10px rgba(0, 0, 0, 0.3)",
-                    }}
-                  >
-                    <CardBody>
-                      <CardTitle
-                        style={{
-                          color: darkMode ? "#FFFFFF" : "#343A40",
-                          textAlign: "start",
-                          borderBottom: darkMode
-                            ? "1px solid rgba(255, 255, 255, 0.2)"
-                            : "1px solid rgba(52, 58, 64, 0.2)",
-                        }}
-                      >
-                        Andamento da Obra
-                      </CardTitle>
-                      <CardText
-                        style={{
-                          color: darkMode ? "#FFFFFF" : "#343A40",
-                          padding: "1rem 0rem 0.5rem 0rem",
-                        }}
-                      >
-                        Conteúdo do Card 3
-                      </CardText>
-                    </CardBody>
-                  </Card>
-                </Col> */}
-              </Row>
+                        <Row style={{ marginBottom: "0.5rem" }}>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginBottom: 0,
+                              }}
+                            >
+                              <strong>Data Final:</strong>
+                            </CardText>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginTop: 0,
+                              }}
+                            >
+                              {obra.dataFinal
+                                ? formatarData(obra.dataFinal)
+                                : "Não informado"}
+                            </CardText>
+                          </Col>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginBottom: 0,
+                              }}
+                            >
+                              <strong>Contrato:</strong>
+                            </CardText>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginTop: 0,
+                              }}
+                            >
+                              {obra.contrato || "Carregando..."}
+                            </CardText>
+                          </Col>
+                        </Row>
+
+                        <Row style={{ marginBottom: "0.5rem" }}>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginBottom: 0,
+                              }}
+                            >
+                              <strong>Alvará:</strong>
+                            </CardText>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginTop: 0,
+                              }}
+                            >
+                              {obra.alvara || "Carregando..."}
+                            </CardText>
+                          </Col>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginBottom: 0,
+                              }}
+                            >
+                              <strong>Orçamento:</strong>
+                            </CardText>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginTop: 0,
+                              }}
+                            >
+                              {obra.orcamento ? formatarOrcamento(obra.orcamento) : "Carregando..."}
+                            </CardText>
+                          </Col>
+                        </Row>
+
+                        <Row style={{ marginBottom: "0.5rem" }}>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginBottom: 0,
+                              }}
+                            >
+                              <strong>Responsável:</strong>
+                            </CardText>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginTop: 0,
+                              }}
+                            >
+                              {obra.responsavel || "Carregando..."}
+                            </CardText>
+                          </Col>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginBottom: 0,
+                              }}
+                            >
+                              <strong>Status:</strong>
+                            </CardText>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginTop: 0,
+                              }}
+                            >
+                              {obra.status || "Carregando..."}
+                            </CardText>
+                          </Col>
+                        </Row>
+
+                        <Row style={{ marginBottom: "0.5rem" }}>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginBottom: 0,
+                              }}
+                            >
+                              <strong>Última alteração:</strong>
+                            </CardText>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginTop: 0,
+                              }}
+                            >
+                              {obra.updatedAt ? new Date(obra.updatedAt).toLocaleDateString() : "Carregando..."}
+                            </CardText>
+                          </Col>
+                          <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginBottom: 0,
+                              }}
+                            >
+                              <strong>Data de cadastro:</strong>
+                            </CardText>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginTop: 0,
+                              }}
+                            >
+                              {obra.createdAt ? formatarData(obra.createdAt) : "Carregando..."}
+                            </CardText>
+                          </Col>
+                          <Col xs={12} style={{ display: "flex", flexDirection: "column" }}>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginBottom: 0,
+                              }}
+                            >
+                              <strong>Contrato:</strong>
+                            </CardText>
+                            <CardText
+                              style={{
+                                color: darkMode ? "#FFFFFF" : "#343A40",
+                                marginTop: 0,
+                              }}
+                            >
+                              <button
+                                onClick={() => window.open(obra.urlContrato, "_blank")}
+                                style={{
+                                  color: darkMode ? "#46CBFF" : "#0074B6",
+                                  background: "none",
+                                  border: "none",
+                                  padding: 0,
+                                  cursor: "pointer",
+                                }}
+                                title="Baixar contrato"
+                              >
+                                Visualizar Contrato
+                              </button>
+                            </CardText>
+                          </Col>
+                        </Row>
+
+                        <div
+                          style={{
+                            paddingTop: "1rem",
+                            borderTop: darkMode
+                              ? "1px solid rgba(255, 255, 255, 0.2)"
+                              : "1px solid rgba(52, 58, 64, 0.2)",
+                          }}
+                        >
+                          <Row style={{ marginBottom: "0.5rem" }}>
+                            <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                              <CardText
+                                style={{
+                                  color: darkMode ? "#FFFFFF" : "#343A40",
+                                  marginBottom: 0,
+                                }}
+                              >
+                                <strong>Cliente:</strong>
+                              </CardText>
+                              <CardText
+                                style={{
+                                  color: darkMode ? "#FFFFFF" : "#343A40",
+                                  marginTop: 0,
+                                }}
+                              >
+                                {obra.cliente || "Carregando..."}
+                              </CardText>
+                            </Col>
+                            <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                              <CardText
+                                style={{
+                                  color: darkMode ? "#FFFFFF" : "#343A40",
+                                  marginBottom: 0,
+                                }}
+                              >
+                                <strong>Telefone:</strong>
+                              </CardText>
+                              <CardText
+                                style={{
+                                  color: darkMode ? "#FFFFFF" : "#343A40",
+                                  marginTop: 0,
+                                }}
+                              >
+                                {cliente.telefone || "Carregando..."}
+                              </CardText>
+                            </Col>
+                            <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                              <CardText
+                                style={{
+                                  color: darkMode ? "#FFFFFF" : "#343A40",
+                                  marginBottom: 0,
+                                }}
+                              >
+                                <strong>Email:</strong>
+                              </CardText>
+                              <CardText
+                                style={{
+                                  color: darkMode ? "#FFFFFF" : "#343A40",
+                                  marginTop: 0,
+                                }}
+                              >
+                                {cliente.email || "Carregando..."}
+                              </CardText>
+                            </Col>
+                            <Col xs={6} style={{ display: "flex", flexDirection: "column" }}>
+                              <CardText
+                                style={{
+                                  color: darkMode ? "#FFFFFF" : "#343A40",
+                                  marginBottom: 0,
+                                }}
+                              >
+                                <strong>Endereço:</strong>
+                              </CardText>
+                              <CardText
+                                style={{
+                                  color: darkMode ? "#FFFFFF" : "#343A40",
+                                  marginTop: 0,
+                                }}
+                              >
+                                {cliente.endereco || "Carregando..."}
+                              </CardText>
+                            </Col>
+                          </Row>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  </Col>
+                </Row>
+              )}
 
               {/* Equipamentos */}
               <Row className="mb-4 g-0">
