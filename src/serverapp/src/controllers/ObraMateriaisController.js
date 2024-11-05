@@ -120,7 +120,12 @@ const ObraMateriaisController = {
       const obraComMateriais = await Promise.all(
         obras.map(async (obra) => {
           const qtdMateriais = await ObraMateriais.count({ where: { ObraId: obra.id } });
-          const totalMateriais = await ObraMateriais.sum('valor', { where: { ObraId: obra.id } });
+          let totalMateriais = await ObraMateriais.sum('valor', { where: { ObraId: obra.id } });
+          
+          if (totalMateriais === null) {
+            totalMateriais = 0;
+          }
+
           return {
             obra: obra.nome,
             materiais: {

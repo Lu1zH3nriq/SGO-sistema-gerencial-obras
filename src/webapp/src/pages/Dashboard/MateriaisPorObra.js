@@ -47,12 +47,12 @@ const MateriaisPorObra = ({ darkMode }) => {
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       const { materiaisCount, Total } = payload[0].payload;
-      const obraName = payload[0].payload.name; 
+      const obraName = payload[0].payload.name;
       return (
         <div className="custom-tooltip" style={{ backgroundColor: darkMode ? "#333" : "#FFF", border: "1px solid #E0E0E0", padding: "10px", borderRadius: "5px", color: darkMode ? "#FFF" : "#000" }}>
-          <p className="label">{`Obra: ${obraName}`}</p> 
+          <p className="label">{`Obra: ${obraName}`}</p>
           <p className="intro">{`Quantidade de Materiais: ${materiaisCount}`}</p>
-          <p className="intro">{`Total: R$ ${Total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</p>
+          <p className="intro">{`Total: R$ ${Total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || 0 }`}</p>
         </div>
       );
     }
